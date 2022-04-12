@@ -1,4 +1,4 @@
-package main
+package required_checks
 
 violation_install_deprecated[{"msg": msg, "details":{"name": name, "description": description, "url": url}}] {
   input.Labels["INSTALL"]

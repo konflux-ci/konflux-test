@@ -1,4 +1,4 @@
-package main
+package optional_checks
 
 violation_maintainer_required[{"msg": msg, "details":{"name": name, "description": description, "url": url}}] {
   not input.Labels["maintainer"]

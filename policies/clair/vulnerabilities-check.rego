@@ -1,4 +1,4 @@
-package main
+package required_checks
 
 violation_critical_vulnerabilities[{"msg": msg, "details":{"name": name, "description": description, "url": url}}] {
   rpms_with_critical_vulnerabilities := {rpm.Name | rpm := input.data[_].Features[_]; count(rpm.Vulnerabilities) > 0; rpm.Vulnerabilities[_].Severity == "Critical"}
