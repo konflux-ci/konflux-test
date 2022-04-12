@@ -1,4 +1,4 @@
-package main
+package required_checks
 
 violation_image_unsigned_rpms[{"msg": msg, "details":{"name": name, "description": description, "url": url}}] {
   unsigned_rpms := {rpm.nvra | rpm := input.rpms[_]; not rpm.gpg}

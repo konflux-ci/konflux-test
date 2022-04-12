@@ -1,4 +1,4 @@
-package main
+package required_checks
 
 violation_name_required[{"msg": msg, "details":{"name": name, "description": description, "url": url}}] {
   not input.Labels["name"]

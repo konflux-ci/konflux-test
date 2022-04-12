@@ -1,4 +1,4 @@
-package main
+package required_checks
 
 violation_image_repository_deprecated[{"msg": msg, "details":{"name": name, "description": description, "url": url}}] {
   input.release_categories[_] == "Deprecated"
