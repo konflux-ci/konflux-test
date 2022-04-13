@@ -1,0 +1,218 @@
+{
+  "clair":{
+    "status": "scanned",
+    "data": {
+      "Layer": {
+        "Name": "sha256:24c0a33d297f04022bf603ad887a7466cdff908caf67794d7acc2e405650e796",
+        "ParentName": "",
+        "NamespaceName": "",
+        "IndexedByVersion": 4,
+        "Features": [
+          {
+            "Name": "py3-pip",
+            "VersionFormat": "",
+            "NamespaceName": "",
+            "AddedBy": "sha256:f2b173ea7ea4f29c66496ee10fd17acd7c4bfec05fcfb34bc0682de4ced2e059",
+            "Version": "20.3.4-r1",
+            "Vulnerabilities": []
+          },
+          {
+            "Name": "pip",
+            "VersionFormat": "",
+            "NamespaceName": "",
+            "AddedBy": "sha256:f2b173ea7ea4f29c66496ee10fd17acd7c4bfec05fcfb34bc0682de4ced2e059",
+            "Version": "20.3.4",
+            "Vulnerabilities": [
+              {
+                "Severity": "Medium",
+                "NamespaceName": "pyupio",
+                "Link": "",
+                "FixedBy": "",
+                "Description": "Pip version 21.1 updates its dependency \"urllib3\" to 1.26.4 to fix CVE-2021-28363.",
+                "Name": "pyup.io-40291 (CVE-2021-28363)",
+                "Metadata": {
+                  "UpdatedBy": "pyupio",
+                  "RepoName": "pypi",
+                  "RepoLink": "https://pypi.org/simple",
+                  "DistroName": "",
+                  "DistroVersion": "",
+                  "NVD": {
+                    "CVSSv3": {
+                      "Vectors": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+                      "Score": 6.5
+                    }
+                  }
+                }
+              },
+              {
+                "Severity": "Unknown",
+                "NamespaceName": "pyupio",
+                "Link": "",
+                "FixedBy": "",
+                "Description": "Pip version 21.1 stops splitting on unicode separators in git references, which could be maliciously used to install a different revision on the repository. \r\nhttps://github.com/pypa/pip/issues/9827",
+                "Name": "pyup.io-42218 (PVE-2021-42218)",
+                "Metadata": {
+                  "UpdatedBy": "pyupio",
+                  "RepoName": "pypi",
+                  "RepoLink": "https://pypi.org/simple",
+                  "DistroName": "",
+                  "DistroVersion": "",
+                  "NVD": {
+                    "CVSSv3": {
+                      "Vectors": "",
+                      "Score": ""
+                    }
+                  }
+                }
+              },
+              {
+                "Severity": "Critical",
+                "NamespaceName": "pyupio",
+                "Link": "",
+                "FixedBy": "",
+                "Description": "Pip version 21.1 updates its dependency 'urllib3' to v1.26.4 to include a security fix.",
+                "Name": "pyup.io-40291 (CVE-2021-28363)",
+                "Metadata": {
+                  "UpdatedBy": "pyupio",
+                  "RepoName": "pypi",
+                  "RepoLink": "https://pypi.org/simple",
+                  "DistroName": "",
+                  "DistroVersion": "",
+                  "NVD": {
+                    "CVSSv3": {
+                      "Vectors": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+                      "Score": 6.5
+                    }
+                  }
+                }
+              },
+              {
+                "Severity": "Low",
+                "NamespaceName": "pyupio",
+                "Link": "",
+                "FixedBy": "",
+                "Description": "Pip version 21.1 includes a fix for CVE-2021-3572: A flaw was found in python-pip in the way it handled Unicode separators in git references. A remote attacker could possibly use this issue to install a different revision on a repository. The highest threat from this vulnerability is to data integrity.\r\nhttps://bugzilla.redhat.com/show_bug.cgi?id=1962856",
+                "Name": "pyup.io-42559 (CVE-2021-3572)",
+                "Metadata": {
+                  "UpdatedBy": "pyupio",
+                  "RepoName": "pypi",
+                  "RepoLink": "https://pypi.org/simple",
+                  "DistroName": "",
+                  "DistroVersion": "",
+                  "NVD": {
+                    "CVSSv3": {
+                      "Vectors": "CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:U/C:N/I:H/A:N",
+                      "Score": 5.7
+                    }
+                  }
+                }
+              },
+              {
+                "Severity": "Medium",
+                "NamespaceName": "pyupio",
+                "Link": "",
+                "FixedBy": "",
+                "Description": "The urllib3 library 1.26.x before 1.26.4 for Python omits SSL certificate validation in some cases involving HTTPS to HTTPS proxies. The initial connection to the HTTPS proxy (if an SSLContext isn't given via proxy_config) doesn't verify the hostname of the certificate. This means certificates for different servers that still validate properly with the default urllib3 SSLContext will be silently accepted.",
+                "Name": "pyup.io-40291 (CVE-2021-28363)",
+                "Metadata": {
+                  "UpdatedBy": "pyupio",
+                  "RepoName": "pypi",
+                  "RepoLink": "https://pypi.org/simple",
+                  "DistroName": "",
+                  "DistroVersion": "",
+                  "NVD": {
+                    "CVSSv3": {
+                      "Vectors": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+                      "Score": 6.5
+                    }
+                  }
+                }
+              },
+              {
+                "Severity": "Medium",
+                "NamespaceName": "pyupio",
+                "Link": "",
+                "FixedBy": "",
+                "Description": "Pip 21.1 updates its dependency 'urllib3' to v1.26.4 due to security issues.",
+                "Name": "pyup.io-40291 (CVE-2021-28363)",
+                "Metadata": {
+                  "UpdatedBy": "pyupio",
+                  "RepoName": "pypi",
+                  "RepoLink": "https://pypi.org/simple",
+                  "DistroName": "",
+                  "DistroVersion": "",
+                  "NVD": {
+                    "CVSSv3": {
+                      "Vectors": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+                      "Score": 6.5
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "Name": "busybox",
+            "VersionFormat": "",
+            "NamespaceName": "",
+            "AddedBy": "sha256:59bf1c3509f33515622619af21ed55bbe26d24913cedbca106468a5fb37a50c3",
+            "Version": "1.34.1-r3",
+            "Vulnerabilities": [
+              {
+                "Severity": "Unknown",
+                "NamespaceName": "alpine-main-v3.15-updater",
+                "Link": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=ALPINE-13661",
+                "FixedBy": "1.34.1-r5",
+                "Description": "",
+                "Name": "ALPINE-13661",
+                "Metadata": {
+                  "UpdatedBy": "alpine-main-v3.15-updater",
+                  "RepoName": null,
+                  "RepoLink": null,
+                  "DistroName": "Alpine Linux",
+                  "DistroVersion": "",
+                  "NVD": {
+                    "CVSSv3": {
+                      "Vectors": "",
+                      "Score": ""
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "Name": "zlib",
+            "VersionFormat": "",
+            "NamespaceName": "",
+            "AddedBy": "sha256:59bf1c3509f33515622619af21ed55bbe26d24913cedbca106468a5fb37a50c3",
+            "Version": "1.2.11-r3",
+            "Vulnerabilities": [
+              {
+                "Severity": "High",
+                "NamespaceName": "alpine-main-v3.15-updater",
+                "Link": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-25032",
+                "FixedBy": "1.2.12-r0",
+                "Description": "",
+                "Name": "CVE-2018-25032",
+                "Metadata": {
+                  "UpdatedBy": "alpine-main-v3.15-updater",
+                  "RepoName": null,
+                  "RepoLink": null,
+                  "DistroName": "Alpine Linux",
+                  "DistroVersion": "",
+                  "NVD": {
+                    "CVSSv3": {
+                      "Vectors": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                      "Score": 7.5
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

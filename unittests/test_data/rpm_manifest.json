@@ -1,0 +1,40 @@
+{
+  "rpm_manifest":{
+    "_id": "5ef0832dd70cc56cea87cb7a",
+    "_links": {
+      "image": {
+        "href": "/v1/images/id/5ef0832cd70cc56cea87cb77"
+      }
+    },
+    "created_by": "metaxor",
+    "creation_date": "2020-06-22T10:08:45.524000+00:00",
+    "image_id": "5ef0832cd70cc56cea87cb77",
+    "last_update_date": "2020-06-22T10:08:45.524000+00:00",
+    "last_updated_by": "metaxor",
+    "object_type": "containerImageRPMManifest",
+    "rpms": [
+      {
+        "architecture": "noarch",
+        "gpg": "199e2f91fd431d51",
+        "name": "autoconf",
+        "nvra": "autoconf-2.69-11.el7.noarch",
+        "release": "11.el7",
+        "srpm_name": "autoconf",
+        "srpm_nevra": "autoconf-0:2.69-11.el7.src",
+        "summary": "A GNU tool for automatically configuring source code",
+        "version": "2.69"
+      },
+      {
+        "architecture": "noarch",
+        "name": "perl-File-Path",
+        "nvra": "perl-File-Path-2.09-2.el7.noarch",
+        "release": "2.el7",
+        "srpm_name": "perl-File-Path",
+        "srpm_nevra": "perl-File-Path-0:2.09-2.el7.src",
+        "summary": "Create or remove directory trees",
+        "version": "2.09"
+      }
+    ],
+    "rpms#": 2
+  }
+}

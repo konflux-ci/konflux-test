@@ -1,0 +1,110 @@
+{
+  "repository":{
+    "_id": "612e5b16c61b370d4fd4c4bd",
+    "_links": {
+      "certification_project": {
+        "href": "/v1/repositories/registry/registry.access.redhat.com/repository/container-native-virtualization/virt-artifacts-server-rhel8/projects/certification"
+      },
+      "images": {
+        "href": "/v1/repositories/registry/registry.access.redhat.com/repository/container-native-virtualization/virt-artifacts-server-rhel8/images"
+      },
+      "operator_bundles": {
+        "href": "/v1/repositories/registry/registry.access.redhat.com/repository/container-native-virtualization/virt-artifacts-server-rhel8/operators/bundles"
+      },
+      "product_listings": {
+        "href": "/v1/repositories/registry/registry.access.redhat.com/repository/container-native-virtualization/virt-artifacts-server-rhel8/product-listings"
+      },
+      "vendor": {
+        "href": "/v1/vendors/label/redhat"
+      }
+    },
+    "application_categories": [
+      "Virtualization Platform"
+    ],
+    "application_categories#": 1,
+    "architectures": [
+      "x86_64"
+    ],
+    "architectures#": 1,
+    "auto_conflict_resolution": false,
+    "auto_rebuild_tags": [],
+    "auto_rebuild_tags#": 0,
+    "build_categories": [
+      "Containerized Product Component"
+    ],
+    "build_categories#": 1,
+    "can_auto_release_cve_rebuild": false,
+    "contacts": [
+      {
+        "email_address": "pousley@redhat.com",
+        "type": "Doc Owner"
+      },
+      {
+      "email_address": "pousley@redhat.com",
+      "type": "Errata Writer"
+    },
+    {
+      "email_address": "eerol@redhat.com",
+      "type": "Image Owner"
+    },
+    {
+      "email_address": "mtessun@redhat.com",
+      "type": "Product Manager"
+    },
+    {
+      "email_address": "rgarcia@redhat.com",
+      "type": "Program Manager"
+    },
+    {
+      "email_address": "ipinto@redhat.com",
+      "type": "QE Owner"
+    }
+    ],
+    "contacts#": 6,
+    "content_sets#": 0,
+    "content_stream_tags": [
+      "4.10.0",
+      "4.9.0"
+    ],
+    "content_stream_tags#": 2,
+    "created_by": "honeybadger",
+    "creation_date": "2021-08-31T16:38:46.921000+00:00",
+    "description": "virt-artifacts-server contains different builds of virtctl.",
+    "display_data": {
+      "long_description": "<p>virt-artifacts-server contains different builds of virtctl.</p>\n",
+      "long_description_markdown": "virt-artifacts-server contains different builds of virtctl.",
+      "name": "virt-artifacts-server",
+      "short_description": "virt-artifacts-server"
+    },
+    "documentation_links#": 0,
+    "includes_multiple_content_streams": true,
+    "last_metadata_update_date": "2021-11-02T13:54:06+00:00",
+    "last_update_date": "2022-03-15T02:31:01.617000+00:00",
+    "last_updated_by": "metaxor",
+    "namespace": "container-native-virtualization",
+    "non_production_only": false,
+    "object_type": "containerRepository",
+    "privileged_images_allowed": false,
+    "product_versions": [
+       "RHEL-8-CNV-4.10",
+       "RHEL-8-CNV-4.9"
+    ],
+    "product_versions#": 2,
+    "protected_for_pull": false,
+    "protected_for_search": false,
+    "publish_on_push": true,
+    "published": true,
+    "registry": "registry.access.redhat.com",
+    "registry_target": "pulp",
+    "release_categories": [
+      "Deprecated"
+    ],
+    "release_categories#": 1,
+    "repository": "container-native-virtualization/virt-artifacts-server-rhel8",
+    "support_levels#": 0,
+    "total_size_bytes": 220668174,
+    "total_uncompressed_size_bytes": 501094299,
+    "use_latest": false,
+    "vendor_label": "redhat"
+  }
+}
