@@ -29,3 +29,36 @@ jobs:
           fetch-depth: 0
       - name: Check if dockerimage build is working
         run: docker build -f ./Dockerfile .
+  opa_policies_unittest:
+    name: opa_policies_unittest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install dependency packages
+        run: |
+         sudo apt-get install jq
+         sudo curl -L -o /usr/bin/opa https://openpolicyagent.org/downloads/v0.39.0/opa_linux_amd64_static
+         sudo chmod 755 /usr/bin/opa
+
+      - name: Run unittests for policies
+        run: |
+          /usr/bin/opa test policies unittests unittests/test_data -c > /tmp/policy_unittest_result.json
+
+      - name: Check unittests result
+        run: |
+          RESULT_PATH="/tmp/policy_unittest_result.json"
+          if [ ! -f $RESULT_PATH ]; then
+            echo "No unittest result exists, please check again"
+            exit 1
+          fi
+          coverage=$(jq '.coverage' $RESULT_PATH)
+          if [ $coverage == 100 ]; then
+            echo "Congratulations! Unittests pass!"
+            exit 0
+          else
+            echo "Ouch! Unittests fail! Please check details as below:"
+            jq '.files | with_entries(.value |= (if (.coverage == '100') then (.coverage) else (.) end))' $RESULT_PATH
+            exit 1
+          fi
