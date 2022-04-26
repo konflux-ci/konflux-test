@@ -13,6 +13,13 @@ Running policy unit testing and exit with non-zero status if coverage is less th
 
 In this repository, we run `opa test policies unittests unittests/test_data -c > /tmp/policy_unittest_result.json` to get unit testing code coverage and then analyze.
 
+## Policy Integration Testing
+
+To Run Integration tests locally
+
+`export $POLICY_PATH=policies`
+
+`sh test/entrypoint.sh`
 
 ## Contact
 
