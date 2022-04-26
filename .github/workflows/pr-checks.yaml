@@ -37,6 +37,19 @@ jobs:
           fetch-depth: 0
       - name: Check if dockerimage build is working
         run: docker build -f ./Dockerfile .
+
+  conftest_integration_tests:
+    name: Integration tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Integration test
+        uses: ./ # Uses an action in the root directory
+        id: test_image
+        with:
+          image: 'quay.io/redhat-appstudio/sample-image:test-index-pass'
+
   opa_policies_unittest:
     name: opa_policies_unittest
     runs-on: ubuntu-latest
