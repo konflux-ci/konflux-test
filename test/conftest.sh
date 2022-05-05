@@ -16,6 +16,17 @@
   [ "$status" -eq 0 ]
 }
 
+@test "/project/image/inherited-labels_pass" {
+  run conftest test --namespace optional_checks --policy $POLICY_PATH/image/inherited-labels.rego label.json
+  [ "$status" -eq 0 ]
+}
+
+# Testing the inherited labels with the same image provided as the base - expected to fail
+@test "/project/image/inherited-labels_fail" {
+  run conftest test --namespace optional_checks --policy $POLICY_PATH/image/inherited-labels.rego -d label.json label.json
+  [ "$status" -eq 1 ]
+}
+
 # CLAIR for test_clair
 @test "/project/clair/vulnerabilities-check" {
   run conftest test --namespace required_checks --policy $POLICY_PATH/clair/vulnerabilities-check.rego clair.json

@@ -1,5 +1,5 @@
 {
-  "image": {
+  "bad_image": {
     "Name": "quay.io/mkovarik/spring-petclinic",
     "Digest": "sha256:d677f22e3b06a7695f599f5de946c0e6820d459e2e4a712759cfbb8b9189c7a2",
     "RepoTags": [],
@@ -76,6 +76,73 @@
       "JBOSS_IMAGE_VERSION=1.11",
       "LANG=C.utf8",
       "MAVEN_CLEAR_REPO=false"
+    ]
+  },
+  "good_image": {
+    "Name": "quay.io/cvpops/test-index",
+    "Digest": "sha256:e33c555044f1333032d414fff5cd1ff0d8f9fe7face8fa3bf54b7b996893d79d",
+    "RepoTags": [],
+    "Created": "2021-11-22T10:02:35.463448331Z",
+    "DockerVersion": "20.10.2",
+    "Labels": {
+      "License": "GPLv2+",
+      "architecture": "x86_64",
+      "build-date": "2020-11-04T21:36:07.069200",
+      "com.redhat.build-host": "cpt-1007.osbs.prod.upshift.rdu2.redhat.com",
+      "com.redhat.component": "operator-registry-container",
+      "com.redhat.index.delivery.distribution_scope": "stage",
+      "com.redhat.index.delivery.version": "v4.10",
+      "com.redhat.license_terms": "https://www.redhat.com/agreements",
+      "description": "This is a component of OpenShift Operator Lifecycle Manager and is the base for operator catalog API containers.",
+      "distribution-scope": "public",
+      "io.k8s.description": "This is a component of OpenShift Operator Lifecycle Manager and is the base for operator catalog API containers.",
+      "io.k8s.display-name": "OpenShift Operator Registry",
+      "io.openshift.build.commit.id": "f6e5d9281f335472dda7110fca2c710794c97fb5",
+      "io.openshift.build.commit.url": "https://github.com/operator-framework/operator-registry/commit/f6e5d9281f335472dda7110fca2c710794c97fb5",
+      "io.openshift.build.source-location": "https://github.com/operator-framework/operator-registry",
+      "io.openshift.expose-services": "",
+      "io.openshift.maintainer.component": "OLM",
+      "io.openshift.maintainer.product": "OpenShift Container Platform",
+      "io.openshift.tags": "openshift,base",
+      "maintainer": "Odin Team \u003caos-odin@redhat.com\u003e",
+      "name": "openshift/ose-operator-registry",
+      "operators.operatorframework.io.index.database.v1": "/database/index.db",
+      "release": "202011041933.p0",
+      "summary": "Operator Registry runs in a Kubernetes or OpenShift cluster to provide operator catalog data to Operator Lifecycle Manager.",
+      "url": "https://access.redhat.com/containers/#/registry.access.redhat.com/openshift/ose-operator-registry/images/v4.6.0-202011041933.p0",
+      "vcs-ref": "f8121ea883541395464b27bf60836518822e8ca3",
+      "vcs-type": "git",
+      "vendor": "Red Hat, Inc.",
+      "version": "v4.10.0"
+    },
+    "Architecture": "amd64",
+    "Os": "linux",
+    "Layers": [
+      "sha256:3cd4a4b8e9bbd78c1ab9bfe1d8ecbca3d38a3a8d2eadeff72add2ba63bead39e",
+      "sha256:29dcb48615a69c3f6e022f438dfe771baf6246e51afa958135bf01129a273bd4",
+      "sha256:3423482f50f83bcc42b3588395e2df3b3956968de34dfc12e82d284554b5f2a8",
+      "sha256:afa040f63d99c7448e10cd96d5df3a54cb50e8dff8d79c5c1f9736230ebdd0c0",
+      "sha256:3a1170c0dc2ce71d76cf744002366eb7c69ad2453dc79660345f1bbfb08b5352",
+      "sha256:78c762102deb8c74cba9a1b9889091b90754029cd6399766ab8111d879327204"
+    ],
+    "Env": [
+      "__doozer=merge",
+      "BUILD_RELEASE=202011041933.p0",
+      "BUILD_VERSION=v4.6.0",
+      "OS_GIT_MAJOR=4",
+      "OS_GIT_MINOR=6",
+      "OS_GIT_PATCH=0",
+      "OS_GIT_TREE_STATE=clean",
+      "OS_GIT_VERSION=4.6.0-202011041933.p0-f6e5d92",
+      "SOURCE_GIT_TREE_STATE=clean",
+      "OS_GIT_COMMIT=f6e5d92",
+      "SOURCE_DATE_EPOCH=1601568901",
+      "SOURCE_GIT_COMMIT=f6e5d9281f335472dda7110fca2c710794c97fb5",
+      "SOURCE_GIT_TAG=v1.14.3-5-gf6e5d92",
+      "SOURCE_GIT_URL=https://github.com/operator-framework/operator-registry",
+      "GODEBUG=x509ignoreCN=0",
+      "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+      "container=oci"
     ]
   }
 }
