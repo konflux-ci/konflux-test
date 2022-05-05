@@ -1,6 +1,6 @@
 package optional_checks
 
-import data.image as image
+import data.bad_image as image
 
 test_violation_maintainer_required {
     result := violation_maintainer_required with input as image

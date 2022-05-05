@@ -1,6 +1,6 @@
 package required_checks
 
-import data.image as image
+import data.bad_image as image
 
 test_violation_install_deprecated {
     result := violation_install_deprecated with input as image
