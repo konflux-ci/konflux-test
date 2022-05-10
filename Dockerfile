@@ -17,7 +17,7 @@ RUN curl -L https://github.com/open-policy-agent/conftest/releases/download/v"${
     skopeo 
 
 COPY policies $POLICY_PATH
-COPY test $POLICY_PATH
+COPY test/conftest.sh $POLICY_PATH
 
 # Copies your code file from your action repository to the filesystem path `/` of the container
 COPY test/entrypoint.sh /entrypoint.sh
