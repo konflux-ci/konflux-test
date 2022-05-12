@@ -17,7 +17,6 @@ RUN curl -L https://github.com/open-policy-agent/conftest/releases/download/v"${
     curl -L https://go.dev/dl/go"${go_version}".linux-amd64.tar.gz | tar -xz --no-same-owner -C /usr/local/ && \
     curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s -- -b /usr/local/go/bin v"${gosec_version}" && \
     dnf -y --setopt=tsflags=nodocs install \
-    git \
     jq \
     skopeo 
 
