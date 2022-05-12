@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       release-version:
-        description: 'Version being released, prefixed with v. Example: 1.2.3'
+        description: 'Version being released, will be automatically prefixed with `v`. Example: 1.2.3'
         required: true
       branch:
         description: 'Branch to release from'
