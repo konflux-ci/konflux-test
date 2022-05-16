@@ -36,3 +36,4 @@ parse_hacbs_test_output sanity_label_check conftest unittest.json
 
 echo "Starting Integeration-Tests"
 bats $POLICY_PATH/conftest.sh
+exec $@

@@ -1,4 +1,5 @@
 # Container image that runs your code
+FROM snyk/snyk:linux
 FROM registry.access.redhat.com/ubi8/ubi:8.7
 
 ARG conftest_version=0.33.2
@@ -32,6 +33,8 @@ RUN ARCH=$(uname -m) && curl -L https://github.com/open-policy-agent/conftest/re
     dnf -y install libicu && \
     chmod +x cyclonedx-linux-x64 && \
     dnf clean all
+
+COPY --from=snyk/snyk:linux /usr/local/bin/snyk /usr/local/bin/snyk
 
 COPY policies $POLICY_PATH
 COPY test/conftest.sh $POLICY_PATH
