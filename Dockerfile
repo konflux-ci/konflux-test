@@ -1,5 +1,8 @@
 # Container image that runs your code
+FROM snyk/snyk:linux
 FROM registry.access.redhat.com/ubi8/ubi
+
+COPY --from=snyk/snyk:linux /usr/local/bin/snyk /usr/local/bin/snyk
 
 ARG conftest_version=0.30.0
 ARG BATS_VERSION=1.6.0
@@ -14,7 +17,7 @@ RUN curl -L https://github.com/open-policy-agent/conftest/releases/download/v"${
     cd .. | rm -rf "bats-core-$BATS_VERSION" | rm -rf "v$BATS_VERSION.tar.gz" && \
     dnf -y --setopt=tsflags=nodocs install \
     jq \
-    skopeo 
+    skopeo
 
 COPY policies $POLICY_PATH
 COPY test/conftest.sh $POLICY_PATH
