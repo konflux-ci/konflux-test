@@ -24,3 +24,4 @@ curl -X 'GET' 'https://catalog.redhat.com/api/containers/v1/repositories/registr
 
 echo "Starting Integeration-Tests"
 bats $POLICY_PATH/conftest.sh
+exec $@
