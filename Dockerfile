@@ -1,4 +1,5 @@
 # Container image that runs your code
+FROM snyk/snyk:linux
 FROM registry.access.redhat.com/ubi8/ubi
 
 ARG conftest_version=0.30.0
@@ -38,6 +39,8 @@ ENV POLICY_PATH="/project"
 ENV JAVA_HOME=/home/jdk-"${JAVA_VERSION}"
 ENV PATH=$PATH:$JAVA_HOME/bin:/home/apache-maven-"${MAVEN_VERSION}"/bin
 ENV PATH $PATH:/usr/local/go/bin
+
+COPY --from=snyk/snyk:linux /usr/local/bin/snyk /usr/local/bin/snyk
 
 COPY policies $POLICY_PATH
 COPY test/conftest.sh $POLICY_PATH
