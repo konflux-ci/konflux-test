@@ -16,6 +16,7 @@ RUN curl -L https://github.com/open-policy-agent/conftest/releases/download/v"${
     dnf -y --setopt=tsflags=nodocs install \
     jq \
     skopeo \
+    python39 \
     https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && \
     dnf -y --setopt=tsflags=nodocs install \
     clamav \
