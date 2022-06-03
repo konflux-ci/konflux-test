@@ -9,6 +9,7 @@ ENV POLICY_PATH="/project"
 RUN curl -L https://github.com/open-policy-agent/conftest/releases/download/v"${conftest_version}"/conftest_"${conftest_version}"_Linux_x86_64.tar.gz | tar -xz --no-same-owner -C /usr/bin/ && \
     curl https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/openshift-client-linux.tar.gz --output oc.tar.gz && tar -xzvf oc.tar.gz -C /usr/bin && \
     curl -LO "https://github.com/bats-core/bats-core/archive/refs/tags/v$BATS_VERSION.tar.gz" && \
+    curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" && \
     tar -xf "v$BATS_VERSION.tar.gz" && \
     cd "bats-core-$BATS_VERSION" && \
     ./install.sh /usr && \
@@ -21,7 +22,10 @@ RUN curl -L https://github.com/open-policy-agent/conftest/releases/download/v"${
     dnf -y --setopt=tsflags=nodocs install \
     clamav \
     clamd \
-    clamav-update
+    clamav-update && \
+    cd / && \
+    python3.9 get-pip.py && \
+    pip install python-dateutil
 
 COPY policies $POLICY_PATH
 COPY test/conftest.sh $POLICY_PATH
