@@ -17,7 +17,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
+        
+      - name: Log into registry quay.io
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        with:
+          registry: quay.io
+          username: jsztuka+roboto
+          password: 2LPIL4957NFLHJCNNS4D18K0GE740NCF3KU7HV0YI55M5LAGOK72YE5TC2MU6EVE
 
       # Workaround: https://github.com/docker/build-push-action/issues/461
       - name: Pull and retag image
