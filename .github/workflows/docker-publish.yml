@@ -1,0 +1,46 @@
+name: Clamav DB
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+
+jobs:
+  build:
+    name: retag
+    runs-on: ubuntu-20.04
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+
+      # Workaround: https://github.com/docker/build-push-action/issues/461
+      - name: Pull and retag image
+        id: PARI
+        run: |
+          docker pull quay.io/jsztuka/tester-s:v1
+          docker tag quay.io/jsztuka/tester-s:v1 quay.io/jsztuka/tester-s:v2
+          docker push quay.io/jsztuka/tester-s:v2
+      - name: Build Image
+        id: build-image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: tester-s
+          tags: latest
+          containerfiles: |
+            ./clamav/Dockerfile
+ 
+      - name: Push To quay.io
+        id: push-to-quay
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.build-image.outputs.image }}
+          tags: ${{ steps.build-image.outputs.tags }}
+          registry: quay.io/jsztuka
+          username: ${{ secrets.HACBS_TEST_QUAY_USER }}
+          password: ${{ secrets.HACBS_TEST_QUAY_TOKEN }}
