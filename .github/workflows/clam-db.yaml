@@ -1,0 +1,53 @@
+name: Clamav DB
+
+# This workflow builds latest version of clamav-db and
+# pushes it to app-studio registry
+
+on:
+  schedule:
+  - cron: '0 6 * * *'
+
+env:
+  REGISTRY: quay.io/redhat-appstudio
+  IMAGE_NAME: clamav-db
+  LATEST_TAG: latest
+  PREVIOUS_TAG: previous
+
+jobs:
+  build:
+    name: Retag-build-and-push
+    runs-on: ubuntu-20.04
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log into registry ${{ env.REGISTRY }}
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.HACBS_TEST_QUAY_USER }}
+          password: ${{ secrets.HACBS_TEST_QUAY_TOKEN }}
+
+      - name: Pull-and-retag-image
+        run: |
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }}
+          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.PREVIOUS_TAG }}
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.PREVIOUS_TAG }}
+
+      - name: Build-image
+        id: build-image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: ${{ env.IMAGE_NAME }}
+          tags: ${{ env.LATEST_TAG }}
+          containerfiles: |
+            ./clamav/Dockerfile
+
+      - name: Push-to-${{ env.REGISTRY }}
+        id: push-to-quay
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.build-image.outputs.image }}
+          tags: ${{ steps.build-image.outputs.tags }}
+          registry: ${{ env.REGISTRY }}
