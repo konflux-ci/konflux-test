@@ -18,12 +18,18 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Install qemu dependency
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y qemu-user-static
+
     - name: Build Image
       id: build-image
       uses: redhat-actions/buildah-build@v2
       with:
         image: hacbs-test
         tags: latest v${{ github.event.inputs.release-version }} ${{ github.sha }}
+        archs: amd64,ppc64le
         containerfiles: |
           ./Dockerfile
     # Podman Login action (https://github.com/redhat-actions/podman-login) also be used to log in,

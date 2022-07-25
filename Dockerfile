@@ -1,13 +1,13 @@
 # Container image that runs your code
 FROM registry.access.redhat.com/ubi8/ubi
 
-ARG conftest_version=0.30.0
+ARG conftest_version=0.33.2
 ARG BATS_VERSION=1.6.0
 
 ENV POLICY_PATH="/project"
 
-RUN curl -L https://github.com/open-policy-agent/conftest/releases/download/v"${conftest_version}"/conftest_"${conftest_version}"_Linux_x86_64.tar.gz | tar -xz --no-same-owner -C /usr/bin/ && \
-    curl https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/openshift-client-linux.tar.gz --output oc.tar.gz && tar -xzvf oc.tar.gz -C /usr/bin && \
+RUN ARCH=$(uname -m) && curl -L https://github.com/open-policy-agent/conftest/releases/download/v"${conftest_version}"/conftest_"${conftest_version}"_Linux_"$ARCH".tar.gz | tar -xz --no-same-owner -C /usr/bin/ && \
+    curl https://mirror.openshift.com/pub/openshift-v4/"$ARCH"/clients/ocp/stable/openshift-client-linux.tar.gz --output oc.tar.gz && tar -xzvf oc.tar.gz -C /usr/bin && \
     curl -LO "https://github.com/bats-core/bats-core/archive/refs/tags/v$BATS_VERSION.tar.gz" && \
     curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" && \
     tar -xf "v$BATS_VERSION.tar.gz" && \
