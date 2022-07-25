@@ -41,6 +41,7 @@ jobs:
         with:
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ env.LATEST_TAG }}
+          archs: amd64,ppc64le
           containerfiles: |
             ./clamav/Dockerfile
 
