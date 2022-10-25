@@ -3,6 +3,7 @@ FROM registry.access.redhat.com/ubi8/ubi
 
 ARG conftest_version=0.33.2
 ARG BATS_VERSION=1.6.0
+ARG cyclonedx_version=0.24.2
 
 ENV POLICY_PATH="/project"
 
@@ -25,7 +26,11 @@ RUN ARCH=$(uname -m) && curl -L https://github.com/open-policy-agent/conftest/re
     clamav-update && \
     cd / && \
     python3.9 get-pip.py && \
-    pip install python-dateutil
+    pip install python-dateutil && \
+    cd /usr/bin && \
+    curl -OL https://github.com/CycloneDX/cyclonedx-cli/releases/download/v"${cyclonedx_version}"/cyclonedx-linux-x64 && \
+    dnf -y install libicu && \
+    chmod +x cyclonedx-linux-x64
 
 COPY policies $POLICY_PATH
 COPY test/conftest.sh $POLICY_PATH
