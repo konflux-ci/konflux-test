@@ -16,7 +16,7 @@ curl -H "Content-type: application/json" -XGET 'https://quay.io/api/v1/repositor
 curl -X GET 'https://catalog.redhat.com/api/containers/v1/images/id/624bfc54f5a0de7ee0c8335c/rpm-manifest?include=rpms' > rpm-manifest.json
 
 # Label Data
-skopeo inspect --no-tags docker://registry.access.redhat.com/ubi8/ubi > label.json
+skopeo inspect --no-tags docker://quay.io/redhat-appstudio/sample-image:test-index-pass > label.json
 check_return_code
 
 # Deprecated Image
