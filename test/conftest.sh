@@ -46,3 +46,9 @@
   run conftest test --namespace required_checks --policy $POLICY_PATH/rpm_manifest/unsigned-rpms.rego rpm-manifest.json
   [ "$status" -eq 0 ]
 }
+
+# Test label operators.operatorframework.io.index.configs.v1 for fbc image
+@test "/project/image/fbc-labels" {
+  run conftest test --namespace fbc_checks --policy $POLICY_PATH/image/required-labels.rego fbc_label.json
+  [ "$status" -eq 0 ]
+}
