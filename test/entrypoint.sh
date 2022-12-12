@@ -22,5 +22,9 @@ check_return_code
 # Deprecated Image
 curl -X 'GET' 'https://catalog.redhat.com/api/containers/v1/repositories/registry/registry.access.redhat.com/repository/rhscl%2Fnodejs-8-rhel7' -H 'accept: application/json' > image.json
 
+# FBC Image, we need to find a fbc
+skopeo inspect --no-tags docker://quay.io/redhat-appstudio/application-service-catalog:next > fbc_label.json
+check_return_code
+
 echo "Starting Integeration-Tests"
 bats $POLICY_PATH/conftest.sh
