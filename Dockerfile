@@ -37,6 +37,7 @@ COPY test/conftest.sh $POLICY_PATH
 
 # Copies your code file from your action repository to the filesystem path `/` of the container
 COPY test/entrypoint.sh /entrypoint.sh
+COPY test/utils.sh /utils.sh
 
 # Code file to execute when the docker container starts up (`entrypoint.sh`)
 ENTRYPOINT ["/entrypoint.sh"]
