@@ -4,6 +4,9 @@ FROM registry.access.redhat.com/ubi8/ubi
 ARG conftest_version=0.33.2
 ARG BATS_VERSION=1.6.0
 ARG cyclonedx_version=0.24.2
+ARG opm_4_9_version=4.9
+ARG opm_4_10_version=4.10
+ARG opm_4_11_version=4.11
 
 ENV POLICY_PATH="/project"
 
@@ -30,7 +33,16 @@ RUN ARCH=$(uname -m) && curl -L https://github.com/open-policy-agent/conftest/re
     cd /usr/bin && \
     curl -OL https://github.com/CycloneDX/cyclonedx-cli/releases/download/v"${cyclonedx_version}"/cyclonedx-linux-x64 && \
     dnf -y install libicu && \
-    chmod +x cyclonedx-linux-x64
+    chmod +x cyclonedx-linux-x64 && \
+    curl -LO https://mirror.openshift.com/pub/openshift-v4/"$ARCH"/clients/ocp/latest-"$opm_4_9_version"/opm-linux.tar.gz && \
+    tar xvf opm-linux.tar.gz && \
+    mv opm /usr/local/bin/opm"$opm_4_9_version" && \
+    curl -LO https://mirror.openshift.com/pub/openshift-v4/"$ARCH"/clients/ocp/latest-"$opm_4_10_version"/opm-linux.tar.gz &&  \
+    tar xvf opm-linux.tar.gz && \
+    mv opm /usr/local/bin/opm"$opm_4_10_version" && \
+    curl -LO https://mirror.openshift.com/pub/openshift-v4/"$ARCH"/clients/ocp/latest-"$opm_4_11_version"/opm-linux.tar.gz &&  \
+    tar xvf opm-linux.tar.gz && \
+    mv opm /usr/local/bin/opm"$opm_4_11_version"
 
 COPY policies $POLICY_PATH
 COPY test/conftest.sh $POLICY_PATH
