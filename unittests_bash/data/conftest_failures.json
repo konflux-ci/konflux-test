@@ -1,0 +1,20 @@
+[
+  {
+    "filename": "image-inspect.json",
+    "namespace": "image_labels",
+    "successes": 19,
+    "failures": [
+      {
+        "msg": "The 'architecture' label is required",
+	      "metadata": {
+   	      "details": {
+   	        "description": "Architecture the software in the image should target.",
+   	        "name": "architecture_label_required",
+   	        "url": "https://example.com"
+   	      }
+   	    }
+      }
+    ]
+  }
+]
+
