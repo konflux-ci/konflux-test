@@ -104,20 +104,20 @@ parse_hacbs_test_output() {
 
   if [ -z "$TEST_NAME" ]; then
     echo "Missing parameter TEST_NAME" >&2
-    exit 1
+    exit 2
   fi
   if [ -z "$TEST_RESULT_FORMAT" ]; then
     echo "Missing parameter TEST_RESULT_FORMAT" >&2
-    exit 1
+    exit 2
   fi
   if [ -z "$TEST_RESULT_FILE" ]; then
     echo "Missing parameter TEST_RESULT_FILE" >&2
-    exit 1
+    exit 2
   fi
 
   if [ ! -f "$TEST_RESULT_FILE" ]; then
     echo "File ${TEST_RESULT_FILE} doesn't exist" >&2
-    exit 1
+    exit 2
   fi
 
   # Handle the test result with format of sarif
