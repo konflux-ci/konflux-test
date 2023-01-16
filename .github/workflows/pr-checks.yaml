@@ -83,3 +83,21 @@ jobs:
             jq '.files | with_entries(.value |= (if (.coverage == '100') then (.coverage) else (.) end))' $RESULT_PATH
             exit 1
           fi
+
+  bash_unittests:
+    name: bash_unittests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup BATS
+        uses: mig4/setup-bats@v1
+        with:
+          bats-version: 1.8.2
+
+      - name: Install required packages
+        run: sudo apt-get install -y jq
+
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Test
+        run: bats unittests_bash
