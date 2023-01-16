@@ -128,10 +128,10 @@ parse_hacbs_test_output() {
     )
 
     # Log out the failing runs
-    if [ $(echo $HACBS_TEST_OUTPUT | jq '.failures') -gt 0 ]
+    if [ "$(echo "$HACBS_TEST_OUTPUT" | jq '.failures')" -gt 0 ]
     then
       echo "The $TEST_NAME test has failed with the following issues:"
-      jq '.runs[].results // []|map(.message.text) | unique' $TEST_RESULT_FILE
+      jq '.runs[].results // []|map(.message.text) | unique' "$TEST_RESULT_FILE"
     fi
   # Handle the test result with format of conftest
   elif [ "$TEST_RESULT_FORMAT" = "conftest" ]; then
@@ -143,10 +143,10 @@ parse_hacbs_test_output() {
     )
 
     # Log out the failing runs
-    if [ $(echo $HACBS_TEST_OUTPUT | jq '.failures') -gt 0 ]
+    if [ "$(echo "$HACBS_TEST_OUTPUT" | jq '.failures')" -gt 0 ]
     then
       echo "The $TEST_NAME test has failed with the following issues::"
-      jq '.[].failures // []|map(.metadata.details.name) | unique' $TEST_RESULT_FILE
+      jq '.[].failures // []|map(.metadata.details.name) | unique' "$TEST_RESULT_FILE"
     fi    
   else
     echo "Unsupported TEST_RESULT_FORMAT $TEST_RESULT_FORMAT"
