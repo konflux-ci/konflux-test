@@ -83,6 +83,12 @@ setup() {
     test_json_eq "${EXPECTED_JSON}" "${HACBS_TEST_OUTPUT}"
 }
 
+@test "Conftest input: more than 1 result" {
+    run parse_hacbs_test_output testname conftest unittests_bash/data/conftest_multi.json
+    [ "$status" -eq 1 ]
+    [ "$output" = 'Cannot create test output, unexpected number of results in file: 2' ]
+}
+
 @test "Sarif input: successful tests" {
     HACBS_TEST_OUTPUT=""
     parse_hacbs_test_output testname sarif unittests_bash/data/sarif_successes.json

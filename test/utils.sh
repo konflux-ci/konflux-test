@@ -135,6 +135,15 @@ parse_hacbs_test_output() {
     fi
   # Handle the test result with format of conftest
   elif [ "$TEST_RESULT_FORMAT" = "conftest" ]; then
+
+    # current workflow assumes only one result per test, fail early if this is not fullfilled
+    local RES_LEN
+    RES_LEN=$(jq '. | length' "${TEST_RESULT_FILE}")
+    if [ "${RES_LEN}" -ne 1 ]; then
+      echo "Cannot create test output, unexpected number of results in file: ${RES_LEN}" >&2
+      exit 1
+    fi
+
     HACBS_TEST_OUTPUT=$(make_result_json \
       -r "$(jq -rce '.[] | (if (.failures | length > 0) then "FAILURE" else "SUCCESS" end)' "${TEST_RESULT_FILE}" || echo 'ERROR')" \
       -n "$(jq -rce '.[] | .namespace' "${TEST_RESULT_FILE}")" \
