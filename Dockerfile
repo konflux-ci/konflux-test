@@ -30,7 +30,8 @@ RUN ARCH=$(uname -m) && curl -L https://github.com/open-policy-agent/conftest/re
     cd /usr/bin && \
     curl -OL https://github.com/CycloneDX/cyclonedx-cli/releases/download/v"${cyclonedx_version}"/cyclonedx-linux-x64 && \
     dnf -y install libicu && \
-    chmod +x cyclonedx-linux-x64
+    chmod +x cyclonedx-linux-x64 && \
+    dnf clean all
 
 COPY policies $POLICY_PATH
 COPY test/conftest.sh $POLICY_PATH
