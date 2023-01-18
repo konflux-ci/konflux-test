@@ -27,6 +27,24 @@ jobs:
         with:
           file_or_dir: .
 
+  Dockerfile-linter:
+    name: Check Dockerfiles
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+          ignore: DL3003,DL3013,DL3041,DL4006  # DL4006 seems broken
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: clamav/Dockerfile
+          ignore: DL3041
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: clair-in-ci/Dockerfile
+          ignore: DL3041
+
   container_image_main:
     name: Check main image build
     runs-on: ubuntu-latest
