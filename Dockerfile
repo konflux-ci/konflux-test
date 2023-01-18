@@ -14,7 +14,7 @@ RUN ARCH=$(uname -m) && curl -L https://github.com/open-policy-agent/conftest/re
     tar -xf "v$BATS_VERSION.tar.gz" && \
     cd "bats-core-$BATS_VERSION" && \
     ./install.sh /usr && \
-    cd .. | rm -rf "bats-core-$BATS_VERSION" | rm -rf "v$BATS_VERSION.tar.gz" && \
+    cd .. && rm -rf "bats-core-$BATS_VERSION" && rm -rf "v$BATS_VERSION.tar.gz" && \
     dnf -y --setopt=tsflags=nodocs install \
     jq \
     skopeo \
