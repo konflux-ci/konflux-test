@@ -4,5 +4,6 @@ RUN dnf -y --setopt=tsflags=nodocs install \
     dnf -y --setopt=tsflags=nodocs install \
     clamav \
     clamd \
-    clamav-update
+    clamav-update && \
+    dnf clean all
 RUN freshclam
