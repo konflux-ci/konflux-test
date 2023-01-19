@@ -1,0 +1,15 @@
+[
+  {
+    "filename": "image-inspect.json",
+    "namespace": "image_labels",
+    "successes": 19,
+    "failures": []
+  },
+  {
+    "filename": "image-inspect2.json",
+    "namespace": "image_labels",
+    "successes": 8,
+    "failures": []
+  }
+]
+
