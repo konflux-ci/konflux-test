@@ -1,5 +1,5 @@
 # Container image that runs your code
-FROM registry.access.redhat.com/ubi8/ubi
+FROM registry.access.redhat.com/ubi8/ubi:8.7
 
 ARG conftest_version=0.33.2
 ARG BATS_VERSION=1.6.0
@@ -14,7 +14,7 @@ RUN ARCH=$(uname -m) && curl -L https://github.com/open-policy-agent/conftest/re
     tar -xf "v$BATS_VERSION.tar.gz" && \
     cd "bats-core-$BATS_VERSION" && \
     ./install.sh /usr && \
-    cd .. | rm -rf "bats-core-$BATS_VERSION" | rm -rf "v$BATS_VERSION.tar.gz" && \
+    cd .. && rm -rf "bats-core-$BATS_VERSION" && rm -rf "v$BATS_VERSION.tar.gz" && \
     dnf -y --setopt=tsflags=nodocs install \
     jq \
     skopeo \
@@ -26,7 +26,7 @@ RUN ARCH=$(uname -m) && curl -L https://github.com/open-policy-agent/conftest/re
     clamav-update && \
     cd / && \
     python3.9 get-pip.py && \
-    pip install python-dateutil && \
+    pip install --no-cache-dir python-dateutil && \
     cd /usr/bin && \
     curl -OL https://github.com/CycloneDX/cyclonedx-cli/releases/download/v"${cyclonedx_version}"/cyclonedx-linux-x64 && \
     dnf -y install libicu && \

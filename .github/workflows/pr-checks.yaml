@@ -27,8 +27,26 @@ jobs:
         with:
           file_or_dir: .
 
-  docker:
-    name: Check docker build
+  Dockerfile-linter:
+    name: Check Dockerfiles
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+          ignore: DL3003,DL3013,DL3041,DL4006  # DL4006 seems broken
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: clamav/Dockerfile
+          ignore: DL3041
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: clair-in-ci/Dockerfile
+          ignore: DL3041
+
+  container_image_main:
+    name: Check main image build
     runs-on: ubuntu-latest
     steps:
       - name: Check out Docker file code in the root directory
@@ -37,6 +55,47 @@ jobs:
           fetch-depth: 0
       - name: Check if dockerimage build is working
         run: docker build -f ./Dockerfile .
+
+  container_image_clamdb:
+    name: Check clam-db image build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install qemu dependency
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-user-static
+
+      - name: Build-image
+        id: build-image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: clam-db
+          tags: pr-test
+          archs: amd64,ppc64le
+          containerfiles: |
+            ./clamav/Dockerfile
+
+  container_image_clair-in-ci-db:
+    name: Check clair-in-ci-db image build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup docker for workflow
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+
+      - name: Build-image
+        id: build-image
+        run: |
+          docker build . -t clair-in-ci-db:pr-test -f ./clair-in-ci/Dockerfile
 
   conftest_integration_tests:
     name: Integration tests
