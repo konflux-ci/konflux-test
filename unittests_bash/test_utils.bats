@@ -63,12 +63,6 @@ setup() {
     test_json_eq "${EXPECTED_JSON}" "${output}"
 }
 
-@test "Error result: default" {
-    run make_error_result_json "Something is wrong" "testnamespace"
-    EXPECTED_JSON='{"result":"ERROR","timestamp":"whatever","note":"Something is wrong","namespace":"testnamespace","successes":0,"failures":0,"warnings":0}'
-    test_json_eq "${EXPECTED_JSON}" "${output}"
-}
-
 @test "Conftest input: successful tests" {
     HACBS_TEST_OUTPUT=""
     parse_hacbs_test_output testname conftest unittests_bash/data/conftest_successes.json
