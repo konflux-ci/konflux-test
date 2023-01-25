@@ -48,13 +48,33 @@ jobs:
   container_image_main:
     name: Check main image build
     runs-on: ubuntu-latest
+    container:
+      image: registry.fedoraproject.org/fedora:37
+      options: --privileged
+
     steps:
       - name: Check out Docker file code in the root directory
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Check if dockerimage build is working
-        run: docker build -f ./Dockerfile .
+
+      - name: Install packages
+        run: |
+          dnf install -y podman buildah
+
+      - name: Build image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: hacbs-test
+          tags: ${{ github.sha }}
+          arch: amd64
+          containerfiles: |
+            ./Dockerfile
+
+      - name: Selfcheck - Integration test inside the image
+        run: |
+          podman run --rm -t hacbs-test:${{ github.sha }} /selftest.sh
+
 
   container_image_clamdb:
     name: Check clam-db image build
@@ -96,18 +116,6 @@ jobs:
         id: build-image
         run: |
           docker build . -t clair-in-ci-db:pr-test -f ./clair-in-ci/Dockerfile
-
-  conftest_integration_tests:
-    name: Integration tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Integration test
-        uses: ./ # Uses an action in the root directory
-        id: test_image
-        with:
-          image: 'quay.io/redhat-appstudio/sample-image:test-index-pass'
 
   opa_policies_unittest:
     name: opa_policies_unittest
@@ -172,4 +180,4 @@ jobs:
           SHELLCHECK_OPTS: -s bash
         with:
           scandir: './test'
-          ignore_paths: './test/conftest.sh ./test/entrypoint.sh'  # for now
+          ignore_paths: './test/conftest.sh ./test/selftest.sh'  # for now
