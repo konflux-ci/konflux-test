@@ -83,16 +83,6 @@ make_result_json() {
 }
 
 
-# Return HACBS_TEST_OUTPUT error response
-make_error_result_json(){
-  # Note about error result for user
-  local NOTE="$1"
-  # Conftest namespace (should be empty in testcases without conftest)
-  local NAMESPACE="$2"
-  make_result_json -r 'ERROR' -t "${NOTE}" -n "${NAMESPACE}"
-}
-
-
 # Parse test result and genarate HACBS_TEST_OUTPUT
 parse_hacbs_test_output() {
   # The name of test
