@@ -27,7 +27,7 @@ RUN ARCH=$(uname -m) && curl -L https://github.com/open-policy-agent/conftest/re
     clamav-update && \
     cd / && \
     python3.9 get-pip.py && \
-    pip install --no-cache-dir python-dateutil && \
+    pip install --no-cache-dir python-dateutil yq && \
     cd /usr/bin && \
     curl -OL https://github.com/CycloneDX/cyclonedx-cli/releases/download/v"${cyclonedx_version}"/cyclonedx-linux-x64 && \
     dnf -y install libicu && \
