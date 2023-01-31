@@ -9,6 +9,10 @@ check_return_code () {
    fi
 }
 
+# Check yq presence
+yq --version
+check_return_code 
+
 #Clair DATA
 curl -H "Content-type: application/json" -XGET 'https://quay.io/api/v1/repository/redhat-appstudio/sample-image/manifest/sha256:fc78d878b68b74c965bdb857fab8a87ef75bf7e411f561b3e5fee97382c785ab/security?vulnerabilities=true' > clair.json
 
