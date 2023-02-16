@@ -1,5 +1,5 @@
 # Container image that runs your code
-FROM docker.io/snyk/snyk:linux as snyk
+FROM docker.io/snyk/snyk:linux@sha256:ac4cef56def7be708dc1097c441c83ef8c2bb0f00e70d15d29dae2e9a8453898 as snyk
 FROM registry.access.redhat.com/ubi8/ubi:8.7-1054.1675788412
 
 ARG conftest_version=0.33.2
