@@ -19,6 +19,7 @@ updates:
       - "jsztuka"
       - "jinqi7"
       - "Josh-Everett"
+      - "sonam1412"
       - "MartinBasti"
       - "dheerajodha"
   - package-ecosystem: "github-actions"
@@ -33,5 +34,36 @@ updates:
       - "jsztuka"
       - "jinqi7"
       - "Josh-Everett"
+      - "sonam1412"
+      - "MartinBasti"
+      - "dheerajodha"
+  - package-ecosystem: "docker"
+    directory: "/clair-in-ci"
+    schedule:
+      interval: daily
+    commit-message:
+      prefix: "chore(Dockerfile): "
+    reviewers:
+      - "dirgim"
+      - "hongweiliu17"
+      - "jsztuka"
+      - "jinqi7"
+      - "Josh-Everett"
+      - "sonam1412"
+      - "MartinBasti"
+      - "dheerajodha"
+  - package-ecosystem: "docker"
+    directory: "/clamav"
+    schedule:
+      interval: daily
+    commit-message:
+      prefix: "chore(Dockerfile): "
+    reviewers:
+      - "dirgim"
+      - "hongweiliu17"
+      - "jsztuka"
+      - "jinqi7"
+      - "Josh-Everett"
+      - "sonam1412"
       - "MartinBasti"
       - "dheerajodha"
