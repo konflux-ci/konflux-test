@@ -152,6 +152,9 @@ jobs:
         run: |
          TEST_FILES="test policies unittests unittests/test_data"
          /usr/local/bin/opa test --coverage --format json $TEST_FILES | { T=`mktemp`; tee "$${T}"; /usr/local/bin/opa eval --format pretty --input "$${T}" --data hack/simplecov.rego data.simplecov.from_opa > coverage.json; rm -f "$${T}" || true ; } | jq -j -r 'if .coverage < 100 then "ERROR: Code coverage threshold not met: got \(.coverage) instead of 100.00\n" | halt_error(1) else "" end'
+         pwd
+         ls coverage.json
+
       - name: Upload test coverage report
         uses: codecov/codecov-action@v3
         if: always()
