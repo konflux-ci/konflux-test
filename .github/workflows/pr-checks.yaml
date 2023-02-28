@@ -38,10 +38,6 @@ jobs:
           ignore: DL3003,DL3013,DL3041,DL4006  # DL4006 seems broken
       - uses: hadolint/hadolint-action@v3.1.0
         with:
-          dockerfile: clamav/Dockerfile
-          ignore: DL3041
-      - uses: hadolint/hadolint-action@v3.1.0
-        with:
           dockerfile: clair-in-ci/Dockerfile
           ignore: DL3041
 
@@ -74,38 +70,6 @@ jobs:
       - name: Selfcheck - Integration test inside the image
         run: |
           podman run --rm -t hacbs-test:${{ github.sha }} /selftest.sh
-
-
-  container_image_clamdb:
-    name: Check clam-db image build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - uses: dorny/paths-filter@v2
-        id: changes
-        with:
-          filters: |
-            clamav:
-              - 'clamav/**'
-
-      - if: steps.changes.outputs.clamav == 'true'
-        name: Install qemu dependency
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y qemu-user-static
-
-      - if: steps.changes.outputs.clamav == 'true'
-        name: Build-image
-        id: build-image
-        uses: redhat-actions/buildah-build@v2
-        with:
-          image: clam-db
-          tags: pr-test
-          archs: amd64,ppc64le
-          containerfiles: |
-            ./clamav/Dockerfile
 
   container_image_clair-in-ci-db:
     name: Check clair-in-ci-db image build

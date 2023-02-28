@@ -6,6 +6,16 @@ name: Clamav DB
 on:
   schedule:
   - cron: '0 6 * * *'
+  push:
+    branches: [ main ]
+    paths:
+      - clamav/**
+      - .github/workflows/clam-db.yaml
+  pull_request:
+    branches: [ main ]
+    paths:
+      - clamav/**
+      - .github/workflows/clam-db.yaml
 
 env:
   REGISTRY: quay.io/redhat-appstudio
@@ -17,17 +27,25 @@ jobs:
   build:
     name: Retag-build-and-push
     runs-on: ubuntu-20.04
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Dockerfile linter
+        if: ${{ github.event_name == 'pull_request' }}  # don't break regular rebuilds if linter is updated
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: clamav/Dockerfile
+          ignore: DL3041
 
       - name: Install qemu dependency
         run: |
           sudo apt-get update
           sudo apt-get install -y qemu-user-static
-        
+
       - name: Log into registry ${{ env.REGISTRY }}
+        if: ${{ github.event_name != 'pull_request' }}  # don't login from PR; secrets are not passed to PRs from fork
         uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
         with:
           registry: ${{ env.REGISTRY }}
@@ -35,6 +53,7 @@ jobs:
           password: ${{ secrets.HACBS_TEST_QUAY_TOKEN }}
 
       - name: Pull-and-retag-image
+        if: ${{ github.event_name != 'pull_request' }}  # don't retag image from PR
         run: |
           docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }}
           docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.PREVIOUS_TAG }}
@@ -51,6 +70,7 @@ jobs:
             ./clamav/Dockerfile
 
       - name: Push-to-${{ env.REGISTRY }}
+        if: ${{ github.event_name != 'pull_request' }}  # don't push image from PR
         id: push-to-quay
         uses: redhat-actions/push-to-registry@v2
         with:
