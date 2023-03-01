@@ -71,6 +71,12 @@ jobs:
         run: |
           podman run --rm -t ${{ steps.build-image.outputs.image-with-tag }} clamscan --version
 
+      - name: Check ClamAV output format
+        run: |
+          podman run --rm -t ${{ steps.build-image.outputs.image-with-tag }} clamscan -ri /etc/hosts > clamav.log
+          bash clamav/test_clamav_format.sh clamav.log
+
+
       - name: Push-to-${{ env.REGISTRY }}
         if: ${{ github.event_name != 'pull_request' }}  # don't push image from PR
         id: push-to-quay
