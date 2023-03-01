@@ -26,7 +26,7 @@ env:
 
 jobs:
   build:
-    name: Retag-build-and-push
+    name: Build the new image
     runs-on: ubuntu-20.04
 
     steps:
