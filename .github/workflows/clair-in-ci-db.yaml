@@ -6,6 +6,16 @@ name: Clair in CI DB
 on:
   schedule:
     - cron: '0 6 * * *'
+  push:
+    branches: [ main ]
+    paths:
+      - clair-in-ci/**
+      - .github/workflows/clair-in-ci-db.yaml
+  pull_request:
+    branches: [ main ]
+    paths:
+      - clair-in-ci/**
+      - .github/workflows/clair-in-ci-db.yaml
 
 env:
   REGISTRY: quay.io/redhat-appstudio
@@ -22,13 +32,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Dockerfile linter
+        if: ${{ github.event_name == 'pull_request' }}  # don't break regular rebuilds if linter is updated
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: clair-in-ci/Dockerfile
+          ignore: DL3041
+
       - name: Log into registry ${{ env.REGISTRY }}
         uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        if: ${{ github.event_name != 'pull_request' }}  # don't login from PR; secrets are not passed to PRs from fork
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ secrets.HACBS_TEST_QUAY_USER }}
           password: ${{ secrets.HACBS_TEST_QUAY_TOKEN }}
-      
+
       - name: Setup docker for workflow
         run: |
           sudo rm -rf /usr/share/dotnet
@@ -37,15 +55,21 @@ jobs:
           sudo rm -rf "$AGENT_TOOLSDIRECTORY"
 
       - name: Pull-and-retag-image
+        if: ${{ github.event_name != 'pull_request' }}  # don't retag image from PR
         run: |
           docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }}
           docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.PREVIOUS_TAG }}
           docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.PREVIOUS_TAG }}
           docker rmi -f $(docker images -q)
 
-      - name: Build-and-push-image
-        id: build-and-push-image
+      - name: Build image
+        id: build-image
         run: |
           docker build . -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }} -f ./clair-in-ci/Dockerfile
+
+      - name: Push image
+        if: ${{ github.event_name != 'pull_request' }}  # don't push image from PR
+        id: push-image
+        run: |
           docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }}
 

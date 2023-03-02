@@ -30,7 +30,7 @@ jobs:
           file_or_dir: .
 
   Dockerfile-linter:
-    name: Check Dockerfiles
+    name: Check Dockerfile
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -38,10 +38,6 @@ jobs:
         with:
           dockerfile: Dockerfile
           ignore: DL3003,DL3013,DL3041,DL4006  # DL4006 seems broken
-      - uses: hadolint/hadolint-action@v3.1.0
-        with:
-          dockerfile: clair-in-ci/Dockerfile
-          ignore: DL3041
 
   container_image_main:
     name: Check main image build
@@ -72,34 +68,6 @@ jobs:
       - name: Selfcheck - Integration test inside the image
         run: |
           podman run --rm -t hacbs-test:${{ github.sha }} /selftest.sh
-
-  container_image_clair-in-ci-db:
-    name: Check clair-in-ci-db image build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - uses: dorny/paths-filter@v2
-        id: changes
-        with:
-          filters: |
-            clair:
-              - 'clair-in-ci/**'
-
-      - if: steps.changes.outputs.clair == 'true'
-        name: Setup docker for workflow
-        run: |
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /opt/ghc
-          sudo rm -rf "/usr/local/share/boost"
-          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-
-      - if: steps.changes.outputs.clair == 'true'
-        name: Build-image
-        id: build-image
-        run: |
-          docker build . -t clair-in-ci-db:pr-test -f ./clair-in-ci/Dockerfile
 
   opa_policies_unittest:
     name: opa_policies_unittest
