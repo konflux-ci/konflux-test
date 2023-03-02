@@ -67,7 +67,11 @@ jobs:
         run: |
           docker build . -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }} -f ./clair-in-ci/Dockerfile
 
-      - name: Push image
+      - name: Get Clair version
+        run: |
+          docker run --rm -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }} clair-action --version
+
+      - name: Push-to-${{ env.REGISTRY }}
         if: ${{ github.event_name != 'pull_request' }}  # don't push image from PR
         id: push-image
         run: |
