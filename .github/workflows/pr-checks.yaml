@@ -17,6 +17,8 @@ name: Validate PRs
 on:
   pull_request:
     branches: [ main ]
+  push:
+    branches: [ main ]
 
 jobs:
   YAML-Linter:
@@ -145,29 +147,17 @@ jobs:
       - name: Install dependency packages
         run: |
          sudo apt-get install jq
-         sudo curl -L -o /usr/bin/opa https://openpolicyagent.org/downloads/v0.39.0/opa_linux_amd64_static
+         sudo curl -L -o /usr/bin/opa https://openpolicyagent.org/downloads/v0.48.0/opa_linux_amd64_static
          sudo chmod 755 /usr/bin/opa
 
       - name: Run unittests for policies
         run: |
-          /usr/bin/opa test policies unittests unittests/test_data -c > /tmp/policy_unittest_result.json
+         TEST_FILES="./policies ./unittests ./unittests/test_data"
+         /usr/bin/opa test --coverage --format json $TEST_FILES | { T=`mktemp`; tee $T; /usr/bin/opa eval --format pretty --input $T --data hack/simplecov.rego data.simplecov.from_opa > coverage.json; rm -f $T || true; } | jq -j -r 'if .coverage < 100 then "ERROR: Code coverage threshold not met: got \(.coverage) instead of 100.00\n" | halt_error(1) else "" end'
 
-      - name: Check unittests result
-        run: |
-          RESULT_PATH="/tmp/policy_unittest_result.json"
-          if [ ! -f $RESULT_PATH ]; then
-            echo "No unittest result exists, please check again"
-            exit 1
-          fi
-          coverage=$(jq '.coverage' $RESULT_PATH)
-          if [ $coverage == 100 ]; then
-            echo "Congratulations! Unittests pass!"
-            exit 0
-          else
-            echo "Ouch! Unittests fail! Please check details as below:"
-            jq '.files | with_entries(.value |= (if (.coverage == '100') then (.coverage) else (.) end))' $RESULT_PATH
-            exit 1
-          fi
+      - name: Upload test coverage report
+        uses: codecov/codecov-action@v3
+        if: always()
 
   bash_unittests:
     name: bash_unittests
