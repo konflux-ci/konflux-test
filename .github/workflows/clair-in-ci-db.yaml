@@ -71,6 +71,16 @@ jobs:
         run: |
           docker run --rm -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }} clair-action --version
 
+      - name: Check Clair output format
+        run: |
+          # test real life usage of clair
+          mkdir results
+          docker run --rm -v $(pwd)/results:/results:rw -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }} bash -c 'clair-action report --image-ref=registry.access.redhat.com/ubi9-minimal --db-path=/tmp/matcher.db --format=quay > /results/clairdata.json'
+
+
+          # check if required metadata and path to values are the same as expected
+          jq -e '.data[].Features[0] | select(has("Name") and has("Vulnerabilities")) or error("Required keys do not exist")' results/clairdata.json
+
       - name: Push-to-${{ env.REGISTRY }}
         if: ${{ github.event_name != 'pull_request' }}  # don't push image from PR
         id: push-image
