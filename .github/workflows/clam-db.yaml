@@ -6,54 +6,86 @@ name: Clamav DB
 on:
   schedule:
   - cron: '0 6 * * *'
+  push:
+    branches: [ main ]
+    paths:
+      - clamav/**
+      - .github/workflows/clam-db.yaml
+  pull_request:
+    branches: [ main ]
+    paths:
+      - clamav/**
+      - .github/workflows/clam-db.yaml
 
 env:
   REGISTRY: quay.io/redhat-appstudio
   IMAGE_NAME: clamav-db
   LATEST_TAG: latest
   PREVIOUS_TAG: previous
+  NEW_TAG: new
 
 jobs:
   build:
-    name: Retag-build-and-push
+    name: Build the new image
     runs-on: ubuntu-20.04
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install qemu dependency
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y qemu-user-static
-        
-      - name: Log into registry ${{ env.REGISTRY }}
-        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+      - name: Dockerfile linter
+        if: ${{ github.event_name == 'pull_request' }}  # don't break regular rebuilds if linter is updated
+        uses: hadolint/hadolint-action@v3.1.0
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ secrets.HACBS_TEST_QUAY_USER }}
-          password: ${{ secrets.HACBS_TEST_QUAY_TOKEN }}
+          dockerfile: clamav/Dockerfile
+          ignore: DL3041
 
-      - name: Pull-and-retag-image
-        run: |
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }}
-          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.PREVIOUS_TAG }}
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.PREVIOUS_TAG }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
 
       - name: Build-image
         id: build-image
         uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.IMAGE_NAME }}
-          tags: ${{ env.LATEST_TAG }}
+          tags: ${{ env.NEW_TAG}}
           archs: amd64,ppc64le
           containerfiles: |
             ./clamav/Dockerfile
 
+      - name: Get ClamAV version
+        run: |
+          podman run --rm -t ${{ steps.build-image.outputs.image-with-tag }} clamscan --version
+
+      - name: Check ClamAV output format
+        run: |
+          podman run --rm -t ${{ steps.build-image.outputs.image-with-tag }} clamscan -ri /etc/hosts > clamav.log
+          bash clamav/test_clamav_format.sh clamav.log
+
+      - name: Log into registry ${{ env.REGISTRY }}
+        if: ${{ github.event_name != 'pull_request' }}  # don't login from PR; secrets are not passed to PRs from fork
+        uses: redhat-actions/podman-login@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.HACBS_TEST_QUAY_USER }}
+          password: ${{ secrets.HACBS_TEST_QUAY_TOKEN }}
+
+      - name: Tag images
+        if: ${{ github.event_name != 'pull_request' }}  # don't retag image from PR
+        run: |
+          # keep backup
+          podman pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }}
+          podman tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.PREVIOUS_TAG }}
+          podman push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.PREVIOUS_TAG }}
+
+          # tag new image
+          podman tag ${{ steps.build-image.outputs.image-with-tag }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }}
+
       - name: Push-to-${{ env.REGISTRY }}
+        if: ${{ github.event_name != 'pull_request' }}  # don't push image from PR
         id: push-to-quay
         uses: redhat-actions/push-to-registry@v2
         with:
           image: ${{ steps.build-image.outputs.image }}
-          tags: ${{ steps.build-image.outputs.tags }}
+          tags: ${{ env.LATEST_TAG }}
           registry: ${{ env.REGISTRY }}
