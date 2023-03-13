@@ -72,15 +72,6 @@ violation_architecture_required[{"msg": msg, "details":{"name": name, "descripti
   url := "https://source.redhat.com/groups/public/container-build-system/container_build_system_wiki/guide_to_layered_image_build_service_osbs#jive_content_id_Labels"
 }
 
-violation_com_redhat_build_host_required[{"msg": msg, "details":{"name": name, "description": description, "url": url}}] {
-  not input.Labels["com.redhat.build-host"]
-
-  name := "com_redhat_build_host_label_required"
-  msg := "The required 'com.redhat.build-host' label is missing!"
-  description := "The build host used to create an image for internal use and auditability, similar to the use in RPM."
-  url := "https://source.redhat.com/groups/public/container-build-system/container_build_system_wiki/guide_to_layered_image_build_service_osbs#jive_content_id_Labels"
-}
-
 violation_vendor_required[{"msg": msg, "details":{"name": name, "description": description, "url": url}}] {
   not input.Labels["vendor"]
 
