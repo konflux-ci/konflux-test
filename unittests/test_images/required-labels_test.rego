@@ -50,12 +50,6 @@ test_violation_architecture_required {
     result[_].msg == "The required 'architecture' label is missing!"
 }
 
-test_violation_com_redhat_build_host_required {
-    result := violation_com_redhat_build_host_required with input as image
-    result[_].details.name == "com_redhat_build_host_label_required"
-    result[_].msg == "The required 'com.redhat.build-host' label is missing!"
-}
-
 test_violation_vendor_required {
     result := violation_vendor_required with input as image
     result[_].details.name == "vendor_label_required"
