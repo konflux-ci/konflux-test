@@ -8,7 +8,7 @@ make_result_json() {
   local SUCCESSES=0
   local FAILURES=0
   local WARNINGS=0
-  local NOTE="For more details please visit the logs in workspace of Tekton tasks."
+  local NOTE="For details, check Tekton task log."
   local NAMESPACE="default"
   local OUTPUT
 
@@ -120,7 +120,7 @@ parse_hacbs_test_output() {
     # Log out the failing runs
     if [ "$(echo "$HACBS_TEST_OUTPUT" | jq '.failures')" -gt 0 ]
     then
-      echo "The $TEST_NAME test has failed with the following issues:"
+      echo "Task $TEST_NAME failed because of the following issues:"
       jq '.runs[].results // []|map(.message.text) | unique' "$TEST_RESULT_FILE"
     fi
   # Handle the test result with format of conftest
@@ -144,7 +144,7 @@ parse_hacbs_test_output() {
     # Log out the failing runs
     if [ "$(echo "$HACBS_TEST_OUTPUT" | jq '.failures')" -gt 0 ]
     then
-      echo "The $TEST_NAME test has failed with the following issues::"
+      echo "Task $TEST_NAME failed because of the following issues:"
       jq '.[].failures // []|map(.metadata.details.name) | unique' "$TEST_RESULT_FILE"
     fi    
   else
