@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 
-# returns HACBS_TEST_OUTPUT json with predefined default. Function accepts optional args to modify result
+# returns TEST_OUTPUT json with predefined default. Function accepts optional args to modify result
 # see make_result_json_usage for usage
 make_result_json() {
   local RESULT=""
@@ -83,7 +83,7 @@ make_result_json() {
 }
 
 
-# Parse test result and genarate HACBS_TEST_OUTPUT
+# Parse test result and genarate TEST_OUTPUT
 parse_hacbs_test_output() {
   # The name of test
   TEST_NAME=$1
@@ -112,13 +112,13 @@ parse_hacbs_test_output() {
 
   # Handle the test result with format of sarif
   if [ "$TEST_RESULT_FORMAT" = "sarif" ]; then
-    HACBS_TEST_OUTPUT=$(make_result_json \
+    TEST_OUTPUT=$(make_result_json \
       -r "$(jq -rce '(if (.runs[].results | length > 0) then "FAILURE" else "SUCCESS" end)' "${TEST_RESULT_FILE}" || echo 'ERROR')" \
       -f "$(jq -rce '(.runs[].results | length)' "${TEST_RESULT_FILE}")" \
     )
 
     # Log out the failing runs
-    if [ "$(echo "$HACBS_TEST_OUTPUT" | jq '.failures')" -gt 0 ]
+    if [ "$(echo "$TEST_OUTPUT" | jq '.failures')" -gt 0 ]
     then
       echo "Task $TEST_NAME failed because of the following issues:"
       jq '.runs[].results // []|map(.message.text) | unique' "$TEST_RESULT_FILE"
@@ -134,7 +134,7 @@ parse_hacbs_test_output() {
       exit 1
     fi
 
-    HACBS_TEST_OUTPUT=$(make_result_json \
+    TEST_OUTPUT=$(make_result_json \
       -r "$(jq -rce '.[] | (if (.failures | length > 0) then "FAILURE" else "SUCCESS" end)' "${TEST_RESULT_FILE}" || echo 'ERROR')" \
       -n "$(jq -rce '.[] | .namespace' "${TEST_RESULT_FILE}")" \
       -s "$(jq -rce '.[] | .successes' "${TEST_RESULT_FILE}")" \
@@ -142,7 +142,7 @@ parse_hacbs_test_output() {
     )
 
     # Log out the failing runs
-    if [ "$(echo "$HACBS_TEST_OUTPUT" | jq '.failures')" -gt 0 ]
+    if [ "$(echo "$TEST_OUTPUT" | jq '.failures')" -gt 0 ]
     then
       echo "Task $TEST_NAME failed because of the following issues:"
       jq '.[].failures // []|map(.metadata.details.name) | unique' "$TEST_RESULT_FILE"

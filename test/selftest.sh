@@ -34,9 +34,9 @@ check_return_code
 echo "Testing shell function parse_hacbs_test_output"
 . /utils.sh
 conftest test --namespace optional_checks --policy $POLICY_PATH/image/inherited-labels.rego label.json --output=json > unittest.json
-HACBS_TEST_OUTPUT=
+TEST_OUTPUT=
 parse_hacbs_test_output sanity_label_check conftest unittest.json
-[ "$(echo $HACBS_TEST_OUTPUT | jq -r '.result')" == "SUCCESS" ] && echo "test_parse_hacbs_test_output PASSED" || exit 1
+[ "$(echo $TEST_OUTPUT | jq -r '.result')" == "SUCCESS" ] && echo "test_parse_hacbs_test_output PASSED" || exit 1
 
 echo "Starting Integeration-Tests"
 bats $POLICY_PATH/conftest.sh

@@ -64,17 +64,17 @@ setup() {
 }
 
 @test "Conftest input: successful tests" {
-    HACBS_TEST_OUTPUT=""
+    TEST_OUTPUT=""
     parse_hacbs_test_output testname conftest unittests_bash/data/conftest_successes.json
     EXPECTED_JSON='{"result":"SUCCESS","timestamp":"whatever","note":"For details, check Tekton task log.","namespace":"image_labels","successes":19,"failures":0,"warnings":0}'
-    test_json_eq "${EXPECTED_JSON}" "${HACBS_TEST_OUTPUT}"
+    test_json_eq "${EXPECTED_JSON}" "${TEST_OUTPUT}"
 }
 
 @test "Conftest input: failed tests" {
-    HACBS_TEST_OUTPUT=""
+    TEST_OUTPUT=""
     parse_hacbs_test_output testname conftest unittests_bash/data/conftest_failures.json
     EXPECTED_JSON='{"result":"FAILURE","timestamp":"whatever","note":"For details, check Tekton task log.","namespace":"image_labels","successes":19,"failures":1,"warnings":0}'
-    test_json_eq "${EXPECTED_JSON}" "${HACBS_TEST_OUTPUT}"
+    test_json_eq "${EXPECTED_JSON}" "${TEST_OUTPUT}"
 }
 
 @test "Conftest input: more than 1 result" {
@@ -84,15 +84,15 @@ setup() {
 }
 
 @test "Sarif input: successful tests" {
-    HACBS_TEST_OUTPUT=""
+    TEST_OUTPUT=""
     parse_hacbs_test_output testname sarif unittests_bash/data/sarif_successes.json
     EXPECTED_JSON='{"result":"SUCCESS","timestamp":"whatever","note":"For details, check Tekton task log.","namespace":"default","successes":0,"failures":0,"warnings":0}'
-    test_json_eq "${EXPECTED_JSON}" "${HACBS_TEST_OUTPUT}"
+    test_json_eq "${EXPECTED_JSON}" "${TEST_OUTPUT}"
 }
 
 @test "Sarif input: failed tests" {
-    HACBS_TEST_OUTPUT=""
+    TEST_OUTPUT=""
     parse_hacbs_test_output testname sarif unittests_bash/data/sarif_failures.json
     EXPECTED_JSON='{"result":"FAILURE","timestamp":"whatever","note":"For details, check Tekton task log.","namespace":"default","successes":0,"failures":1,"warnings":0}'
-    test_json_eq "${EXPECTED_JSON}" "${HACBS_TEST_OUTPUT}"
+    test_json_eq "${EXPECTED_JSON}" "${TEST_OUTPUT}"
 }
