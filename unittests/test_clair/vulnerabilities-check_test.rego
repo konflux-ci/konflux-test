@@ -12,14 +12,14 @@ test_violation_critical_vulnerabilities {
 test_violation_high_vulnerabilities {
     result := violation_high_vulnerabilities with input as clair
     result[_].details.name == "clair_high_vulnerabilities"
-    result[_].vulnerabilities_number == 1
+    result[_].vulnerabilities_number == 2
     result[_].msg == "Found packages with high vulnerabilities. Consider updating to a newer version of those packages, they may no longer be affected by the reported CVEs."
 }
 
 test_violation_medium_vulnerabilities {
     result := violation_medium_vulnerabilities with input as clair
     result[_].details.name == "clair_medium_vulnerabilities"
-    result[_].vulnerabilities_number == 2
+    result[_].vulnerabilities_number == 3
     result[_].msg == "Found packages with medium vulnerabilities. Consider updating to a newer version of those packages, they may no longer be affected by the reported CVEs."
 }
 

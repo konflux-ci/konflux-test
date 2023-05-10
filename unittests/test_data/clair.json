@@ -112,8 +112,8 @@
                 "NamespaceName": "pyupio",
                 "Link": "",
                 "FixedBy": "",
-                "Description": "The urllib3 library 1.26.x before 1.26.4 for Python omits SSL certificate validation in some cases involving HTTPS to HTTPS proxies. The initial connection to the HTTPS proxy (if an SSLContext isn't given via proxy_config) doesn't verify the hostname of the certificate. This means certificates for different servers that still validate properly with the default urllib3 SSLContext will be silently accepted.",
-                "Name": "pyup.io-40291 (CVE-2021-28363)",
+                "Description": "another medium level CVE, to test if multiple CVEs per RPM are reported correctly",
+                "Name": "pyup.io-40291 (CVE-another-cve-for-the-test)",
                 "Metadata": {
                   "UpdatedBy": "pyupio",
                   "RepoName": "pypi",
@@ -129,11 +129,11 @@
                 }
               },
               {
-                "Severity": "Medium",
+                "Severity": "Critical",
                 "NamespaceName": "pyupio",
                 "Link": "",
                 "FixedBy": "",
-                "Description": "Pip 21.1 updates its dependency 'urllib3' to v1.26.4 due to security issues.",
+                "Description": "Pip 21.1 updates its dependency 'urllib3' to v1.26.4 due to security issues. (TEST that the same CVE is not reportted twice)",
                 "Name": "pyup.io-40291 (CVE-2021-28363)",
                 "Metadata": {
                   "UpdatedBy": "pyupio",
@@ -194,6 +194,36 @@
                 "Link": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-25032",
                 "FixedBy": "1.2.12-r0",
                 "Description": "",
+                "Name": "CVE-2018-25032",
+                "Metadata": {
+                  "UpdatedBy": "alpine-main-v3.15-updater",
+                  "RepoName": null,
+                  "RepoLink": null,
+                  "DistroName": "Alpine Linux",
+                  "DistroVersion": "",
+                  "NVD": {
+                    "CVSSv3": {
+                      "Vectors": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                      "Score": 7.5
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "Name": "zlib",
+            "VersionFormat": "",
+            "NamespaceName": "",
+            "AddedBy": "sha256:59bf1c3509f33515622619af21ed55bbe26d24913cedbca106468a5fb37a50c3",
+            "Version": "1.2.11-r3-different",
+            "Vulnerabilities": [
+              {
+                "Severity": "High",
+                "NamespaceName": "alpine-main-v3.15-updater",
+                "Link": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-25032",
+                "FixedBy": "1.2.12-r0",
+                "Description": "TEST: The same vulnerability, but different version of package",
                 "Name": "CVE-2018-25032",
                 "Metadata": {
                   "UpdatedBy": "alpine-main-v3.15-updater",
