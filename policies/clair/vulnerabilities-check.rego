@@ -21,7 +21,7 @@ generate_description(vulnerabilities) := dsc {
                  )])
 }
 
-violation_critical_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] {
+warn_critical_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] {
   rpms_with_critical_vulnerabilities := get_vulnerabilities(input, "Critical")
   not count(rpms_with_critical_vulnerabilities) == 0
 
@@ -32,7 +32,7 @@ violation_critical_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_
   url := "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
 }
 
-violation_high_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] {
+warn_high_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] {
   rpms_with_high_vulnerabilities := get_vulnerabilities(input, "High")
   not count(rpms_with_high_vulnerabilities) == 0
 
@@ -43,7 +43,7 @@ violation_high_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num,
   url := "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
 }
 
-violation_medium_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] {
+warn_medium_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] {
   rpms_with_medium_vulnerabilities := get_vulnerabilities(input, "Medium")
   not count(rpms_with_medium_vulnerabilities) == 0
 
@@ -54,7 +54,7 @@ violation_medium_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_nu
   url := "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
 }
 
-violation_low_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] {
+warn_low_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] {
   rpms_with_low_vulnerabilities := get_vulnerabilities(input, "Low")
   not count(rpms_with_low_vulnerabilities) == 0
 
