@@ -133,6 +133,7 @@ jobs:
           ignore_paths: './test/conftest.sh ./test/selftest.sh'  # for now
   gitlint:
     name: Run gitlint checks
+    if: ${{ github.event_name == 'pull_request' }}  # we can test only PRs
     runs-on: ubuntu-20.04
     steps:
       - name: Check out code
