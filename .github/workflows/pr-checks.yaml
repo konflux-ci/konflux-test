@@ -67,6 +67,7 @@ jobs:
 
       - name: Selfcheck - Integration test inside the image
         run: |
+          cat "/sys/fs/cgroup/user.slice/user-$(id -u).slice/user@$(id -u).service/cgroup.controllers"
           podman run --rm -t hacbs-test:${{ github.sha }} /selftest.sh
 
   opa_policies_unittest:
