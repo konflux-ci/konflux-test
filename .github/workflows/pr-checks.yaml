@@ -54,16 +54,11 @@ jobs:
 
       - name: Install packages
         run: |
-          dnf install -y podman buildah
+          dnf install -y podman
 
       - name: Build image
-        uses: redhat-actions/buildah-build@v2
-        with:
-          image: hacbs-test
-          tags: ${{ github.sha }}
-          arch: amd64
-          containerfiles: |
-            ./Dockerfile
+        run: |
+          podman build -t hacbs-test:${{ github.sha }} .
 
       - name: Selfcheck - Integration test inside the image
         run: |
