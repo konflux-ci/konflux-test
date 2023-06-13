@@ -9,6 +9,6 @@
 #### Triggering a release
   1. Select the Actions tab and choose release workflow from the list of workflows.
   2. Click on the Run Workflow event trigger.
-  3. Now enter the version to be released, will be automatically prefixed with 'v'. Example: 1.2.3
+  3. Now enter the version to be released, will be automatically prefixed with 'v'. Example: 1.2.3 . Bump version using [semantic versioning](https://semver.org/) based on changes to be released.
   4. Make sure the release branch is set to `main`
   5. Click on Run Workflow to trigger the release.
