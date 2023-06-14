@@ -52,3 +52,9 @@
   run conftest test --namespace fbc_checks --policy $POLICY_PATH/image/required-labels.rego fbc_label.json
   [ "$status" -eq 0 ]
 }
+
+# Test label operators.operatorframework.io.index.configs.v1 for invalid fbc image
+@test "/project/image/fbc-labels" {
+  run conftest test --namespace fbc_checks --policy $POLICY_PATH/image/required-labels.rego fbc_label_fail.json
+  [ "$status" -eq 1 ]
+}
