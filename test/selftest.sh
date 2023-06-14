@@ -19,15 +19,19 @@ curl -H "Content-type: application/json" -XGET 'https://quay.io/api/v1/repositor
 #RPM MANIFEST
 curl -X GET 'https://catalog.redhat.com/api/containers/v1/images/id/624bfc54f5a0de7ee0c8335c/rpm-manifest?include=rpms' > rpm-manifest.json
 
-# Label Data
-skopeo inspect --no-tags docker://quay.io/redhat-appstudio/sample-image:test-index-pass > label.json
+# Label data from example image with valid labels
+skopeo inspect --no-tags docker://quay.io/redhat-appstudio/sample-image:test-labels-pass > label.json
 check_return_code
 
 # Deprecated Image
 curl -X 'GET' 'https://catalog.redhat.com/api/containers/v1/repositories/registry/registry.access.redhat.com/repository/rhscl%2Fnodejs-8-rhel7' -H 'accept: application/json' > image.json
 
-# FBC Image, we need to find a fbc
-skopeo inspect --no-tags docker://quay.io/redhat-appstudio/application-service-catalog:next > fbc_label.json
+# FBC Image label data from example fbc index image
+skopeo inspect --no-tags docker://quay.io/redhat-appstudio/sample-image:test-index-pass > fbc_label.json
+check_return_code
+
+# FBC Image label data from example invalid fbc index image
+skopeo inspect --no-tags docker://quay.io/redhat-appstudio/sample-image:test-index-fail-2 > fbc_label_fail.json
 check_return_code
 
 # Test parse_hacbs_test_output
