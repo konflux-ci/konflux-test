@@ -44,6 +44,7 @@ parse_test_output sanity_label_check conftest unittest.json
 
 echo "Starting Integeration-Tests"
 bats $POLICY_PATH/conftest.sh
+check_return_code
 
 echo "Test presence of snyk binary"
 snyk version
