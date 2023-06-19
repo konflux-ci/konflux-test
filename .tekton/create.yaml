@@ -1,0 +1,60 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: hacbs-test-on-pull-request
+  annotations:
+    pipelinesascode.tekton.dev/max-keep-runs: "3"
+    pipelinesascode.tekton.dev/on-event: "[pull_request]"
+    pipelinesascode.tekton.dev/on-target-branch: "[STONEINTG-362]"
+    pipelinesascode.tekton.dev/task: "[buildah]"
+spec:
+  params:
+    - name: output-image
+      value: "{{IMAGE}}"
+    - name: builder-image
+      value: registry.access.redhat.com/ubi9/buildah:9.0.0-19@sha256:c8b1d312815452964885680fc5bc8d99b3bfe9b6961228c71a09c72ca8e915eb
+    - name: dockerfile
+      value: /clair/Dockerfile
+  pipelineSpec:
+    params:
+      - name: output-image
+      - name: builder-image
+      - name: dockerfile
+    workspaces:
+      - name: workspace
+    tasks:
+      - name: git-clone
+        taskSpec:
+          workspaces:
+            - name: clone-workspace
+              workspace: workspace
+          steps:
+            - name: clone-hacbs-test
+              image: registry.access.redhat.com/ubi9/python-39
+              script: |
+                #!/usr/bin/env bash
+                git clone https://github.com/redhat-appstudio/hacbs-test.git
+      # - name: build-image
+      #   workspaces:
+      #     - name: clone-workspace
+      #   params:
+      #     - name: IMAGE
+      #       value: quay.io/jstuka/clair-test-build:latest
+      #     - name: builder-image
+      #       value: $(params.builder-image)
+      #     - name: dockerfile
+      #       value: $(workspaces.clone-workspace.path)$(params.dockerfile)
+      #   runAfter:
+      #     - git-clone
+      #   taskRef:
+      #     name: buildah
+      #     kind: ClusterTask
+  workspaces:
+    - name: workspace
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
