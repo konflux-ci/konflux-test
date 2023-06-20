@@ -46,7 +46,7 @@ spec:
           - name: builder-image
             value: $(params.builder-image)
           - name: dockerfile
-            value: $(workspaces.source.path)$(params.dockerfile)
+            value: $(workspaces.source.path)/hacbs-test$(params.dockerfile)
         runAfter:
           - git-clone
         taskRef:
