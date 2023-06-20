@@ -6,7 +6,7 @@ metadata:
     pipelinesascode.tekton.dev/max-keep-runs: "3"
     pipelinesascode.tekton.dev/on-event: "[pull_request]"
     pipelinesascode.tekton.dev/on-target-branch: "[main]"
-#    pipelinesascode.tekton.dev/task: "[buildah]"
+    pipelinesascode.tekton.dev/task: "[buildah]"
 spec:
   params:
     - name: output-image
@@ -34,21 +34,21 @@ spec:
               script: |
                 #!/usr/bin/env bash
                 git clone https://github.com/redhat-appstudio/hacbs-test.git
-      # - name: build-image
-      #   workspaces:
-      #     - name: clone-workspace
-      #   params:
-      #     - name: IMAGE
-      #       value: quay.io/jstuka/clair-test-build:latest
-      #     - name: builder-image
-      #       value: $(params.builder-image)
-      #     - name: dockerfile
-      #       value: $(workspaces.clone-workspace.path)$(params.dockerfile)
-      #   runAfter:
-      #     - git-clone
-      #   taskRef:
-      #     name: buildah
-      #     kind: ClusterTask
+      - name: build-image
+        workspaces:
+          - name: clone-workspace
+        params:
+          - name: IMAGE
+            value: quay.io/jstuka/clair-test-build:latest
+          - name: builder-image
+            value: $(params.builder-image)
+          - name: dockerfile
+            value: $(workspaces.clone-workspace.path)$(params.dockerfile)
+        runAfter:
+          - git-clone
+        taskRef:
+          name: buildah
+          kind: ClusterTask
   workspaces:
     - name: workspace
       volumeClaimTemplate:
