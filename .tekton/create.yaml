@@ -43,10 +43,10 @@ spec:
         params:
           - name: IMAGE
             value: quay.io/jstuka/clair-test-build:latest
-          - name: builder-image
+          - name: BUILDER_IMAGE
             value: $(params.builder-image)
-          - name: dockerfile
-            value: $(workspaces.source.path)/hacbs-test$(params.dockerfile)
+          - name: DOCKERFILE
+            value: $(workspaces.source.path)/hacbs-test$(params.Dockerfile)
         runAfter:
           - git-clone
         taskRef:
