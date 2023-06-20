@@ -14,7 +14,7 @@ spec:
     - name: builder-image
       value: registry.access.redhat.com/ubi9/buildah:9.0.0-19@sha256:c8b1d312815452964885680fc5bc8d99b3bfe9b6961228c71a09c72ca8e915eb
     - name: dockerfile
-      value: /clair/Dockerfile
+      value: /clair-in-ci/Dockerfile
   pipelineSpec:
     params:
       - name: output-image
