@@ -24,10 +24,12 @@ spec:
       - name: workspace
     tasks:
       - name: git-clone
+        workspaces:
+          - name: clone-workspace
+            workspace: workspace
         taskSpec:
           workspaces:
             - name: clone-workspace
-              workspace: workspace
           steps:
             - name: clone-hacbs-test
               image: registry.access.redhat.com/ubi9/python-39
@@ -36,14 +38,15 @@ spec:
                 git clone https://github.com/redhat-appstudio/hacbs-test.git
       - name: build-image
         workspaces:
-          - name: clone-workspace
+          - name: source
+            workspace: workspace
         params:
           - name: IMAGE
             value: quay.io/jstuka/clair-test-build:latest
           - name: builder-image
             value: $(params.builder-image)
           - name: dockerfile
-            value: $(workspaces.clone-workspace.path)$(params.dockerfile)
+            value: $(workspaces.source.path)$(params.dockerfile)
         runAfter:
           - git-clone
         taskRef:
