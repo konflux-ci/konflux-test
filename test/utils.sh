@@ -84,7 +84,7 @@ make_result_json() {
 
 
 # Parse test result and genarate TEST_OUTPUT
-parse_hacbs_test_output() {
+parse_test_output() {
   # The name of test
   TEST_NAME=$1
   # The format of json file, can be conftest or sarif
