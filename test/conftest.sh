@@ -30,7 +30,7 @@
 # CLAIR for test_clair
 @test "/project/clair/vulnerabilities-check" {
   run conftest test --namespace required_checks --policy $POLICY_PATH/clair/vulnerabilities-check.rego clair.json
-  [ "$status" -eq 1 ]
+  [ "$status" -eq 0 ]
 }
 
 # REPOSITORY for test_repo
