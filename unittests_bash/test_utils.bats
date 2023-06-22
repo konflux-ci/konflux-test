@@ -65,34 +65,34 @@ setup() {
 
 @test "Conftest input: successful tests" {
     TEST_OUTPUT=""
-    parse_hacbs_test_output testname conftest unittests_bash/data/conftest_successes.json
+    parse_test_output testname conftest unittests_bash/data/conftest_successes.json
     EXPECTED_JSON='{"result":"SUCCESS","timestamp":"whatever","note":"For details, check Tekton task log.","namespace":"image_labels","successes":19,"failures":0,"warnings":0}'
     test_json_eq "${EXPECTED_JSON}" "${TEST_OUTPUT}"
 }
 
 @test "Conftest input: failed tests" {
     TEST_OUTPUT=""
-    parse_hacbs_test_output testname conftest unittests_bash/data/conftest_failures.json
+    parse_test_output testname conftest unittests_bash/data/conftest_failures.json
     EXPECTED_JSON='{"result":"FAILURE","timestamp":"whatever","note":"For details, check Tekton task log.","namespace":"image_labels","successes":19,"failures":1,"warnings":0}'
     test_json_eq "${EXPECTED_JSON}" "${TEST_OUTPUT}"
 }
 
 @test "Conftest input: more than 1 result" {
-    run parse_hacbs_test_output testname conftest unittests_bash/data/conftest_multi.json
+    run parse_test_output testname conftest unittests_bash/data/conftest_multi.json
     [ "$status" -eq 1 ]
     [ "$output" = 'Cannot create test output, unexpected number of results in file: 2' ]
 }
 
 @test "Sarif input: successful tests" {
     TEST_OUTPUT=""
-    parse_hacbs_test_output testname sarif unittests_bash/data/sarif_successes.json
+    parse_test_output testname sarif unittests_bash/data/sarif_successes.json
     EXPECTED_JSON='{"result":"SUCCESS","timestamp":"whatever","note":"For details, check Tekton task log.","namespace":"default","successes":0,"failures":0,"warnings":0}'
     test_json_eq "${EXPECTED_JSON}" "${TEST_OUTPUT}"
 }
 
 @test "Sarif input: failed tests" {
     TEST_OUTPUT=""
-    parse_hacbs_test_output testname sarif unittests_bash/data/sarif_failures.json
+    parse_test_output testname sarif unittests_bash/data/sarif_failures.json
     EXPECTED_JSON='{"result":"FAILURE","timestamp":"whatever","note":"For details, check Tekton task log.","namespace":"default","successes":0,"failures":1,"warnings":0}'
     test_json_eq "${EXPECTED_JSON}" "${TEST_OUTPUT}"
 }
