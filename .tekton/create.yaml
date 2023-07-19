@@ -57,8 +57,6 @@ spec:
         runAfter:
           - build-image
         taskSpec:
-          workspaces:
-            - name: clone-workspace
           steps:
             - name: tigger-workflow
               image: registry.access.redhat.com/ubi9/python-39
