@@ -1,0 +1,55 @@
+name: Trigger clair db image build
+
+# This workflow creates/reopens PR and closes it
+# in order to trigger PAC to build clair DB image
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+
+env:
+  REGISTRY: quay.io/redhat-appstudio
+  IMAGE_NAME: clair-in-ci
+  LATEST_TAG: latest
+  PREVIOUS_TAG: previous
+  GITHUB_TOKEN: ${{ secrets.HACBS_TEST_GITHUB_TOKEN }}
+  BRANCH_MAIN: PAC-trigger
+  BRANCH_TO_MERGE: clair-trigger
+  IS_CREATED: false
+  PR_STATE: ""
+  PR_NUMBER: 0
+  
+
+jobs:
+  test:
+    name: Build the new image
+    runs-on: ubuntu-20.04
+
+    steps:
+    - name: Check out repository code
+      uses: actions/checkout@v3
+      with:
+        ref: main
+    - name: create pull request
+      run: |
+          echo "Check if PR is already created."
+          PR_NUMBER=$(gh pr list --state all --label clair-db --json number | jq -r '.[0] | .number')
+          if [ -z "$PR_NUMBER" ] || [ "$PR_NUMBER" == null ]; then
+            echo "No existing PR with label clair-db was found. Creating a new PR..."
+            gh pr create -B $BRANCH_MAIN -H $BRANCH_TO_MERGE --title 'Using branch: $BRANCH_TO_MERGE to create PR triggering clair-db build PAC.' --body 'Created by Github action' --label clair-db
+            sleep 5
+            PR_NUMBER=$(gh pr list --state all --label clair-db --json number | jq -r '.[0] | .number')
+          fi
+          PR_STATE=$(gh pr view $PR_NUMBER --json state | jq -r '.state')
+          if [ "$PR_STATE" == "OPEN" ]; then
+            echo "$PR_NUMBER is $PR_STATE, closing it now."
+            gh pr close $PR_NUMBER
+            echo "PR number: $PR_NUMBER has been closed."
+          else
+            echo "$PR_NUMBER is $PR_STATE, reopening it now."
+            gh pr reopen $PR_NUMBER
+            echo "PR number: $PR_NUMBER has been opened."
+            sleep 5
+            gh pr close $PR_NUMBER
+            echo "PR number: $PR_NUMBER has been closed."
+          fi

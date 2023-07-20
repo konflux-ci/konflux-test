@@ -1,31 +1,25 @@
-name: Clair in CI DB
+name: Clair in CI DB - test
 
-# This workflow builds latest database version of clair-in-ci and
-# pushes it to app-studio registry
+# This workflow tests latest database version of clair-in-ci and
+# pushes it to app-studio registry in case all tests passed
 
 on:
-  schedule:
-    - cron: '0 6 * * *'
-  push:
-    branches: [ main ]
-    paths:
-      - clair-in-ci/**
-      - .github/workflows/clair-in-ci-db.yaml
-  pull_request:
-    branches: [ main ]
+  repository_dispatch:
+    types: trigger_workflow
     paths:
       - clair-in-ci/**
       - .github/workflows/clair-in-ci-db.yaml
 
 env:
   REGISTRY: quay.io/redhat-appstudio
-  IMAGE_NAME: clair-in-ci
+  IMAGE_NAME: clair-test-build
   LATEST_TAG: latest
   PREVIOUS_TAG: previous
+  TO_TEST: to_test
 
 jobs:
-  build:
-    name: Build the new image
+  test-and-push:
+    name: Test and push image
     runs-on: ubuntu-20.04
 
     steps:
@@ -38,7 +32,7 @@ jobs:
         with:
           dockerfile: clair-in-ci/Dockerfile
           ignore: DL3041
-
+          
       - name: Log into registry ${{ env.REGISTRY }}
         uses: docker/login-action@v2.2.0
         if: ${{ github.event_name != 'pull_request' }}  # don't login from PR; secrets are not passed to PRs from fork
@@ -62,28 +56,24 @@ jobs:
           docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.PREVIOUS_TAG }}
           docker rmi -f $(docker images -q)
 
-      - name: Build image
-        id: build-image
-        run: |
-          docker build . -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }} -f ./clair-in-ci/Dockerfile
-
       - name: Get Clair version
         run: |
-          docker run --rm -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }} clair-action --version
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TO_TEST }}
+          docker run --rm -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TO_TEST }} clair-action --version
 
       - name: Check Clair output format
         run: |
           # test real life usage of clair
           mkdir results
-          docker run --rm -v $(pwd)/results:/results:rw -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }} bash -c 'clair-action report --image-ref=registry.access.redhat.com/ubi9-minimal --db-path=/tmp/matcher.db --format=quay > /results/clairdata.json'
+          docker run --rm -v $(pwd)/results:/results:rw -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TO_TEST }} bash -c 'clair-action report --image-ref=registry.access.redhat.com/ubi9-minimal --db-path=/tmp/matcher.db --format=quay > /results/clairdata.json'
 
 
           # check if required metadata and path to values are the same as expected
           jq -e '.data[].Features[0] | select(has("Name") and has("Vulnerabilities")) or error("Required keys do not exist")' results/clairdata.json
 
-      - name: Push-to-${{ env.REGISTRY }}
+      - name: Retag-and-push-to-${{ env.REGISTRY }}
         if: ${{ github.event_name != 'pull_request' }}  # don't push image from PR
         id: push-image
         run: |
+          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TO_TEST }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }}
           docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }}
-

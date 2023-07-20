@@ -1,0 +1,80 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: build-and-trigger
+  annotations:
+    pipelinesascode.tekton.dev/max-keep-runs: "3"
+    pipelinesascode.tekton.dev/on-event: "[pull_request]"
+    pipelinesascode.tekton.dev/on-target-branch: "[PAC-trigger]"
+    pipelinesascode.tekton.dev/task: "[buildah]"
+spec:
+  params:
+    - name: output-image
+      value: quay.io/redhat-appstudio/clair-in-ci:to_test
+    - name: builder-image
+      value: registry.access.redhat.com/ubi9/buildah:9.0.0-19@sha256:c8b1d312815452964885680fc5bc8d99b3bfe9b6961228c71a09c72ca8e915eb
+    - name: dockerfile
+      value: /clair-in-ci/Dockerfile
+  pipelineSpec:
+    params:
+      - name: output-image
+      - name: builder-image
+      - name: dockerfile
+    workspaces:
+      - name: workspace
+    tasks:
+      - name: git-clone
+        workspaces:
+          - name: clone-workspace
+            workspace: workspace
+        taskSpec:
+          workspaces:
+            - name: clone-workspace
+          steps:
+            - name: clone-hacbs-test
+              image: registry.access.redhat.com/ubi9/python-39
+              workingDir: $(workspaces.clone-workspace.path)
+              script: |
+                #!/usr/bin/env bash
+                git clone https://github.com/redhat-appstudio/hacbs-test.git
+      - name: build-image
+        workspaces:
+          - name: source
+            workspace: workspace
+        params:
+          - name: IMAGE
+            value: quay.io/redhat-appstudio/clair-in-ci:to_test
+          - name: BUILDER_IMAGE
+            value: $(params.builder-image)
+          - name: DOCKERFILE
+            value: $(workspaces.source.path)/hacbs-test$(params.dockerfile)
+        runAfter:
+          - git-clone
+        taskRef:
+          name: buildah
+          kind: ClusterTask
+      - name: trigger-tests-and-push
+        runAfter:
+          - build-image
+        taskSpec:
+          steps:
+            - name: tigger-workflow
+              image: registry.access.redhat.com/ubi9/python-39
+              env:
+                - name: GITHUB_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: integration-github-token
+                      key: integration-github-token
+              script: |
+                #!/usr/bin/env bash
+                curl -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GITHUB_TOKEN" --request POST --data '{"event_type":"trigger_workflow"}' https://api.github.com/repos/redhat-appstudio/hacbs-test/dispatches
+  workspaces:
+    - name: workspace
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
