@@ -61,16 +61,14 @@ spec:
             - name: tigger-workflow
               image: registry.access.redhat.com/ubi9/python-39
               env:
-                - name: TEST_GH_TOKEN
-                  value: "${{ secrets.TEST_TOKEN }}"
-                - name: TO_TEST
-                  value: "${{ secrets.TO_TEST }}"
+                - name: GITHUB_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: jsztuka-github-secret
+                      key: token
               script: |
                 #!/usr/bin/env bash
-                echo "Echoing env sample"
-                echo $TO_TEST
-                echo "Echo End"
-                curl -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $TEST_GH_TOKEN" --request POST --data '{"event_type":"trigger_workflow"}' https://api.github.com/repos/jsztuka/hacbs-test/dispatches
+                curl -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GITHUB_TOKEN" --request POST --data '{"event_type":"trigger_workflow"}' https://api.github.com/repos/jsztuka/hacbs-test/dispatches
   workspaces:
     - name: workspace
       volumeClaimTemplate:
