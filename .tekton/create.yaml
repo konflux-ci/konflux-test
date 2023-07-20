@@ -62,7 +62,7 @@ spec:
               image: registry.access.redhat.com/ubi9/python-39
               env:
                 - name: TEST_GH_TOKEN
-                  value: "${{ secrets.HACBS_TEST_GITHUB_TOKEN }}"
+                  value: "${{ secrets.TEST_TOKEN }}"
               script: |
                 #!/usr/bin/env bash
                 curl -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $TEST_GH_TOKEN" --request POST --data '{"event_type":"trigger_workflow"}' https://api.github.com/repos/jsztuka/hacbs-test/dispatches
