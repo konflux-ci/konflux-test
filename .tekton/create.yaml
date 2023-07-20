@@ -54,6 +54,9 @@ spec:
 #          name: buildah
 #          kind: ClusterTask
       - name: trigger-tests-and-push
+        env:
+          - name: TEST_GH_TOKEN
+            value: "${{ secrets.HACBS_TEST_GITHUB_TOKEN }}"
         runAfter:
           - git-clone
         taskSpec:
@@ -62,7 +65,7 @@ spec:
               image: registry.access.redhat.com/ubi9/python-39
               script: |
                 #!/usr/bin/env bash
-                curl -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $secrets.HACBS_TEST_GITHUB_TOKEN" --request POST --data '{"event_type":"trigger_workflow"}' https://api.github.com/repos/jsztuka/hacbs-test/dispatches
+                curl -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $TEST_GH_TOKEN" --request POST --data '{"event_type":"trigger_workflow"}' https://api.github.com/repos/jsztuka/hacbs-test/dispatches
   workspaces:
     - name: workspace
       volumeClaimTemplate:
