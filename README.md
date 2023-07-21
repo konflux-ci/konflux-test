@@ -1,5 +1,5 @@
 # HACBS-TEST
-This is HACBS-test team repository.
+This is HACBS-test team repository with love.
 Purpose of this repo is to store resources, currently for tekton tasks and pipelines.
 
 ## Prerequisites
