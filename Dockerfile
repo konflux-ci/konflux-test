@@ -5,6 +5,7 @@ FROM registry.access.redhat.com/ubi8/ubi:8.8-854
 ARG conftest_version=0.33.2
 ARG BATS_VERSION=1.6.0
 ARG cyclonedx_version=0.24.2
+ARG sbom_utility_version=0.12.0
 ARG OPM_VERSION=v1.26.3
 
 ENV POLICY_PATH="/project"
@@ -30,11 +31,15 @@ RUN ARCH=$(uname -m) && curl -L https://github.com/open-policy-agent/conftest/re
     cd / && \
     python3.9 get-pip.py && \
     pip install --no-cache-dir python-dateutil yq && \
+    curl -L https://github.com/CycloneDX/sbom-utility/releases/download/v"${sbom_utility_version}"/sbom-utility-v"${sbom_utility_version}"-linux-amd64.tar.gz --output sbom-utility.tar.gz && \
+    mkdir sbom-utility && tar -xf sbom-utility.tar.gz -C sbom-utility && rm sbom-utility.tar.gz && \
     cd /usr/bin && \
     curl -OL https://github.com/CycloneDX/cyclonedx-cli/releases/download/v"${cyclonedx_version}"/cyclonedx-linux-x64 && \
     dnf -y install libicu && \
     chmod +x cyclonedx-linux-x64 && \
     dnf clean all
+
+ENV PATH="${PATH}:/sbom-utility"
 
 COPY --from=snyk /usr/local/bin/snyk /usr/local/bin/snyk
 
