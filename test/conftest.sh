@@ -1,5 +1,7 @@
 #!/usr/bin/env bats
 
+# SPDX-License-Identifier: Apache-2.0
+
 # IMAGES for test_images - positive cases
 @test "/project/image/deprecated-labels" {
   run conftest test --namespace required_checks --policy $POLICY_PATH/image/deprecated-labels.rego label.json

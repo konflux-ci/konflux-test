@@ -1,5 +1,7 @@
 #!/bin/sh -l
 
+# SPDX-License-Identifier: Apache-2.0
+
 check_return_code () {
    if [ $? -eq 0 ]; then
      echo PASS
