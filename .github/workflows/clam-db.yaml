@@ -20,9 +20,8 @@ on:
 env:
   REGISTRY: quay.io/redhat-appstudio
   IMAGE_NAME: clamav-db
+  VERSION_MAJOR: "v1"
   LATEST_TAG: latest
-  PREVIOUS_TAG: previous
-  NEW_TAG: new
 
 jobs:
   build:
@@ -32,6 +31,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Set env
+        run: |
+          echo "NEW_TAG=${VERSION_MAJOR}.$(date --utc '+%Y%m%d%H%M%S')" | tee -a "$GITHUB_ENV"
 
       - name: Dockerfile linter
         if: ${{ github.event_name == 'pull_request' }}  # don't break regular rebuilds if linter is updated
@@ -48,7 +51,7 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.IMAGE_NAME }}
-          tags: ${{ env.NEW_TAG}}
+          tags: ${{ env.NEW_TAG}} ${{ env.VERSION_MAJOR }} ${{ env.LATEST_TAG }}
           archs: amd64,ppc64le
           containerfiles: |
             ./clamav/Dockerfile
@@ -70,16 +73,6 @@ jobs:
           username: ${{ secrets.HACBS_TEST_QUAY_USER }}
           password: ${{ secrets.HACBS_TEST_QUAY_TOKEN }}
 
-      - name: Tag images
-        if: ${{ github.event_name != 'pull_request' }}  # don't retag image from PR
-        run: |
-          # keep backup
-          podman pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }}
-          podman tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.PREVIOUS_TAG }}
-          podman push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.PREVIOUS_TAG }}
-
-          # tag new image
-          podman tag ${{ steps.build-image.outputs.image-with-tag }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_TAG }}
 
       - name: Push-to-${{ env.REGISTRY }}
         if: ${{ github.event_name != 'pull_request' }}  # don't push image from PR
@@ -87,5 +80,5 @@ jobs:
         uses: redhat-actions/push-to-registry@v2
         with:
           image: ${{ steps.build-image.outputs.image }}
-          tags: ${{ env.LATEST_TAG }}
+          tags: ${{ steps.build-image.outputs.tags }}
           registry: ${{ env.REGISTRY }}
