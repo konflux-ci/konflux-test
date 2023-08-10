@@ -65,7 +65,7 @@ jobs:
           podman run --rm -t ${{ steps.build-image.outputs.image-with-tag }} clamscan -ri /etc/hosts > clamav.log
           bash clamav/test_clamav_format.sh clamav.log
 
-      - name: Log into registry ${{ env.REGISTRY }}
+      - name: Log into registry
         if: ${{ github.event_name != 'pull_request' }}  # don't login from PR; secrets are not passed to PRs from fork
         uses: redhat-actions/podman-login@v1
         with:
@@ -74,7 +74,7 @@ jobs:
           password: ${{ secrets.HACBS_TEST_QUAY_TOKEN }}
 
 
-      - name: Push-to-${{ env.REGISTRY }}
+      - name: Push into registry
         if: ${{ github.event_name != 'pull_request' }}  # don't push image from PR
         id: push-to-quay
         uses: redhat-actions/push-to-registry@v2
