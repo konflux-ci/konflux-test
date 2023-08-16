@@ -1,8 +1,11 @@
 # Container image that runs your code
 FROM docker.io/snyk/snyk:linux@sha256:91a21f9dfd09a93126d6b066f86f995013148253d98284f300a7b69c12e1829c as snyk
+# Note that the version of OPA used by pr-checks must be updated manually to reflect dependabot updates
+# To find the OPA version associated with conftest run the following:
+# podman run --rm -ti ${NEW_IMAGE}  --version
+FROM docker.io/openpolicyagent/conftest:latest@sha256:93c0fccb97538b24ecb8492c5c988f39d27ec7108d4ce99f217677ad50f4271e as conftest
 FROM registry.access.redhat.com/ubi8/ubi:8.8-1032
 
-ARG conftest_version=0.33.2
 ARG BATS_VERSION=1.6.0
 ARG cyclonedx_version=0.24.2
 ARG sbom_utility_version=0.12.0
@@ -10,8 +13,7 @@ ARG OPM_VERSION=v1.26.3
 
 ENV POLICY_PATH="/project"
 
-RUN ARCH=$(uname -m) && curl -L https://github.com/open-policy-agent/conftest/releases/download/v"${conftest_version}"/conftest_"${conftest_version}"_Linux_"$ARCH".tar.gz | tar -xz --no-same-owner -C /usr/bin/ && \
-    curl https://mirror.openshift.com/pub/openshift-v4/"$ARCH"/clients/ocp/stable/openshift-client-linux.tar.gz --output oc.tar.gz && tar -xzvf oc.tar.gz -C /usr/bin && rm oc.tar.gz && \
+RUN ARCH=$(uname -m) && curl https://mirror.openshift.com/pub/openshift-v4/"$ARCH"/clients/ocp/stable/openshift-client-linux.tar.gz --output oc.tar.gz && tar -xzvf oc.tar.gz -C /usr/bin && rm oc.tar.gz && \
     curl -LO "https://github.com/bats-core/bats-core/archive/refs/tags/v$BATS_VERSION.tar.gz" && \
     curl -L https://github.com/operator-framework/operator-registry/releases/download/"${OPM_VERSION}"/linux-amd64-opm > /usr/bin/opm && chmod +x /usr/bin/opm && \ 
     curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" && \
@@ -42,6 +44,8 @@ RUN ARCH=$(uname -m) && curl -L https://github.com/open-policy-agent/conftest/re
 ENV PATH="${PATH}:/sbom-utility"
 
 COPY --from=snyk /usr/local/bin/snyk /usr/local/bin/snyk
+COPY --from=conftest /usr/local/bin/conftest /usr/local/bin/conftest
+
 
 COPY policies $POLICY_PATH
 COPY test/conftest.sh $POLICY_PATH
