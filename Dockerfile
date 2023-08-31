@@ -4,7 +4,7 @@ FROM docker.io/snyk/snyk:linux@sha256:91a21f9dfd09a93126d6b066f86f995013148253d9
 # To find the OPA version associated with conftest run the following:
 # podman run --rm -ti ${NEW_IMAGE}  --version
 FROM docker.io/openpolicyagent/conftest:latest@sha256:93c0fccb97538b24ecb8492c5c988f39d27ec7108d4ce99f217677ad50f4271e as conftest
-FROM registry.access.redhat.com/ubi8/ubi:8.8-1032
+FROM registry.access.redhat.com/ubi8/ubi:8.8-1032.1692772289
 
 ARG BATS_VERSION=1.6.0
 ARG cyclonedx_version=0.24.2
