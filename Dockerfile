@@ -1,5 +1,5 @@
 # Container image that runs your code
-FROM docker.io/snyk/snyk:linux@sha256:91a21f9dfd09a93126d6b066f86f995013148253d98284f300a7b69c12e1829c as snyk
+FROM docker.io/snyk/snyk:linux@sha256:606839193a672e026e832faac45d218f7ed55406d89d39c12fbd979a21ae5181 as snyk
 # Note that the version of OPA used by pr-checks must be updated manually to reflect dependabot updates
 # To find the OPA version associated with conftest run the following:
 # podman run --rm -ti ${NEW_IMAGE}  --version
