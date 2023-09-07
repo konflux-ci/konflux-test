@@ -1,9 +1,8 @@
-FROM registry.access.redhat.com/ubi8/ubi:8.8-1032
-RUN dnf -y --setopt=tsflags=nodocs install \
-    https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && \
-    dnf -y --setopt=tsflags=nodocs install \
+FROM registry.access.redhat.com/ubi8/ubi-minimal:8.8-1037
+RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && \
+    microdnf -y --setopt=tsflags=nodocs install \
     clamav \
     clamd \
     clamav-update && \
-    dnf clean all
+    microdnf clean all
 RUN freshclam
