@@ -5,6 +5,8 @@
 
 # returns TEST_OUTPUT json with predefined default. Function accepts optional args to modify result
 # see make_result_json_usage for usage
+set -euo pipefail
+
 make_result_json() {
   local RESULT=""
   local SUCCESSES=0
@@ -153,4 +155,20 @@ parse_test_output() {
     echo "Unsupported TEST_RESULT_FORMAT $TEST_RESULT_FORMAT"
     exit 1
   fi
+}
+
+# the function will be used by the tekton tasks of build-definitions
+handle_error()
+{
+  # The tekton task result path
+  TEST_RESULT_PATH=$1
+  if [ -z "$TEST_RESULT_PATH" ]; then
+    echo "Missing parameter TEST_RESULT_PATH" >&2
+    exit 2
+  fi
+
+  note="Unexpected error: Script errored at line ${LINENO}: ${BASH_COMMAND}."
+  ERROR_OUTPUT=$(make_result_json -r ERROR -t "$note")
+  echo "${ERROR_OUTPUT}" | tee "$(TEST_RESULT_PATH)"
+  exit 0
 }
