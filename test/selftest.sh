@@ -1,6 +1,7 @@
 #!/bin/sh -l
 
 # SPDX-License-Identifier: Apache-2.0
+set -euo pipefail
 
 check_return_code () {
    if [ $? -eq 0 ]; then
