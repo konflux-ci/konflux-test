@@ -3,7 +3,7 @@ FROM docker.io/snyk/snyk:linux@sha256:3e68a4293a304d261f63ddd1ae9291273a7285f9a7
 # Note that the version of OPA used by pr-checks must be updated manually to reflect dependabot updates
 # To find the OPA version associated with conftest run the following:
 # podman run --rm -ti ${NEW_IMAGE}  --version
-FROM docker.io/openpolicyagent/conftest:v0.44.1@sha256:93c0fccb97538b24ecb8492c5c988f39d27ec7108d4ce99f217677ad50f4271e as conftest
+FROM docker.io/openpolicyagent/conftest:v0.45.0@sha256:614b456d9a301ef3d43bf4d0d3b4cb79f5cd8f7a1364780c911c2f2d2d5766ad as conftest
 FROM registry.access.redhat.com/ubi8/ubi-minimal:8.8-1072
 
 
