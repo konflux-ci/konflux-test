@@ -29,3 +29,10 @@ test_warn_low_vulnerabilities {
     result[_].vulnerabilities_number == 1
     result[_].msg == "Found packages with low vulnerabilities. Consider updating to a newer version of those packages, they may no longer be affected by the reported CVEs."
 }
+
+test_warn_unknown_vulnerabilities {
+    result := warn_unknown_vulnerabilities with input as clair
+    result[_].details.name == "clair_unknown_vulnerabilities"
+    result[_].vulnerabilities_number == 1
+    result[_].msg == "Found packages with unknown vulnerabilities. Consider updating to a newer version of those packages, they may no longer be affected by the reported CVEs."
+}
