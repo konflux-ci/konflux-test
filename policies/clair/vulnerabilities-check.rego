@@ -64,3 +64,14 @@ warn_low_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "deta
   description := generate_description(rpms_with_low_vulnerabilities)
   url := "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
 }
+
+warn_unknown_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] {
+  rpms_with_unknown_vulnerabilities := get_vulnerabilities(input, "Unknown")
+  not count(rpms_with_unknown_vulnerabilities) == 0
+
+  name := "clair_unknown_vulnerabilities"
+  vulns_num := count_vulnerabilities(rpms_with_unknown_vulnerabilities)
+  msg := "Found packages with unknown vulnerabilities. Consider updating to a newer version of those packages, they may no longer be affected by the reported CVEs."
+  description := generate_description(rpms_with_unknown_vulnerabilities)
+  url := "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
+}
