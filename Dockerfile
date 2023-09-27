@@ -15,6 +15,7 @@ ENV POLICY_PATH="/project"
 
 RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && \
     microdnf -y --setopt=tsflags=nodocs --setopt=install_weak_deps=0 install \
+    findutils \
     jq \
     skopeo \
     tar \
