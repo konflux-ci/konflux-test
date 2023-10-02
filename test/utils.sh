@@ -5,8 +5,6 @@
 
 # returns TEST_OUTPUT json with predefined default. Function accepts optional args to modify result
 # see make_result_json_usage for usage
-set -euo pipefail
-
 make_result_json() {
   local RESULT=""
   local SUCCESSES=0
