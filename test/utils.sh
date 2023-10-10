@@ -158,18 +158,18 @@ parse_test_output() {
 }
 
 # The function will be used by the tekton tasks of build-definitions
-# It need tekton result path as parameter
+# It need tekton result path as parameter when generating TEST_OUTPUT task result is needed
 handle_error()
 {
   exit_code=$?
   if [ "${exit_code}" -ne 0 ]; then
-    # The tekton task result path
-    TEST_OUTPUT_PATH=$1
-    if [ -z "$TEST_OUTPUT_PATH" ]; then
-      echo "Missing parameter TEST_OUTPUT_PATH" >&2
-      exit 2
+    if [ $# == 0 ]; then
+      echo "Unexpected error: Script errored at command: ${BASH_COMMAND}."
+      exit 0
     fi
 
+    # The tekton task result path
+    TEST_OUTPUT_PATH=$1
     note="Unexpected error: Script errored at command: ${BASH_COMMAND}."
     ERROR_OUTPUT=$(make_result_json -r ERROR -t "$note")
     echo "${ERROR_OUTPUT}" | tee "$TEST_OUTPUT_PATH"
