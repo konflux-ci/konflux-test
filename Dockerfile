@@ -1,5 +1,5 @@
 # Container image that runs your code
-FROM docker.io/snyk/snyk:linux@sha256:7e3a2a1e3c47a23101979a00d7ea2d8ea34175a200348fe876a529bc54c271e8 as snyk
+FROM docker.io/snyk/snyk:linux@sha256:c38e5101a63d55fe663ad57e39811d68787342abbbe843bb7c55a499d8103a97 as snyk
 FROM registry.access.redhat.com/ubi8/ubi-minimal:8.9-1029
 
 # Note that the version of OPA used by pr-checks must be updated manually to reflect conftest updates
