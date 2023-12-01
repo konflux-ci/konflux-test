@@ -4,7 +4,7 @@ violation_image_repository_deprecated[{"msg": msg, "details":{"name": name, "des
   input.release_categories[_] == "Deprecated"
 
   name := "image_repository_deprecated"
-  msg := "The container image shouldn't be built from a repository that is marked as 'Deprecated' in COMET."
+  msg := "The container image shouldn't be built from a repository that is marked as 'Deprecated' in Red Hat Catalog."
   description := "Deprecated images are no longer maintained and will accumulate security vulnerabilities without releasing a fixed version."
-  url := "https://source.redhat.com/groups/public/portfolio-programs-group/container_factory_blog/dont_build_on_deprecated_images"
+  url := "https://redhat-connect.gitbook.io/catalog-help/container-images/container-image-details/container-image-release-categories"
 }
