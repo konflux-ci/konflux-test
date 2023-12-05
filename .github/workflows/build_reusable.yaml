@@ -1,0 +1,66 @@
+on:
+  workflow_call:
+    inputs:
+      archs:
+        description: "Build image for defined architectures. Must be comma-separated list of architectures."
+        required: false
+        default: "amd64,ppc64le"
+        type: string
+      tags:
+        description: "Tags to be used for the image. Must be space separated list of tags."
+        required: true
+        type: string
+      push:
+        description: "Determine if image should be pushed into registry. By default image will be only built and tested locally."
+        required: false
+        type: boolean
+        default: false
+jobs:
+  build_container_image:
+    name: Build and check main image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Docker file code in the root directory
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-user-static podman
+
+      - name: Build Image
+        id: build-image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: hacbs-test
+          tags: ${{ inputs.tags }}
+          archs: ${{ inputs.archs }}
+          containerfiles: |
+            ./Dockerfile
+
+      - name: Selfcheck - Integration test inside the image
+        run: |
+          archs="${{ inputs.archs }}"
+          for i in ${archs//,/$IFS}
+          do
+            echo "START of testing architecture ${arch}"
+            podman run --arch "${arch}" --rm -t ${{ steps.build-image.outputs.image-with-tag }} /selftest.sh
+            echo "END of testing for architecture ${arch}"
+            echo
+          done
+
+      - name: Push To quay.io
+        id: push-to-quay
+        if: ${{ inputs.push }}
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.build-image.outputs.image }}
+          tags: ${{ steps.build-image.outputs.tags }}
+          registry: quay.io/redhat-appstudio
+          username: ${{ secrets.HACBS_TEST_QUAY_USER }}
+          password: ${{ secrets.HACBS_TEST_QUAY_TOKEN }}
+
+      - name: Print image url
+        if: ${{ inputs.push }}
+        run: echo "Image pushed to ${{ steps.push-to-quay.outputs.registry-paths }}"

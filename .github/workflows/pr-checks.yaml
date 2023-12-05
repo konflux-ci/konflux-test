@@ -39,30 +39,12 @@ jobs:
           dockerfile: Dockerfile
           ignore: DL3003,DL3013,DL3041,DL4006  # DL4006 seems broken
 
-  container_image_main:
-    name: Check main image build
-    runs-on: ubuntu-latest
-    container:
-      image: registry.fedoraproject.org/fedora:37
-      options: --privileged
-
-    steps:
-      - name: Check out Docker file code in the root directory
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Install packages
-        run: |
-          dnf install -y podman
-
-      - name: Build image
-        run: |
-          podman build -t hacbs-test:${{ github.sha }} .
-
-      - name: Selfcheck - Integration test inside the image
-        run: |
-          podman run --rm -t hacbs-test:${{ github.sha }} /selftest.sh
+  call-build-and-test-workflow:
+    name: Call build and test workflow
+    uses: ./.github/workflows/build_reusable.yaml
+    with:
+      tags: ${{ github.sha }}
+    secrets: inherit
 
   opa_policies_unittest:
     name: opa_policies_unittest
