@@ -14,20 +14,20 @@ check_return_code () {
 
 # Check yq presence
 yq --version
-check_return_code 
+check_return_code
 
 #Clair DATA
-curl -H "Content-type: application/json" -XGET 'https://quay.io/api/v1/repository/redhat-appstudio/sample-image/manifest/sha256:fc78d878b68b74c965bdb857fab8a87ef75bf7e411f561b3e5fee97382c785ab/security?vulnerabilities=true' > clair.json
+curl -s -H "Content-type: application/json" -XGET 'https://quay.io/api/v1/repository/redhat-appstudio/sample-image/manifest/sha256:fc78d878b68b74c965bdb857fab8a87ef75bf7e411f561b3e5fee97382c785ab/security?vulnerabilities=true' > clair.json
 
 #RPM MANIFEST
-curl -X GET 'https://catalog.redhat.com/api/containers/v1/images/id/624bfc54f5a0de7ee0c8335c/rpm-manifest?include=rpms' > rpm-manifest.json
+curl -s -X GET 'https://catalog.redhat.com/api/containers/v1/images/id/624bfc54f5a0de7ee0c8335c/rpm-manifest?include=rpms' > rpm-manifest.json
 
 # Label data from example image with valid labels
 skopeo inspect --no-tags docker://quay.io/redhat-appstudio/sample-image:test-labels-pass > label.json
 check_return_code
 
 # Deprecated Image
-curl -X 'GET' 'https://catalog.redhat.com/api/containers/v1/repositories/registry/registry.access.redhat.com/repository/rhscl%2Fnodejs-8-rhel7' -H 'accept: application/json' > image.json
+curl -s -X 'GET' 'https://catalog.redhat.com/api/containers/v1/repositories/registry/registry.access.redhat.com/repository/rhscl%2Fnodejs-8-rhel7' -H 'accept: application/json' > image.json
 
 # FBC Image label data from example fbc index image
 skopeo inspect --no-tags docker://quay.io/redhat-appstudio/sample-image:test-index-pass > fbc_label.json
