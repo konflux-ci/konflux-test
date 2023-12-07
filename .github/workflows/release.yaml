@@ -11,41 +11,21 @@ on:
         default: 'main'
 
 jobs:
-  build:
+  call-build-test-and-push-workflow:
+    name: Call build, test and push workflow
+    uses: ./.github/workflows/build_reusable.yaml
+    with:
+      tags: latest v${{ github.event.inputs.release-version }} ${{ github.sha }}
+      push: true
+    secrets: inherit
+
+  github-release:
     name: Build and push image
     runs-on: ubuntu-20.04
-
+    needs:
+      - call-build-test-and-push-workflow
     steps:
     - uses: actions/checkout@v4
-
-    - name: Install qemu dependency
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y qemu-user-static
-
-    - name: Build Image
-      id: build-image
-      uses: redhat-actions/buildah-build@v2
-      with:
-        image: hacbs-test
-        tags: latest v${{ github.event.inputs.release-version }} ${{ github.sha }}
-        archs: amd64,ppc64le
-        containerfiles: |
-          ./Dockerfile
-    # Podman Login action (https://github.com/redhat-actions/podman-login) also be used to log in,
-    # in which case 'username' and 'password' can be omitted.
-    - name: Push To quay.io
-      id: push-to-quay
-      uses: redhat-actions/push-to-registry@v2
-      with:
-        image: ${{ steps.build-image.outputs.image }}
-        tags: ${{ steps.build-image.outputs.tags }}
-        registry: quay.io/redhat-appstudio
-        username: ${{ secrets.HACBS_TEST_QUAY_USER }}
-        password: ${{ secrets.HACBS_TEST_QUAY_TOKEN }}
-
-    - name: Print image url
-      run: echo "Image pushed to ${{ steps.push-to-quay.outputs.registry-paths }}"
 
     - name: Bump version and push tag
       id: tag_version
