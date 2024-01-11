@@ -7,7 +7,6 @@ FROM registry.access.redhat.com/ubi8/ubi-minimal:8.9-1029
 # $ conftest --version
 ARG conftest_version=0.45.0
 ARG BATS_VERSION=1.6.0
-ARG cyclonedx_version=0.24.2
 ARG sbom_utility_version=0.12.0
 ARG OPM_VERSION=v1.26.3
 
@@ -28,9 +27,7 @@ RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.
     curl -s -L https://github.com/CycloneDX/sbom-utility/releases/download/v"${sbom_utility_version}"/sbom-utility-v"${sbom_utility_version}"-linux-amd64.tar.gz --output sbom-utility.tar.gz && \
     mkdir sbom-utility && tar -xf sbom-utility.tar.gz -C sbom-utility && rm sbom-utility.tar.gz && \
     cd /usr/bin && \
-    curl -s -OL https://github.com/CycloneDX/cyclonedx-cli/releases/download/v"${cyclonedx_version}"/cyclonedx-linux-x64 && \
     microdnf -y install libicu && \
-    chmod +x cyclonedx-linux-x64 && \
     microdnf clean all
 
 RUN ARCH=$(uname -m) && curl -s -L https://github.com/open-policy-agent/conftest/releases/download/v"${conftest_version}"/conftest_"${conftest_version}"_Linux_"$ARCH".tar.gz | tar -xz --no-same-owner -C /usr/bin/ && \
