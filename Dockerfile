@@ -1,6 +1,6 @@
 # Container image that runs your code
 FROM docker.io/snyk/snyk:linux@sha256:f2a967823bc2101fe1fd4e12fbb9ef4defd0c595bdaaec66e4cab9782b25504b as snyk
-FROM registry.access.redhat.com/ubi8/ubi-minimal:8.9-1029
+FROM registry.access.redhat.com/ubi8/ubi-minimal:8.9-1108
 
 # Note that the version of OPA used by pr-checks must be updated manually to reflect conftest updates
 # To find the OPA version associated with conftest run the following with the relevant version of conftest:
