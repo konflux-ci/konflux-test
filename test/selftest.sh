@@ -52,3 +52,7 @@ check_return_code
 echo "Test presence of snyk binary"
 snyk version
 check_return_code
+
+echo "Test presence of ec-cli binary"
+ec version
+check_return_code
