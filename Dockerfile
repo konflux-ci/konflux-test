@@ -23,7 +23,7 @@ RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.
     clamd \
     python39-pip \
     clamav-update && \
-    pip3 install --no-cache-dir python-dateutil yq && \
+    pip3 install --no-cache-dir yq && \
     curl -s -L https://github.com/CycloneDX/sbom-utility/releases/download/v"${sbom_utility_version}"/sbom-utility-v"${sbom_utility_version}"-linux-amd64.tar.gz --output sbom-utility.tar.gz && \
     mkdir sbom-utility && tar -xf sbom-utility.tar.gz -C sbom-utility && rm sbom-utility.tar.gz && \
     cd /usr/bin && \
