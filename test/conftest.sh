@@ -35,6 +35,13 @@
   [ "$status" -eq 0 ]
 }
 
+
+# CLAMAV for test_clamav
+@test "/project/clamav/virus-check" {
+  run conftest test --namespace required_checks --policy $POLICY_PATH/clamav/virus-check.rego clamav.yaml
+  [ "$status" -eq 1 ]
+}
+
 # REPOSITORY for test_repo
 # Test is expected to fail for deprecated Image.
 # Currently test passes even the json is not present. handle it better with output checks in later stage.

@@ -1,0 +1,18 @@
+clamav_output:
+  output: |
+    /tmp/test/eicar.txt: Win.Test.EICAR_HDB-1 FOUND
+    /work/content/usr/lib/firmware/ath11k/IPQ5018/hw1.0/m3_fw.b00.xz: Heuristics.Broken.Executable FOUND
+    A random debug output
+
+    ----------- SCAN SUMMARY -----------
+    Known viruses: 8682605
+    Engine version: 0.103.11
+    Scanned directories: 3620
+    Scanned files: 21578
+    Infected files: 2
+    Data scanned: 3150.81 MB
+    Data read: 1602.33 MB (ratio 1.97:1)
+    Time: 297.045 sec (4 m 57 s)
+    Start Date: 2024:01:16 09:34:47
+    End Date:   2024:01:16 09:39:44
+    Executed-on: Scan was executed on version - ClamAV 0.103.11/27155/Mon Jan 15 09:42:55 2024

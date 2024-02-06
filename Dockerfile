@@ -1,5 +1,6 @@
 # Container image that runs your code
 FROM docker.io/snyk/snyk:linux@sha256:a5ad00d08b0555d93f6a0c0d136a62161ed50b5ac84f8bad35738897db76d87f as snyk
+FROM quay.io/enterprise-contract/ec-cli:snapshot@sha256:8b8ec0ddc271f181da6adfb33af5f161cd2bf177019b8f4f85dc5eea82771818 AS ec-cli
 FROM registry.access.redhat.com/ubi8/ubi-minimal:8.9-1108.1706795067
 
 # Note that the version of OPA used by pr-checks must be updated manually to reflect conftest updates
@@ -43,6 +44,8 @@ RUN ARCH=$(uname -m) && curl -s -L https://github.com/open-policy-agent/conftest
 ENV PATH="${PATH}:/sbom-utility"
 
 COPY --from=snyk /usr/local/bin/snyk /usr/local/bin/snyk
+
+COPY --from=ec-cli /usr/bin/ec /usr/local/bin/ec
 
 COPY policies $POLICY_PATH
 COPY test/conftest.sh $POLICY_PATH
