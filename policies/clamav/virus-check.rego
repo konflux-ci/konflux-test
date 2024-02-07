@@ -19,7 +19,7 @@ warn_heuristic_malware_files[{"msg": msg, "details": {"filename": filename, "vir
 	filename := hit.filename
 	virname := hit.virname
 	msg := sprintf("Detected potential malware '%s' by heuristics in %s", [virname, filename])
-	description := "The heuristic check detected a potential malware. (Heuristic checks have higher possibility of false postive results.)"
+	description := "The heuristic check detected a potential malware. (Heuristic checks have higher possibility of false positive results.)"
 
 	hit.is_heuristic # we want to only warn for heuristic checks
 }
