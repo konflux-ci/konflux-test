@@ -1,6 +1,6 @@
 # Container image that runs your code
 FROM docker.io/snyk/snyk:linux@sha256:97ca76137cca984ccee944253dc48dda871ad02a27172f4359dea92e7196213b as snyk
-FROM quay.io/enterprise-contract/ec-cli:snapshot@sha256:aa20605cf7c47b4ee4935751b5dbdcf9c9af6658e205d9503ce79cca9075fa84 AS ec-cli
+FROM quay.io/enterprise-contract/ec-cli:snapshot@sha256:bcab149404368a4b77ae3656094f1d1b611b7dee1951fd46ee5e24cc89915a5e AS ec-cli
 FROM registry.access.redhat.com/ubi8/ubi-minimal:8.9-1108.1706795067
 
 # Note that the version of OPA used by pr-checks must be updated manually to reflect conftest updates
