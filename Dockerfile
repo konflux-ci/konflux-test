@@ -1,7 +1,7 @@
 # Container image that runs your code
 FROM docker.io/snyk/snyk:linux@sha256:24adc43bcebd703b2f8f3e175fbcd595bc77c36778f24ef0c2203b04a960bc03 as snyk
 FROM quay.io/enterprise-contract/ec-cli:snapshot@sha256:1c8bb8b6359ff05a743d228d2a713655799028808932d65aaaca84d7c3535e92 AS ec-cli
-FROM registry.access.redhat.com/ubi8/ubi-minimal:8.9-1108.1706795067
+FROM registry.access.redhat.com/ubi8/ubi-minimal:8.9-1137
 
 # Note that the version of OPA used by pr-checks must be updated manually to reflect conftest updates
 # To find the OPA version associated with conftest run the following with the relevant version of conftest:
