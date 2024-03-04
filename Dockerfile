@@ -1,5 +1,5 @@
 # Container image that runs your code
-FROM docker.io/snyk/snyk:linux@sha256:24adc43bcebd703b2f8f3e175fbcd595bc77c36778f24ef0c2203b04a960bc03 as snyk
+FROM docker.io/snyk/snyk:linux@sha256:178b4192cd1aa4e2d67cb41efa6526a998480f7369e97efa2e77f4eb8c286c5e as snyk
 FROM quay.io/enterprise-contract/ec-cli:snapshot@sha256:1c8bb8b6359ff05a743d228d2a713655799028808932d65aaaca84d7c3535e92 AS ec-cli
 FROM registry.access.redhat.com/ubi9/ubi-minimal:9.3-1552
 
