@@ -176,3 +176,51 @@ handle_error()
     exit 0
   fi
 }
+
+
+# The function will be used by the tekton tasks of build-definitions
+# It returns a map of manifests in an image index received by running `skopeo inspect --no-tags --raw` on an image
+get_image_index_manifests() {
+  local image_url=""
+
+  #Usage information
+  get_image_index_manifests_usage()
+  {
+    echo "
+  get_image_index_manifests  -i IMAGE_URL
+  " >&2
+    exit 2
+  }
+
+  local OPTIND opt
+  while getopts "i:" opt; do
+      case "${opt}" in
+          i)
+              image_url="${OPTARG}" ;;
+          *)
+              get_image_index_manifests_usage ;;
+      esac
+  done
+  shift $((OPTIND-1))
+
+  if [ -z "${image_url}" ]; then
+    echo "Missing parameter: -i IMAGE_URL" >&2
+    exit 2
+  fi
+
+  local skopeo_command="skopeo inspect --no-tags --raw"
+  skopeo_command+=" docker://${image_url}"
+
+  if ! command_output=$(eval "$skopeo_command"); then
+    echo "The image could not be inspected" >&2
+    exit 1
+  fi
+
+  image_manifests=''
+  if [ "$(echo "${command_output}" | jq 'has("manifests")')" = "true" ]; then
+    image_manifests=$(echo "${command_output}" | jq -rce ' .manifests | map ( {(.platform.architecture|tostring|ascii_downcase):  .digest} ) | add' )
+  fi
+
+  echo "${image_manifests}"
+
+}

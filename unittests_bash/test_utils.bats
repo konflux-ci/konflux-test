@@ -15,6 +15,17 @@ setup() {
         C2=$( echo "${OUTPUT}" | jq 'del(.timestamp)' | jq -Sc)
         [ "${C1}" = "${C2}" ]
     }
+
+    skopeo() {
+        if [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://valid-url" ]]; then
+            echo '{"schemaVersion":2,"mediaType":"application/vnd.oci.image.index.v1+json","manifests":[{"mediaType":"application/vnd.oci.image.manifest.v1+json","digest":"sha256:f3d43a4e4e5371c9d972fa6a17144be940ddf3a3fd9185e2a4149a4c20e51e55","size":928,"platform":{"architecture":"amd64","os":"linux"}},{"mediaType":"application/vnd.oci.image.manifest.v1+json","digest":"sha256:8e8229030a72efe300422eca38af80fae9b166361ae0f3ede8fb2fdad987f38f","size":928,"platform":{"architecture":"arm64","os":"linux"}}]}'
+            return 0
+        else
+            echo 'Command execution failed'
+            return 1
+        fi
+    }
+
 }
 
 @test "Result: missing result" {
@@ -95,4 +106,21 @@ setup() {
     parse_test_output testname sarif unittests_bash/data/sarif_failures.json
     EXPECTED_JSON='{"result":"FAILURE","timestamp":"whatever","note":"For details, check Tekton task log.","namespace":"default","successes":0,"failures":1,"warnings":0}'
     test_json_eq "${EXPECTED_JSON}" "${TEST_OUTPUT}"
+}
+
+@test "Get Image Index Manifests: missing IMAGE_URL" {
+    run get_image_index_manifests
+    [ "$status" -eq 2 ]
+}
+
+@test "Get Image Index Manifests: invalid-url" {
+    run get_image_index_manifests -i invalid-url
+    EXPECTED_RESPONSE='The image could not be inspected'
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+}
+
+@test "Get Image Index Manifests: success with raw flag" {
+    run get_image_index_manifests -i valid-url
+    EXPECTED_RESPONSE='{"amd64":"sha256:f3d43a4e4e5371c9d972fa6a17144be940ddf3a3fd9185e2a4149a4c20e51e55","arm64":"sha256:8e8229030a72efe300422eca38af80fae9b166361ae0f3ede8fb2fdad987f38f"}'
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
