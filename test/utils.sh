@@ -208,29 +208,20 @@ get_image_manifests() {
     exit 2
   fi
 
-  local skopeo_command="skopeo inspect --no-tags --raw"
-  skopeo_command+=" docker://${image_url}"
-
-  if ! command_output=$(eval "$skopeo_command"); then
-    echo "The image could not be inspected" >&2
+  if ! raw_inspect_output=$(skopeo inspect --no-tags --raw docker://"${image_url}"); then
+    echo "The raw image inspect command failed" >&2
     exit 1
   fi
 
   image_manifests=''
-  if [ "$(echo "${command_output}" | jq 'has("manifests")')" = "true" ]; then
-    image_manifests=$(echo "${command_output}" | jq -rce ' .manifests | map ( {(.platform.architecture|tostring|ascii_downcase):  .digest} ) | add' )
+  if [ "$(echo "${raw_inspect_output}" | jq 'has("manifests")')" = "true" ]; then
+    image_manifests=$(echo "${raw_inspect_output}" | jq -rce ' .manifests | map ( {(.platform.architecture|tostring|ascii_downcase):  .digest} ) | add' )
   else
-    local image_arch_command="skopeo inspect --no-tags --config"
-    image_arch_command+=" docker://${image_url}"
-
-    local image_arch=''
-    local image_arch_command_output=''
-    if ! image_arch_command_output=$(eval "$image_arch_command"); then
-      echo "Could not get the arch for the image manifest" >&2
+    if ! image_manifest_command_output=$(skopeo inspect --no-tags docker://"${image_url}"); then
+      echo "The image manifest could not be inspected" >&2
       exit 1
     fi
-    image_arch=$(echo "${image_arch_command_output}" | jq -rce '.architecture')
-    image_manifests=$(echo "${command_output}" | jq -rce --arg ARCH "$image_arch" '{($ARCH): .config.digest}' )
+    image_manifests=$(echo "${image_manifest_command_output}" | jq -rce '{(.Architecture) : .Digest}')
   fi
 
   echo "${image_manifests}"
