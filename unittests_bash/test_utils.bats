@@ -20,6 +20,11 @@ setup() {
         if [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://valid-url" ]]; then
             echo '{"schemaVersion":2,"mediaType":"application/vnd.oci.image.index.v1+json","manifests":[{"mediaType":"application/vnd.oci.image.manifest.v1+json","digest":"sha256:f3d43a4e4e5371c9d972fa6a17144be940ddf3a3fd9185e2a4149a4c20e51e55","size":928,"platform":{"architecture":"amd64","os":"linux"}},{"mediaType":"application/vnd.oci.image.manifest.v1+json","digest":"sha256:8e8229030a72efe300422eca38af80fae9b166361ae0f3ede8fb2fdad987f38f","size":928,"platform":{"architecture":"arm64","os":"linux"}}]}'
             return 0
+        elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--config" && $4 == "docker://valid-image-manifest-url" ]]; then
+            echo '{"architecture": "arm64"}'
+            return 0
+        elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://valid-image-manifest-url" || $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://valid-image-manifest-invalid-url"  ]]; then
+            echo '{"schemaVersion": 2,"mediaType": "application/vnd.oci.image.manifest.v1+json","config": {"mediaType": "application/vnd.oci.image.config.v1+json","digest": "sha256:826def60fd1aa34f5090c9db60016773d91ecc324304d0ac3b01d","size": 14208}}'
         else
             echo 'Command execution failed'
             return 1
@@ -109,18 +114,30 @@ setup() {
 }
 
 @test "Get Image Index Manifests: missing IMAGE_URL" {
-    run get_image_index_manifests
+    run get_image_manifests
     [ "$status" -eq 2 ]
 }
 
 @test "Get Image Index Manifests: invalid-url" {
-    run get_image_index_manifests -i invalid-url
+    run get_image_manifests -i invalid-url
     EXPECTED_RESPONSE='The image could not be inspected'
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
 }
 
 @test "Get Image Index Manifests: success with raw flag" {
-    run get_image_index_manifests -i valid-url
+    run get_image_manifests -i valid-url
     EXPECTED_RESPONSE='{"amd64":"sha256:f3d43a4e4e5371c9d972fa6a17144be940ddf3a3fd9185e2a4149a4c20e51e55","arm64":"sha256:8e8229030a72efe300422eca38af80fae9b166361ae0f3ede8fb2fdad987f38f"}'
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get Image Manifest Digest: success with raw flag" {
+    run get_image_manifests -i valid-image-manifest-url
+    EXPECTED_RESPONSE='{"arm64":"sha256:826def60fd1aa34f5090c9db60016773d91ecc324304d0ac3b01d"}'
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get Image Manifest Digest: invalid-image-manifest-url" {
+    run get_image_manifests -i invalid-image-manifest-url
+    EXPECTED_RESPONSE='The image could not be inspected'
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
 }
