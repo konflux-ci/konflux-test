@@ -179,15 +179,15 @@ handle_error()
 
 
 # The function will be used by the tekton tasks of build-definitions
-# It returns a map of manifests in an image index received by running `skopeo inspect --no-tags --raw` on an image
-get_image_index_manifests() {
+# It returns a map of {arch:digest} for the given image_url
+get_image_manifests() {
   local image_url=""
 
   #Usage information
-  get_image_index_manifests_usage()
+  get_image_manifests_usage()
   {
     echo "
-  get_image_index_manifests  -i IMAGE_URL
+  get_image_manifests  -i IMAGE_URL
   " >&2
     exit 2
   }
@@ -198,7 +198,7 @@ get_image_index_manifests() {
           i)
               image_url="${OPTARG}" ;;
           *)
-              get_image_index_manifests_usage ;;
+              get_image_manifests_usage ;;
       esac
   done
   shift $((OPTIND-1))
@@ -219,6 +219,18 @@ get_image_index_manifests() {
   image_manifests=''
   if [ "$(echo "${command_output}" | jq 'has("manifests")')" = "true" ]; then
     image_manifests=$(echo "${command_output}" | jq -rce ' .manifests | map ( {(.platform.architecture|tostring|ascii_downcase):  .digest} ) | add' )
+  else
+    local image_arch_command="skopeo inspect --no-tags --config"
+    image_arch_command+=" docker://${image_url}"
+
+    local image_arch=''
+    local image_arch_command_output=''
+    if ! image_arch_command_output=$(eval "$image_arch_command"); then
+      echo "Could not get the arch for the image manifest" >&2
+      exit 1
+    fi
+    image_arch=$(echo "${image_arch_command_output}" | jq -rce '.architecture')
+    image_manifests=$(echo "${command_output}" | jq -rce --arg ARCH "$image_arch" '{($ARCH): .config.digest}' )
   fi
 
   echo "${image_manifests}"
