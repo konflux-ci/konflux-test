@@ -66,6 +66,27 @@
                 }
               },
               {
+                "Severity": "Unknown",
+                "NamespaceName": "pyupio",
+                "Link": "",
+                "FixedBy": "1.34.1-r3",
+                "Description": "TEST Patched vulnerability",
+                "Name": "pyup.io-42219 (PVE-2021-42219)",
+                "Metadata": {
+                  "UpdatedBy": "pyupio",
+                  "RepoName": "pypi",
+                  "RepoLink": "https://pypi.org/simple",
+                  "DistroName": "",
+                  "DistroVersion": "",
+                  "NVD": {
+                    "CVSSv3": {
+                      "Vectors": "",
+                      "Score": ""
+                    }
+                  }
+                }
+              },
+              {
                 "Severity": "Critical",
                 "NamespaceName": "pyupio",
                 "Link": "",
@@ -108,6 +129,27 @@
                 }
               },
               {
+                "Severity": "Low",
+                "NamespaceName": "pyupio",
+                "Link": "",
+                "FixedBy": "1.34.1-r3",
+                "Description": "TEST patched vulnerability",
+                "Name": "pyup.io-42556(CVE-2021-3575)",
+                "Metadata": {
+                  "UpdatedBy": "pyupio",
+                  "RepoName": "pypi",
+                  "RepoLink": "https://pypi.org/simple",
+                  "DistroName": "",
+                  "DistroVersion": "",
+                  "NVD": {
+                    "CVSSv3": {
+                      "Vectors": "CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:U/C:N/I:H/A:N",
+                      "Score": 5.7
+                    }
+                  }
+                }
+              },
+              {
                 "Severity": "Medium",
                 "NamespaceName": "pyupio",
                 "Link": "",
@@ -133,8 +175,29 @@
                 "NamespaceName": "pyupio",
                 "Link": "",
                 "FixedBy": "",
-                "Description": "Pip 21.1 updates its dependency 'urllib3' to v1.26.4 due to security issues. (TEST that the same CVE is not reportted twice)",
+                "Description": "Pip 21.1 updates its dependency 'urllib3' to v1.26.4 due to security issues. (TEST that the same CVE is not reported twice)",
                 "Name": "pyup.io-40291 (CVE-2021-28363)",
+                "Metadata": {
+                  "UpdatedBy": "pyupio",
+                  "RepoName": "pypi",
+                  "RepoLink": "https://pypi.org/simple",
+                  "DistroName": "",
+                  "DistroVersion": "",
+                  "NVD": {
+                    "CVSSv3": {
+                      "Vectors": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+                      "Score": 6.5
+                    }
+                  }
+                }
+              },
+              {
+                "Severity": "Critical",
+                "NamespaceName": "pyupio",
+                "Link": "",
+                "FixedBy": "1.34.1-r3",
+                "Description": "Pip 21.1 updates its dependency 'urllib3' to v1.26.4 due to security issues. (TEST an patched vulnerability)",
+                "Name": "pyup.io-40291 (CVE-2021-28367)",
                 "Metadata": {
                   "UpdatedBy": "pyupio",
                   "RepoName": "pypi",
@@ -225,6 +288,36 @@
                 "FixedBy": "1.2.12-r0",
                 "Description": "TEST: The same vulnerability, but different version of package",
                 "Name": "CVE-2018-25032",
+                "Metadata": {
+                  "UpdatedBy": "alpine-main-v3.15-updater",
+                  "RepoName": null,
+                  "RepoLink": null,
+                  "DistroName": "Alpine Linux",
+                  "DistroVersion": "",
+                  "NVD": {
+                    "CVSSv3": {
+                      "Vectors": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                      "Score": 7.5
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "Name": "zlib",
+            "VersionFormat": "",
+            "NamespaceName": "",
+            "AddedBy": "sha256:59bf1c3509f33515622619af21ed55bbe26d24913cedbca106468a5fb37a50c3",
+            "Version": "1.2.11-r3",
+            "Vulnerabilities": [
+              {
+                "Severity": "High",
+                "NamespaceName": "alpine-main-v3.15-updater",
+                "Link": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-25032",
+                "FixedBy": "",
+                "Description": "An unpatched vulnerability",
+                "Name": "CVE-2018-25045",
                 "Metadata": {
                   "UpdatedBy": "alpine-main-v3.15-updater",
                   "RepoName": null,
