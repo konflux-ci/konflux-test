@@ -5,4 +5,5 @@ RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.
     clamd \
     clamav-update && \
     microdnf clean all
+COPY whitelist.ign2 /var/lib/clamav/whitelist.ign2
 RUN freshclam
