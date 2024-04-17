@@ -57,6 +57,10 @@ echo "Test presence of ec-cli binary"
 ec version
 check_return_code
 
+echo "Test presence of cosign binary"
+cosign version
+check_return_code
+
 # Test clamscan output format, we are parsing it so we relay on it (including foramt of virus report)
 echo "Test clamscan output format"
 echo "this is for a test" >> /tmp/virus-test.txt
