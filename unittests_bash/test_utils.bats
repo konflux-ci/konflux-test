@@ -26,7 +26,7 @@ setup() {
         elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://valid-image-manifest-url" || $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://invalid-image-manifest-url"  ]]; then
             echo '{"schemaVersion": 2,"mediaType": "application/vnd.oci.image.manifest.v1+json","config": {"mediaType": "application/vnd.oci.image.config.v1+json","digest": "sha256:826def60fd1aa34f5090c9db60016773d91ecc324304d0ac3b01d","size": 14208}}'
         else
-            echo 'Command execution failed'
+            echo 'Unrecognized call to mock skopeo'
             return 1
         fi
     }
