@@ -31,6 +31,15 @@ setup() {
         fi
     }
 
+    oras() {
+        if [[ $1 == "push" && $2 == "--no-tty" && $3 == "valid-image-manifest-url:sha256-826def60fd1aa34f5090c9db60016773d91ecc324304d0ac3b01d.sarif" && $4 == "unittests_bash/data/sarif_successes.json:application/sarif+json" ]]; then
+            echo 'Pushed [registry] valid-image-manifest-url:sha256-826def60fd1aa34f5090c9db60016773d91ecc324304d0ac3b01d.sarif'
+            echo 'Digest: sha256:826def60fd1aa34f5090c9db60016773d91ecc324304d0ac3b01d'
+        else
+            echo 'Unrecognized call to mock oras'
+            return 1
+        fi
+    }
 }
 
 @test "Result: missing result" {
@@ -111,6 +120,14 @@ setup() {
     parse_test_output testname sarif unittests_bash/data/sarif_failures.json
     EXPECTED_JSON='{"result":"FAILURE","timestamp":"whatever","note":"For details, check Tekton task log.","namespace":"default","successes":0,"failures":1,"warnings":0}'
     test_json_eq "${EXPECTED_JSON}" "${TEST_OUTPUT}"
+}
+
+@test "ORAS upload: sarif file" {
+    TEST_OUTPUT=$(upload_file valid-image-manifest-url application/sarif+json sarif unittests_bash/data/sarif_successes.json)
+    EXPECTED_OUTPUT='Pushed [registry] valid-image-manifest-url:sha256-826def60fd1aa34f5090c9db60016773d91ecc324304d0ac3b01d.sarif
+Digest: sha256:826def60fd1aa34f5090c9db60016773d91ecc324304d0ac3b01d'
+    /usr/bin/diff -u <(echo "$TEST_OUTPUT") <(echo "$EXPECTED_OUTPUT")
+    [[ "${EXPECTED_OUTPUT}" = "${TEST_OUTPUT}" ]]
 }
 
 @test "Get Image Index Manifests: missing IMAGE_URL" {

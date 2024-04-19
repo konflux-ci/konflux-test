@@ -2,6 +2,8 @@
 FROM docker.io/snyk/snyk:linux@sha256:c7f21c3d71f64d592e427e78d5043375c9b93e304f70fdbbd8ca7306cbb0ba1f as snyk
 FROM quay.io/enterprise-contract/ec-cli:snapshot@sha256:141a7cd25ce0d098b1e40fd75d6f75873f8709c5f96f6340993b269c56e3f387 AS ec-cli
 FROM gcr.io/projectsigstore/cosign:v1.13.6@sha256:366bf5a7e882e9748e2b05f620258f8eab89ef4e3597001279291a88486c4fdf as cosign-bin
+#FROM quay.io/konflux-ci/oras:latest as oras
+FROM quay.io/redhat-user-workloads/ralphjbean-tenant/oras/oras:f281406da00d033e9f99a4d2010a66b69257972e as oras
 FROM registry.access.redhat.com/ubi9/ubi-minimal:9.3-1612
 
 # Note that the version of OPA used by pr-checks must be updated manually to reflect conftest updates
@@ -50,6 +52,7 @@ COPY --from=ec-cli /usr/bin/ec /usr/local/bin/ec
 
 COPY --from=cosign-bin /ko-app/cosign /usr/local/bin/cosign
 
+COPY --from=oras /usr/bin/oras /usr/local/bin/oras
 
 COPY policies $POLICY_PATH
 COPY test/conftest.sh $POLICY_PATH

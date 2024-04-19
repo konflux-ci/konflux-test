@@ -148,11 +148,58 @@ parse_test_output() {
     then
       echo "Task $TEST_NAME failed because of the following issues:"
       jq '.[].failures // []|map(.metadata.details.name) | unique' "$TEST_RESULT_FILE"
-    fi    
+    fi
   else
     echo "Unsupported TEST_RESULT_FORMAT $TEST_RESULT_FORMAT"
     exit 1
   fi
+}
+
+# Push a file to quay registry
+upload_file() {
+  # The artifact to which the file pertains
+  OCI_SUBJECT=$1
+  # The type of the file
+  MEDIA_TYPE=$2
+  # The suffix of the tag to push
+  SUFFIX=$3
+  # The file to upload
+  UPLOAD_FILE=$4
+
+  if [ -z "$OCI_SUBJECT" ]; then
+    echo "Missing parameter OCI_SUBJECT" >&2
+    exit 2
+  fi
+  if [ -z "$MEDIA_TYPE" ]; then
+    echo "Missing parameter MEDIA_TYPE" >&2
+    exit 2
+  fi
+  if [ -z "$SUFFIX" ]; then
+    echo "Missing parameter SUFFIX" >&2
+    exit 2
+  fi
+  if [ -z "$UPLOAD_FILE" ]; then
+    echo "Missing parameter UPLOAD_FILE" >&2
+    exit 2
+  fi
+
+  if [ ! -f "$UPLOAD_FILE" ]; then
+    echo "File ${UPLOAD_FILE} doesn't exist" >&2
+    exit 2
+  fi
+
+  if ! raw_inspect_output=$(skopeo inspect --no-tags docker://"${OCI_SUBJECT}"); then
+    echo "Failed to inspect ${OCI_SUBJECT}" >&2
+    exit 2
+  fi
+  if ! DIGEST=$(echo "${raw_inspect_output}" | jq -r .Digest | sed 's/:/-/'); then
+    echo "Failed to identify digest of ${OCI_SUBJECT}"
+    exit 2
+  fi
+
+  REPO=$(echo "$OCI_SUBJECT" | awk -F ':' '{ print $1 }' | awk -F '@' '{ print $1 }')
+
+  oras push --no-tty "${REPO}:${DIGEST}.${SUFFIX}" "${UPLOAD_FILE}:${MEDIA_TYPE}"
 }
 
 # The function will be used by the tekton tasks of build-definitions
