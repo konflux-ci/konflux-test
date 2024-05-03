@@ -1,5 +1,5 @@
-# HACBS-TEST
-This is HACBS-test team repository.
+# Konflux-test
+This is Konflux-test repository for building the image of the same name.
 Purpose of this repo is to store resources, currently for tekton tasks and pipelines.
 
 ## Prerequisites
@@ -12,7 +12,7 @@ Install the following list of packages to run the policies locally.
 
 ## Policy Unit Testing
 
-In addition to [prerequisites](https://github.com/redhat-appstudio/hacbs-test#prerequisites) install the packages below to run unit testing.
+In addition to [prerequisites](https://github.com/konflux-ci/konflux-test#prerequisites) install the packages below to run unit testing.
 
   1. [OPA](https://www.openpolicyagent.org/docs/latest/#running-opa)
 
@@ -26,7 +26,7 @@ In this repository, we run `opa test policies unittests unittests/test_data -c >
 
 ## Policy Integration Testing
 
-In addition to [prerequisites](https://github.com/redhat-appstudio/hacbs-test#prerequisites) install the packages below to run integration testing.
+In addition to [prerequisites](https://github.com/konflux-ci/konflux-test#prerequisites) install the packages below to run integration testing.
 
   1. [BATS](https://github.com/bats-core/bats-core/releases)
 

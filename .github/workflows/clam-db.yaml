@@ -67,8 +67,8 @@ jobs:
         uses: redhat-actions/podman-login@v1
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ secrets.HACBS_TEST_QUAY_USER }}
-          password: ${{ secrets.HACBS_TEST_QUAY_TOKEN }}
+          username: ${{ secrets.KONFLUX_TEST_QUAY_USER }}
+          password: ${{ secrets.KONFLUX_TEST_QUAY_TOKEN }}
 
 
       - name: Push into registry
