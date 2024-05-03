@@ -8,7 +8,7 @@ Install the following list of packages to run the policies locally.
 
   1. [Conftest](https://www.conftest.dev/install/)
   2. [jq](https://snapcraft.io/jq)
-  3. [Skopeo](https://github.com/containers/skopeo/blob/main/install.md) 
+  3. [Skopeo](https://github.com/containers/skopeo/blob/main/install.md)
 
 ## Policy Unit Testing
 
@@ -35,8 +35,3 @@ Run Integration tests locally by export the policies directory path to `policies
 `export POLICY_PATH=policies`
 
 `sh test/entrypoint.sh`
-
-## Contact
-
-### team HACBS: https://coreos.slack.com/archives/C034UFMUSV6
-### forum HACBS: https://coreos.slack.com/archives/C030SGP2VB9
