@@ -31,7 +31,7 @@ jobs:
       id: tag_version
       uses: mathieudutour/github-tag-action@v6.2
       with:
-        github_token: ${{ secrets.HACBS_TEST_GITHUB_TOKEN }}
+        github_token: ${{ secrets.KONFLUX_TEST_GITHUB_TOKEN }}
         custom_tag: ${{ github.event.inputs.release-version }}
 
     - name: Create a GitHub release
