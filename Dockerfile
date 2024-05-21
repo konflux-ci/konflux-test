@@ -1,6 +1,6 @@
 # Container image that runs your code
 FROM docker.io/snyk/snyk:linux@sha256:4dd82a8e56f10ba540fb9bd31764def17120e6ffcbffee9e3b60afa41b6dc44c as snyk
-FROM quay.io/enterprise-contract/ec-cli:snapshot@sha256:c9e705ef35c130d49440310e0b8d73a2c654613a3fb637a63b35a6793a4cbe1f AS ec-cli
+FROM quay.io/enterprise-contract/ec-cli:snapshot@sha256:dc7d404596385e7d3c624ec0492524a1d57efe2b0c10cf0ec2158d49c0290a83 AS ec-cli
 FROM gcr.io/projectsigstore/cosign:v2.2.4@sha256:bed7ba33a8610c1607c16dee696f62bad168814016126abb9da01e9fb7cb2167 as cosign-bin
 FROM registry.access.redhat.com/ubi9/ubi-minimal:9.4-949.1714662671
 
@@ -46,7 +46,7 @@ ENV PATH="${PATH}:/sbom-utility"
 
 COPY --from=snyk /usr/local/bin/snyk /usr/local/bin/snyk
 
-COPY --from=ec-cli /usr/bin/ec /usr/local/bin/ec
+COPY --from=ec-cli /usr/local/bin/ec /usr/local/bin/ec
 
 COPY --from=cosign-bin /ko-app/cosign /usr/local/bin/cosign
 
