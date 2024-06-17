@@ -2,7 +2,7 @@
 FROM docker.io/snyk/snyk:linux@sha256:efd358452ee1c6fe63cca59c5b8f088b8fe4004b4518ef97873219d1d382b283 as snyk
 FROM quay.io/enterprise-contract/ec-cli:snapshot@sha256:dc7d404596385e7d3c624ec0492524a1d57efe2b0c10cf0ec2158d49c0290a83 AS ec-cli
 FROM gcr.io/projectsigstore/cosign:v2.2.4@sha256:bed7ba33a8610c1607c16dee696f62bad168814016126abb9da01e9fb7cb2167 as cosign-bin
-FROM registry.access.redhat.com/ubi9/ubi-minimal:9.4-949.1717074713
+FROM registry.access.redhat.com/ubi9/ubi-minimal:9.4-1134
 
 # Note that the version of OPA used by pr-checks must be updated manually to reflect conftest updates
 # To find the OPA version associated with conftest run the following with the relevant version of conftest:
