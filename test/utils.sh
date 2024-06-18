@@ -64,7 +64,7 @@ make_result_json() {
 
   # Generate mandatory fields
   OUTPUT=$(jq -rce \
-    --arg date "$(date +%s)" \
+    --arg date "$(date -u --iso-8601=seconds)" \
     --arg result "${RESULT}" \
     --arg note "${NOTE}" \
     --arg namespace "${NAMESPACE}" \
