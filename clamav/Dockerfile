@@ -1,5 +1,5 @@
-FROM registry.access.redhat.com/ubi8/ubi-minimal:8.10-896.1717584414
-RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && \
+FROM registry.access.redhat.com/ubi9/ubi-minimal:9.4-1134
+RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm && \
     microdnf -y --setopt=tsflags=nodocs install \
     clamav \
     clamd \
