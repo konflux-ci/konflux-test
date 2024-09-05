@@ -1,0 +1,48 @@
+name: Version check for clamav binary
+# This workflow checks periodically(6 AM daily) for newer
+# version of clamav 
+
+on:
+  schedule:
+  - cron: '0 6 * * *'
+
+
+jobs:
+  test:
+    name: Check for latest clamav version
+    runs-on: ubuntu-20.04
+
+    steps:
+     - name: Get clamav version from latest konflux-test release
+       id: vars
+       run: |
+         echo "currentVer=$(podman run --rm -t --entrypoint='/usr/bin/clamscan' quay.io/redhat-appstudio/konflux-test:latest --version)" >> $GITHUB_OUTPUT
+         if [ $? != 0 ]; then
+          echo "There was an issue getting current clamav version from konflux-test image."
+          exit 1
+         fi
+    
+     - name: Get latest clamav rpm version and compare
+       run: |
+         repoVer=$(podman run --rm -t --entrypoint="/usr/bin/rpm" quay.io/redhat-appstudio/konflux-test:latest --queryformat "%{VERSION}" -q clamav)
+         if [ $? != 0 ]; then
+          echo "There was an issue getting clamav package version."
+          exit 1
+         fi
+
+         # parse versions for comparison
+         repositoryVersion=$(echo $repoVer | sed 's/[^0-9]*//g')
+         currentVersion=$(echo ${{ steps.vars.outputs.currentVer}} | sed 's/[^0-9]*//g')
+
+         # get latest release of konflux-test
+         latestRelease=$(curl -s https://api.github.com/repos/konflux-ci/konflux-test/releases/latest | jq '.name')
+         
+         newLatest=$(echo $latestRelease | sed 's/[^0-9]*//g')
+         # increment release version and format it correctly
+         ((newLatest++))
+         newLatest=$(echo "$newLatest" | sed 's/[0-9]\B/&./g')
+
+         # compare versions, in case of newer version trigger a new release
+         if [ $repositoryVersion -gt $currentVersion]; then
+          curl --fail-with-body -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.KONFLUX_TEST_GITHUB_TOKEN }}" --request POST --data '{"ref":"main","inputs":{"release-version": "$newLatest"}}' https://api.github.com/repos/konflux-ci/konflux-test/actions/workflows/release.yaml/dispatches
+         fi
