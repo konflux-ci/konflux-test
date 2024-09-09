@@ -25,6 +25,7 @@ RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.
     clamd \
     csdiff \
     git \
+    python3-file-magic \
     python3-pip \
     clamav-update && \
     pip3 install --no-cache-dir yq && \
