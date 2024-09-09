@@ -43,6 +43,6 @@ jobs:
          newLatest=$(echo "$newLatest" | sed 's/[0-9]\B/&./g')
 
          # compare versions, in case of newer version trigger a new release
-         if [ $repositoryVersion -gt $currentVersion]; then
+         if [ $repositoryVersion -gt $currentVersion ]; then
           curl --fail-with-body -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.KONFLUX_TEST_GITHUB_TOKEN }}" --request POST --data '{"ref":"main","inputs":{"release-version": "$newLatest"}}' https://api.github.com/repos/konflux-ci/konflux-test/actions/workflows/release.yaml/dispatches
          fi
