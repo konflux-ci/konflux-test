@@ -1,5 +1,5 @@
 # Container image that runs your code
-FROM docker.io/snyk/snyk:linux@sha256:7aa7540f4073cc5f2c30f94d74ba819414c46e96756662f6a996da7f7261fa15 as snyk
+FROM docker.io/snyk/snyk:linux@sha256:3d54aefda934916f089a259fe91df470a82983a3c7926a1180c926ae380e6e11 as snyk
 FROM quay.io/enterprise-contract/ec-cli:snapshot@sha256:dc7d404596385e7d3c624ec0492524a1d57efe2b0c10cf0ec2158d49c0290a83 AS ec-cli
 FROM gcr.io/projectsigstore/cosign:v2.4.0@sha256:9d50ceb15f023eda8f58032849eedc0216236d2e2f4cfe1cdf97c00ae7798cfe as cosign-bin
 FROM registry.access.redhat.com/ubi9/ubi-minimal:9.4-1227
