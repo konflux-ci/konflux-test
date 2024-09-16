@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi9/ubi-minimal:9.4-1227
+FROM registry.access.redhat.com/ubi9/ubi-minimal:9.4-1227.1725849298
 RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm && \
     microdnf -y --setopt=tsflags=nodocs install \
     clamav \
