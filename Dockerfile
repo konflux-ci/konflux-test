@@ -27,6 +27,8 @@ RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.
     git \
     python3-file-magic \
     python3-pip \
+    ShellCheck \
+    csmock-plugin-shellcheck-core \
     clamav-update && \
     pip3 install --no-cache-dir yq && \
     curl -s -L https://github.com/CycloneDX/sbom-utility/releases/download/v"${sbom_utility_version}"/sbom-utility-v"${sbom_utility_version}"-linux-amd64.tar.gz --output sbom-utility.tar.gz && \
