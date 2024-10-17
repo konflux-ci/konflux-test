@@ -87,6 +87,27 @@
                 }
               },
               {
+                "Severity": "Negligible",
+                "NamespaceName": "pyupio",
+                "Link": "",
+                "FixedBy": "1.34.1-r4",
+                "Description": "TEST Negligible Patched vulnerability",
+                "Name": "pyup.io-42213 (PVE-2021-42213)",
+                "Metadata": {
+                  "UpdatedBy": "pyupio",
+                  "RepoName": "pypi",
+                  "RepoLink": "https://pypi.org/simple",
+                  "DistroName": "",
+                  "DistroVersion": "",
+                  "NVD": {
+                    "CVSSv3": {
+                      "Vectors": "",
+                      "Score": ""
+                    }
+                  }
+                }
+              },
+              {
                 "Severity": "Critical",
                 "NamespaceName": "pyupio",
                 "Link": "",

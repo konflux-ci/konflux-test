@@ -99,23 +99,27 @@ warn_unpatched_medium_vulnerabilities[{"msg": msg, "vulnerabilities_number": vul
 
 warn_low_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] {
   rpms_with_low_vulnerabilities := get_patched_vulnerabilities(input, "Low")
-  not count(rpms_with_low_vulnerabilities) == 0
+  rpms_with_negligible_vulnerabilities := get_patched_vulnerabilities(input, "Negligible")
+  rpms_with_low_neg_vulnerabilities = array.concat(rpms_with_low_vulnerabilities, rpms_with_negligible_vulnerabilities)
+  not count(rpms_with_low_neg_vulnerabilities) == 0
 
   name := "clair_low_vulnerabilities"
-  vulns_num := count_vulnerabilities(rpms_with_low_vulnerabilities)
-  msg := "Found packages with low vulnerabilities. Consider updating to a newer version of those packages, they may no longer be affected by the reported CVEs."
-  description := generate_description(rpms_with_low_vulnerabilities)
+  vulns_num := count_vulnerabilities(rpms_with_low_neg_vulnerabilities)
+  msg := "Found packages with low/negligible vulnerabilities. Consider updating to a newer version of those packages, they may no longer be affected by the reported CVEs."
+  description := generate_description(rpms_with_low_neg_vulnerabilities)
   url := "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
 }
 
 warn_unpatched_low_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] {
   rpms_with_unpatched_low_vulnerabilities := get_unpatched_vulnerabilities(input, "Low")
-  not count(rpms_with_unpatched_low_vulnerabilities) == 0
+  rpms_with_unpatched_negligible_vulnerabilities := get_unpatched_vulnerabilities(input, "Negligible")
+  rpms_with_unpatched_low_neg_vulnerabilities = array.concat(rpms_with_unpatched_low_vulnerabilities, rpms_with_unpatched_negligible_vulnerabilities)
+  not count(rpms_with_unpatched_low_neg_vulnerabilities) == 0
 
   name := "clair_unpatched_low_vulnerabilities"
-  vulns_num := count_vulnerabilities(rpms_with_unpatched_low_vulnerabilities)
-  msg := "Found packages with unpatched low vulnerabilities. These vulnerabilities don't have a known fix at this time."
-  description := generate_description(rpms_with_unpatched_low_vulnerabilities)
+  vulns_num := count_vulnerabilities(rpms_with_unpatched_low_neg_vulnerabilities)
+  msg := "Found packages with unpatched low/negligible vulnerabilities. These vulnerabilities don't have a known fix at this time."
+  description := generate_description(rpms_with_unpatched_low_neg_vulnerabilities)
   url := "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
 }
 
