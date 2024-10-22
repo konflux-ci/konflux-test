@@ -1,7 +1,7 @@
 # Container image that runs your code
 FROM docker.io/snyk/snyk:linux@sha256:e4293c9149762b7119844e98e24f31895dd409a9b63066a22b21f27ec0c991cf as snyk
 FROM quay.io/enterprise-contract/ec-cli:snapshot@sha256:dc7d404596385e7d3c624ec0492524a1d57efe2b0c10cf0ec2158d49c0290a83 AS ec-cli
-FROM gcr.io/projectsigstore/cosign:v2.4.1@sha256:b03690aa52bfe94054187142fba24dc54137650682810633901767d8a3e15b31 as cosign-bin
+FROM ghcr.io/sigstore/cosign/cosign:v2.4.1@sha256:b03690aa52bfe94054187142fba24dc54137650682810633901767d8a3e15b31 as cosign-bin
 FROM registry.access.redhat.com/ubi9/ubi-minimal:9.4-1227.1726694542
 
 # Note that the version of OPA used by pr-checks must be updated manually to reflect conftest updates
