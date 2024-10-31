@@ -79,3 +79,12 @@ jobs:
           image: ${{ steps.build-image.outputs.image }}
           tags: ${{ steps.build-image.outputs.tags }}
           registry: ${{ env.REGISTRY }}
+
+      - name: Push into registry konflux-ci/clamav-db # temporarily added step to push to quay.io/konflux-ci/clamav-db 
+        if: ${{ github.event_name != 'pull_request' }}  
+        id: push-to-quay-konflux-ci
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.build-image.outputs.image }}
+          tags: ${{ steps.build-image.outputs.tags }}
+          registry: quay.io/konflux-ci/clamav-db
