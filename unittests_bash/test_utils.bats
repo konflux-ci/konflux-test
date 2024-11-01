@@ -25,8 +25,36 @@ setup() {
             return 0
         elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://valid-image-manifest-url" || $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://invalid-image-manifest-url"  ]]; then
             echo '{"schemaVersion": 2,"mediaType": "application/vnd.oci.image.manifest.v1+json","config": {"mediaType": "application/vnd.oci.image.config.v1+json","digest": "sha256:826def60fd1aa34f5090c9db60016773d91ecc324304d0ac3b01d","size": 14208}}'
+        elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://invalid-fragment-fbc" || $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://valid-fragment-fbc" ]]; then
+            echo '{"annotations": {"org.opencontainers.image.base.name": "registry.redhat.io/openshift4/ose-operator-registry:v4.12"}}'
+            return 0
+        elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://valid-fragment-fbc-success" ]]; then
+            echo '{"annotations": {"org.opencontainers.image.base.name": "registry.redhat.io/openshift4/ose-operator-registry:v4.15"}}'
+            return 0
+        elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://valid-fragment-fbc-success-2" ]]; then
+            echo '{"annotations": {"org.opencontainers.image.base.name": "registry.redhat.io/openshift4/ose-operator-registry:v4.20"}}'
+            return 0
         else
             echo 'Unrecognized call to mock skopeo'
+            return 1
+        fi
+    }
+
+    opm() {
+        if [[ $1 == "render" && $2 == "valid-fragment-fbc" || $1 == "render" && $2 == "valid-fragment-fbc-success" || $1 == "render" && $2 == "valid-fragment-fbc-success-2" ]]; then
+            echo '{"schema": "olm.package", "name": "rhbk-operator"}{"schema": "olm.bundle", "package": "rhbk-operator", "image": "registry.redhat.io/rhbk/keycloak-operator-bundle@my-sha", "properties":[]}{"schema": "olm.package", "name": "not-rhbk-operator"}{"schema": "olm.bundle", "package": "not-rhbk-operator", "image": "registry.redhat.io/not-rhbk/operator-bundle@my-other-sha", "properties":[]}'
+            return 0
+        elif [[ $1 == "render" && $2 == "registry.redhat.io/redhat/redhat-operator-index:v4.15" ]]; then
+            echo '{"schema": "olm.package", "name": "rhbk-operator"}{"schema": "olm.bundle", "package": "rhbk-operator", "image": "registry.redhat.io/rhbk/keycloak-operator-bundle@random-image", "properties":[]}{"schema": "olm.package", "name": "not-rhbk-operator"}{"schema": "olm.bundle", "package": "not-rhbk-operator", "image": "registry.redhat.io/not-rhbk/operator-bundle@not-my-other-sha", "properties":[]}'
+            return 0
+        elif [[ $1 == "render" && $2 == "registry.io/random-index:v4.20" ]]; then
+            echo '{"schema": "olm.package", "name": "rhbk-operator"}{"schema": "olm.bundle", "package": "rhbk-operator", "image": "registry.redhat.io/rhbk/keycloak-operator-bundle@random-image", "properties":[]}{"schema": "olm.package", "name": "not-rhbk-operator"}{"schema": "olm.bundle", "package": "not-rhbk-operator", "image": "registry.redhat.io/not-rhbk/operator-bundle@my-other-sha", "properties":[]}'
+            return 0
+        elif [[ $1 == "render" && $2 == "registry.redhat.io/redhat/redhat-operator-index:v4.12" ]]; then
+            echo 'Invalid index'
+            return 1
+        else
+            echo 'Invalid value'
             return 1
         fi
     }
@@ -140,4 +168,47 @@ setup() {
     run get_image_manifests -i invalid-image-manifest-url
     EXPECTED_RESPONSE='The image manifest could not be inspected'
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+}
+
+@test "Get Unreleased Bundle: missing FBC_FRAGMENT" {
+    run get_unreleased_bundle
+    EXPECTED_RESPONSE='Missing parameter FBC_FRAGMENT'
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
+}
+
+@test "Get Unreleased Bundle: invalid-url" {
+    run get_unreleased_bundle -i invalid-url
+    EXPECTED_RESPONSE='Could not get ocp version for the fragment'
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+}
+
+@test "Get Unreleased Bundle: invalid-fragment-fbc" {
+    run get_unreleased_bundle -i invalid-fragment-fbc
+    EXPECTED_RESPONSE='Could not render image invalid-fragment-fbc'
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+}
+
+@test "Get Unreleased Bundle: valid-fragment-fbc and invalid index" {
+    run get_unreleased_bundle -i valid-fragment-fbc
+    EXPECTED_RESPONSE='Could not render image registry.redhat.io/redhat/redhat-operator-index:v4.12'
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+}
+
+@test "Get Unreleased Bundle: valid-fragment-fbc-success" {
+    run get_unreleased_bundle -i valid-fragment-fbc-success
+    EXPECTED_RESPONSE=$(echo "registry.redhat.io/rhbk/keycloak-operator-bundle@my-sha registry.redhat.io/not-rhbk/operator-bundle@my-other-sha"  | tr ' ' '\n')
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get Unreleased Bundle: valid-fragment-fbc-success and index with tag" {
+    run get_unreleased_bundle -i valid-fragment-fbc-success -b registry.redhat.io/redhat/redhat-operator-index:v4.27@randomsha256
+    EXPECTED_RESPONSE=$(echo "registry.redhat.io/rhbk/keycloak-operator-bundle@my-sha registry.redhat.io/not-rhbk/operator-bundle@my-other-sha"  | tr ' ' '\n')
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get Unreleased Bundle: valid-fragment-fbc-success-2 and custom index" {
+    run get_unreleased_bundle -i valid-fragment-fbc-success-2 -b registry.io/random-index:v4.20
+    EXPECTED_RESPONSE="registry.redhat.io/rhbk/keycloak-operator-bundle@my-sha"
+    echo ${output}
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
