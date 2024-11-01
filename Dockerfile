@@ -10,7 +10,7 @@ FROM registry.access.redhat.com/ubi9/ubi-minimal:9.4-1227.1726694542
 ARG conftest_version=0.45.0
 ARG BATS_VERSION=1.6.0
 ARG sbom_utility_version=0.12.0
-ARG OPM_VERSION=v1.26.3
+ARG OPM_VERSION=v1.40.0
 ARG UMOCI_VERSION=v0.4.7
 
 ENV POLICY_PATH="/project"
