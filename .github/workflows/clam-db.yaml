@@ -1,7 +1,7 @@
 name: Clamav DB
 
 # This workflow builds latest version of clamav-db and
-# pushes it to app-studio registry
+# pushes it to konflux-ci registry
 
 on:
   schedule:
@@ -19,8 +19,7 @@ on:
       - .github/workflows/clam-db.yaml
 
 env:
-  REGISTRY: quay.io/redhat-appstudio
-  REGISTRYCI: quay.io/konflux-ci
+  REGISTRY: quay.io/konflux-ci
   IMAGE_NAME: clamav-db
   VERSION_MAJOR: "v1"
   LATEST_TAG: latest
@@ -63,30 +62,11 @@ jobs:
         run: |
           podman run --rm -t ${{ steps.build-image.outputs.image-with-tag }} clamscan --version
 
-      - name: Log into registry
-        if: ${{ github.event_name != 'pull_request' }}  # don't login from PR; secrets are not passed to PRs from fork
-        uses: redhat-actions/podman-login@v1
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ secrets.KONFLUX_TEST_QUAY_USER }}
-          password: ${{ secrets.KONFLUX_TEST_QUAY_TOKEN }}
-
-
-      - name: Push into registry
-        if: ${{ github.event_name != 'pull_request' }}  # don't push image from PR
-        id: push-to-quay
-        uses: redhat-actions/push-to-registry@v2
-        with:
-          image: ${{ steps.build-image.outputs.image }}
-          tags: ${{ steps.build-image.outputs.tags }}
-          registry: ${{ env.REGISTRY }}
-
-
       - name: Log into registry konflux-ci
         if: ${{ github.event_name != 'pull_request' }}  # don't login from PR; secrets are not passed to PRs from fork
         uses: redhat-actions/podman-login@v1
         with:
-          registry: ${{ env.REGISTRYCI }}
+          registry: ${{ env.REGISTRY }}
           username: ${{ secrets.KONFLUX_CI_TEST_QUAY_USER }}
           password: ${{ secrets.KONFLUX_CI_TEST_QUAY_TOKEN}}
 
@@ -98,4 +78,4 @@ jobs:
         with:
           image: ${{ steps.build-image.outputs.image }}
           tags: ${{ steps.build-image.outputs.tags }}
-          registry: ${{ env.REGISTRYCI }}
+          registry: ${{ env.REGISTRY }}
