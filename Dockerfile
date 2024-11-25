@@ -15,7 +15,8 @@ ARG UMOCI_VERSION=v0.4.7
 
 ENV POLICY_PATH="/project"
 
-RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm && \
+RUN curl -k -s -L https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm --output epel-release-latest-9.noarch.rpm && \
+    rpm -Uvh epel-release-latest-9.noarch.rpm && \
     microdnf -y --setopt=tsflags=nodocs --setopt=install_weak_deps=0 install \
     findutils \
     jq \
@@ -32,17 +33,17 @@ RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.
     csmock-plugin-shellcheck-core \
     clamav-update && \
     pip3 install --no-cache-dir yq && \
-    curl -s -L https://github.com/CycloneDX/sbom-utility/releases/download/v"${sbom_utility_version}"/sbom-utility-v"${sbom_utility_version}"-linux-amd64.tar.gz --output sbom-utility.tar.gz && \
+    curl -k -s -L https://github.com/CycloneDX/sbom-utility/releases/download/v"${sbom_utility_version}"/sbom-utility-v"${sbom_utility_version}"-linux-amd64.tar.gz --output sbom-utility.tar.gz && \
     mkdir sbom-utility && tar -xf sbom-utility.tar.gz -C sbom-utility && rm sbom-utility.tar.gz && \
     cd /usr/bin && \
     microdnf -y install libicu && \
     microdnf clean all
 
-RUN ARCH=$(uname -m) && curl -s -L https://github.com/open-policy-agent/conftest/releases/download/v"${conftest_version}"/conftest_"${conftest_version}"_Linux_"$ARCH".tar.gz | tar -xz --no-same-owner -C /usr/bin/ && \
+RUN ARCH=$(uname -m) && curl -k -s -L https://github.com/open-policy-agent/conftest/releases/download/v"${conftest_version}"/conftest_"${conftest_version}"_Linux_"$ARCH".tar.gz | tar -xz --no-same-owner -C /usr/bin/ && \
     curl https://mirror.openshift.com/pub/openshift-v4/"$ARCH"/clients/ocp/stable/openshift-client-linux.tar.gz --output oc.tar.gz && tar -xzvf oc.tar.gz -C /usr/bin && rm oc.tar.gz && \
-    curl -s -LO "https://github.com/bats-core/bats-core/archive/refs/tags/v$BATS_VERSION.tar.gz" && \
-    curl -s -L https://github.com/operator-framework/operator-registry/releases/download/"${OPM_VERSION}"/linux-amd64-opm > /usr/bin/opm && chmod +x /usr/bin/opm && \
-    curl -s -L https://github.com/opencontainers/umoci/releases/download/"${UMOCI_VERSION}"/umoci.amd64 > /usr/bin/umoci && chmod +x /usr/bin/umoci && \
+    curl -k -s -LO "https://github.com/bats-core/bats-core/archive/refs/tags/v$BATS_VERSION.tar.gz" && \
+    curl -k -s -L https://github.com/operator-framework/operator-registry/releases/download/"${OPM_VERSION}"/linux-amd64-opm > /usr/bin/opm && chmod +x /usr/bin/opm && \
+    curl -k -s -L https://github.com/opencontainers/umoci/releases/download/"${UMOCI_VERSION}"/umoci.amd64 > /usr/bin/umoci && chmod +x /usr/bin/umoci && \
     tar -xf "v$BATS_VERSION.tar.gz" && \
     cd "bats-core-$BATS_VERSION" && \
     ./install.sh /usr && \
@@ -56,7 +57,6 @@ COPY --from=snyk /usr/local/bin/snyk /usr/local/bin/snyk
 COPY --from=ec-cli /usr/local/bin/ec /usr/local/bin/ec
 
 COPY --from=cosign-bin /ko-app/cosign /usr/local/bin/cosign
-
 
 COPY policies $POLICY_PATH
 COPY test/conftest.sh $POLICY_PATH
