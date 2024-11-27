@@ -1,3 +1,14 @@
+# Build step for check-payload tool
+FROM registry.access.redhat.com/ubi9/go-toolset:1.21.13-2.1729776560 as check-payload-build
+
+WORKDIR /opt/app-root/src
+
+ARG CHECK_PAYLOAD_VERSION=0.3.2
+
+RUN curl -k -s -L -o check-payload.tar.gz "https://github.com/openshift/check-payload/archive/refs/tags/${CHECK_PAYLOAD_VERSION}.tar.gz" && \
+    tar -xzf check-payload.tar.gz && rm check-payload.tar.gz && cd check-payload-${CHECK_PAYLOAD_VERSION} && \
+    CGO_ENABLED=0 go build -ldflags="-X main.Commit=${CHECK_PAYLOAD_VERSION}" -o /opt/app-root/src/check-payload-binary && chmod +x /opt/app-root/src/check-payload-binary
+
 # Container image that runs your code
 FROM docker.io/snyk/snyk:linux@sha256:21217bfb2623ef192c8e2c743d6f81d8eee19c407b158a1742e180be47bb1dd4 as snyk
 FROM quay.io/enterprise-contract/ec-cli:snapshot@sha256:dc7d404596385e7d3c624ec0492524a1d57efe2b0c10cf0ec2158d49c0290a83 AS ec-cli
@@ -57,6 +68,8 @@ COPY --from=snyk /usr/local/bin/snyk /usr/local/bin/snyk
 COPY --from=ec-cli /usr/local/bin/ec /usr/local/bin/ec
 
 COPY --from=cosign-bin /ko-app/cosign /usr/local/bin/cosign
+
+COPY --from=check-payload-build /opt/app-root/src/check-payload-binary /usr/bin/check-payload
 
 COPY policies $POLICY_PATH
 COPY test/conftest.sh $POLICY_PATH
