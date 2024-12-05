@@ -62,7 +62,7 @@ jobs:
           password: ${{ secrets.KONFLUX_TEST_QUAY_TOKEN }}
 
       - name: Push To quay.io
-        id: push-to-quay
+        id: push-to-quay-konflux-ci
         if: ${{ inputs.push }}
         uses: redhat-actions/push-to-registry@v2
         with:
@@ -74,4 +74,4 @@ jobs:
 
       - name: Print image url
         if: ${{ inputs.push }}
-        run: echo "Image pushed to ${{ steps.push-to-quay.outputs.registry-paths }}"
+        run: echo "Image pushed to ${{ steps.push-to-quay.outputs.registry-paths }} and ${{ steps.push-to-quay-konflux-ci.outputs.registry-paths }}"
