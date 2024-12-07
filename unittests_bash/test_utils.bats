@@ -23,6 +23,9 @@ setup() {
         elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "docker://valid-image-manifest-url" ]]; then
             echo '{"Architecture": "arm64", "Digest": "sha256:826def60fd1aa34f5090c9db60016773d91ecc324304d0ac3b01d"}'
             return 0
+        elif [[ $1 == "inspect" && $2 == "--config" && $3 == "docker://valid-image-manifest-url-2" ]]; then
+            echo '{"config": {"Labels": {"architecture":"arm64"}}}'
+            return 0
         elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://valid-image-manifest-url" || $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://invalid-image-manifest-url"  ]]; then
             echo '{"schemaVersion": 2,"mediaType": "application/vnd.oci.image.manifest.v1+json","config": {"mediaType": "application/vnd.oci.image.config.v1+json","digest": "sha256:826def60fd1aa34f5090c9db60016773d91ecc324304d0ac3b01d","size": 14208}}'
         elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://invalid-fragment-fbc" || $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://valid-fragment-fbc" ]]; then
@@ -44,6 +47,8 @@ setup() {
         if [[ $1 == "render" && $2 == "valid-fragment-fbc" || $1 == "render" && $2 == "valid-fragment-fbc-success" || $1 == "render" && $2 == "valid-fragment-fbc-success-2" ]]; then
             echo '{"invalid-control-char": "This is an invalid control char \\t", "schema": "olm.package", "name": "rhbk-operator"}{"schema": "olm.bundle", "package": "rhbk-operator", "image": "registry.redhat.io/rhbk/keycloak-operator-bundle@my-sha", "properties":[]}{"schema": "olm.package", "name": "not-rhbk-operator"}{"schema": "olm.bundle", "package": "not-rhbk-operator", "image": "registry.redhat.io/not-rhbk/operator-bundle@my-other-sha", "properties":[]}'
             return 0
+        elif [[ $1 == "render" && $2 == "valid-operator-bundle-1" ]]; then
+            echo '{"schema":"olm.bundle", "relatedImages": [{"name": "", "image": "quay.io/securesign/rhtas-operator:something"}]}'
         elif [[ $1 == "render" && $2 == "registry.redhat.io/redhat/redhat-operator-index:v4.15" ]]; then
             echo '{"schema": "olm.package", "name": "rhbk-operator"}{"schema": "olm.bundle", "package": "rhbk-operator", "image": "registry.redhat.io/rhbk/keycloak-operator-bundle@random-image", "properties":[]}{"schema": "olm.package", "name": "not-rhbk-operator"}{"schema": "olm.bundle", "package": "not-rhbk-operator", "image": "registry.redhat.io/not-rhbk/operator-bundle@not-my-other-sha", "properties":[]}'
             return 0
@@ -210,4 +215,40 @@ setup() {
     run get_unreleased_bundle -i valid-fragment-fbc-success-2 -b registry.io/random-index:v4.20
     EXPECTED_RESPONSE="registry.redhat.io/rhbk/keycloak-operator-bundle@my-sha"
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get Image Labels: valid-image-manifest-url-2" {
+    run get_image_labels valid-image-manifest-url-2
+    EXPECTED_RESPONSE="architecture=arm64"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get Image Labels: missing image" {
+    run get_image_labels
+    EXPECTED_RESPONSE="Missing image pull spec"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
+}
+
+@test "Get Image Labels: invalid-image-manifest-url" {
+    run get_image_labels invalid-image-manifest-url
+    EXPECTED_RESPONSE='Failed to inspect the image'
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+}
+
+@test "Get relatedImages from operator bundle: valid-operator-bundle-1" {
+    run extract_related_images_from_bundle valid-operator-bundle-1
+    EXPECTED_RESPONSE="quay.io/securesign/rhtas-operator:something"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get relatedImages from operator bundle: missing image" {
+    run extract_related_images_from_bundle
+    EXPECTED_RESPONSE="Missing image pull spec"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
+}
+
+@test "Get relatedImages from operator bundle: invalid-fragment-fbc" {
+    run extract_related_images_from_bundle invalid-fragment-fbc
+    EXPECTED_RESPONSE='Failed to render the image'
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
 }
