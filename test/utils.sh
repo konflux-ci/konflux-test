@@ -358,3 +358,44 @@ get_unreleased_bundle() {
   echo "${unreleased_bundles}" | tr ' ' '\n'
 
 }
+
+# This function will be used by tekton tasks in build-definitions
+# It returns a list of labels on the image
+get_image_labels() {
+  local image=$1
+
+  if [ -z "$image" ]; then
+    echo "Missing image pull spec" >&2
+    exit 2
+  fi
+
+  local image_labels
+  if ! image_labels=$(skopeo inspect --config docker://"${image}"); then
+    echo "Failed to inspect the image" >&2
+    exit 1
+  fi
+
+  echo "${image_labels}" | jq -r '.config.Labels // {} | to_entries[] | "\(.key)=\(.value)"'
+
+}
+
+# This function will be used by tekton tasks in build-definitions
+# It returns a list of relatedImages in the CSV of an operator bundle image
+extract_related_images_from_bundle(){
+  local image=$1
+
+  if [ -z "$image" ]; then
+    echo "Missing image pull spec" >&2
+    exit 2
+  fi
+
+  local bundle_render_out related_images
+  if ! bundle_render_out=$(opm render "${image}"); then
+    echo "Failed to render the image" >&2
+    exit 1
+  fi
+  related_images=$(echo "${bundle_render_out}" | tr -d '\000-\031' | jq -r '.relatedImages[]?.image')
+
+  echo "${related_images}" | tr ' ' '\n'
+
+}
