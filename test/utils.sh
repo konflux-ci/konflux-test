@@ -267,7 +267,7 @@ extract_unique_bundles_from_catalog() {
 
   # Jq query to extract unique bundles from `opm render` command output
   local jq_unique_bundles='select( .package == "'$PACKAGE_NAME'" ) | select(.schema == "olm.bundle") | select( [.properties[]|select(.type == "olm.deprecated")] == []) | "\(.image)"'
-  echo "$RENDER_OUT" | jq -r "$jq_unique_bundles"
+  echo "$RENDER_OUT" | tr -d '\000-\031' | jq -r "$jq_unique_bundles"
 }
 
 # Given output of `opm render` command and package name, this function returns
@@ -280,7 +280,7 @@ extract_unique_package_names_from_catalog() {
     exit 2
   fi
 
-  echo "$render_out_fbc" | jq -r 'select(.schema == "olm.package") | .name'
+  echo "$RENDER_OUT" | tr -d '\000-\031' | jq -r 'select(.schema == "olm.package") | .name'
 }
 
 # This function will be used by tekton tasks in build-definitions
