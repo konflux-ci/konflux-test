@@ -39,6 +39,8 @@ RUN rpm -Uvh epel-release-latest-9.noarch.rpm && \
     clamd \
     csdiff \
     git \
+    # Remove golang after https://github.com/openshift/check-payload/issues/231 is resolved
+    golang \
     python3-file-magic \
     python3-pip \
     ShellCheck \
