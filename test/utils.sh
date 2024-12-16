@@ -399,3 +399,58 @@ extract_related_images_from_bundle(){
   echo "${related_images}" | tr ' ' '\n'
 
 }
+
+# This function will be used by tasks in build-definitions
+# It returns a map of {source: [mirror1, mirror2]} for imageDigestMirrorSet yaml
+process_image_digest_mirror_set() {
+  local yaml_input="$1"
+  local pullspec_map="{"
+
+  if ! echo "${yaml_input}" | yq '.' &>/dev/null; then
+    echo "Invalid YAML input" >&2
+    exit 2
+  fi
+
+  for entry in $(yq --output-format=json '.spec.imageDigestMirrors' <<<"${yaml_input}" | jq -c '.[]'); do
+    source=$(echo "${entry}" | jq -r '.source')
+    mirrors_list=$(echo "${entry}" | jq -r '.mirrors | map("\"" + . + "\"") | join(",")')
+    pullspec_map+="\"${source}\":[${mirrors_list}],"
+  done
+
+  pullspec_map="${pullspec_map%,}}"
+
+  echo "${pullspec_map}"
+
+}
+
+# This function will be used by tasks in build-definitions
+# It replaces the image pullspec with the mirror and returns the modified pullspec
+# The image should be in `<image>:<tag>`, `<image>@<digest>` or `<image>:<tag>@<digest>` format
+replace_image_pullspec() {
+  local image="$1"
+  local mirror="$2"
+
+  if [[ -z "$image" || -z "$mirror" ]]; then
+    echo "Invalid input. Usage: replace_image_pullspec <image> <mirror>" >&2
+    exit 2
+  fi
+
+  local image_regex="^([^:@]+)(:[^@]+)?(@sha256:[a-f0-9]{64})?$"
+  if [[ "$image" =~ $image_regex ]]; then
+    local digest=""
+    if [[ "$image" =~ (@sha256:[a-f0-9]{64}) ]]; then
+      digest=$(echo "$image" | sed -E 's/^.*(@sha256:[a-f0-9]{64})$/\1/')
+      image=${image%%@*}
+    fi
+
+    local tag=""
+    if [[ "$image" =~ (:[^@]+) ]]; then
+      tag=$(echo "$image" | sed -E 's/^.*(:[^@]+).*$/\1/')
+    fi
+
+    echo "${mirror}${tag}${digest}"
+  else
+    echo "Invalid pullspec format: ${image}" >&2
+    exit 2
+  fi
+}
