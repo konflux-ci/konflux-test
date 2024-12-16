@@ -252,3 +252,60 @@ setup() {
     EXPECTED_RESPONSE='Failed to render the image'
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
 }
+
+@test "Process imageDigestMirrorSet: success" {
+    yaml_input=$(cat <<EOF
+---
+apiVersion: operator.openshift.io/v1alpha1
+kind: ImageDigestMirrorSet
+metadata:
+  name: example-mirror-set
+spec:
+  imageDigestMirrors:
+    - mirrors:
+        - quay.io/mirror-namespace/mirror-repo
+        - other-registry.io/namespace/repo
+      source: quay.io/gatekeeper/gatekeeper
+EOF
+)
+    run process_image_digest_mirror_set "${yaml_input}"
+    EXPECTED_RESPONSE="{\"quay.io/gatekeeper/gatekeeper\":[\"quay.io/mirror-namespace/mirror-repo\",\"other-registry.io/namespace/repo\"]}"
+    echo "${output}"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Process process_image_digest_mirror_set: invalid input" {
+    run process_image_digest_mirror_set "\"invalid yaml"
+    EXPECTED_RESPONSE="Invalid YAML input"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
+}
+
+@test "Replace image pullspec: invalid input" {
+    run replace_image_pullspec "quay.io/some/image"
+    EXPECTED_RESPONSE="Invalid input. Usage: replace_image_pullspec <image> <mirror>"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
+}
+
+@test "Replace image pullspec: success digest" {
+    run replace_image_pullspec "registry.io/unavailable/pullspec@sha256:7441ff12e3d200521512247e053f5ed1c6157bc5f1cbe818dd3cc46903a1c72f" "quay.io/some/mirror"
+    EXPECTED_RESPONSE="quay.io/some/mirror@sha256:7441ff12e3d200521512247e053f5ed1c6157bc5f1cbe818dd3cc46903a1c72f"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Replace image pullspec: success tag" {
+    run replace_image_pullspec "registry.io/unavailable/pullspec:latest" "quay.io/some/mirror"
+    EXPECTED_RESPONSE="quay.io/some/mirror:latest"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Replace image pullspec: success tag@sha256" {
+    run replace_image_pullspec "registry.io/unavailable/pullspec:latest@sha256:7441ff12e3d200521512247e053f5ed1c6157bc5f1cbe818dd3cc46903a1c72f" "quay.io/some/mirror"
+    EXPECTED_RESPONSE="quay.io/some/mirror:latest@sha256:7441ff12e3d200521512247e053f5ed1c6157bc5f1cbe818dd3cc46903a1c72f"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Replace image pullspec: invalid image format" {
+    run replace_image_pullspec "registry.io/unavailable/pullspec@sha256:short-sha" "quay.io/some/mirror"
+    EXPECTED_RESPONSE="Invalid pullspec format: registry.io/unavailable/pullspec@sha256:short-sha"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
+}
