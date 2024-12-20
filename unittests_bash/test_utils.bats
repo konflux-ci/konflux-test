@@ -37,6 +37,9 @@ setup() {
         elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://valid-fragment-fbc-success-2" ]]; then
             echo '{"annotations": {"org.opencontainers.image.base.name": "registry.redhat.io/openshift4/ose-operator-registry:v4.20"}}'
             return 0
+        elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://valid-fbc-fragment-isolated" ]]; then
+            echo '{"annotations": {"org.opencontainers.image.base.name": "registry.redhat.io/openshift4/ose-operator-registry:v4.15"}}'
+            return 0
         else
             echo 'Unrecognized call to mock skopeo'
             return 1
@@ -45,12 +48,17 @@ setup() {
 
     opm() {
         if [[ $1 == "render" && $2 == "valid-fragment-fbc" || $1 == "render" && $2 == "valid-fragment-fbc-success" || $1 == "render" && $2 == "valid-fragment-fbc-success-2" ]]; then
-            echo '{"invalid-control-char": "This is an invalid control char \\t", "schema": "olm.package", "name": "rhbk-operator"}{"schema": "olm.bundle", "package": "rhbk-operator", "image": "registry.redhat.io/rhbk/keycloak-operator-bundle@my-sha", "properties":[]}{"schema": "olm.package", "name": "not-rhbk-operator"}{"schema": "olm.bundle", "package": "not-rhbk-operator", "image": "registry.redhat.io/not-rhbk/operator-bundle@my-other-sha", "properties":[]}'
+            echo '{"invalid-control-char": "This is an invalid control char \\t", "schema": "olm.package", "name": "rhbk-operator"}{"schema": "olm.bundle", "package": "rhbk-operator", "image": "registry.redhat.io/rhbk/keycloak-operator-bundle@my-sha", "properties":[], "relatedImages": [{"name": "foo-bar", "image": "registry.redhat.io/foo/bar@sha256:my-bar-sha"}, {"name": "foo-baz", "image": "registry.redhat.io/foo/baz@sha256:my-sha"}]}{"schema": "olm.package", "name": "not-rhbk-operator"}{"schema": "olm.bundle", "package": "not-rhbk-operator", "image": "registry.redhat.io/not-rhbk/operator-bundle@my-other-sha", "properties":[], "relatedImages": [{"name": "foo-baz", "image": "registry.redhat.io/foo/baz@sha256:my-sha"}]}'
             return 0
+        elif [[ $1 == "render" && $2 == "valid-fbc-fragment-isolated" ]]; then
+            echo '{"invalid-control-char": "This is an invalid control char \\t", "schema": "olm.package", "name": "rhbk-operator"}{"schema": "olm.bundle", "package": "rhbk-operator", "image": "registry.redhat.io/rhbk/keycloak-operator-bundle@my-sha", "properties":[], "relatedImages": [{"name": "foo-bar", "image": "registry.redhat.io/foo/bar@sha256:my-bar-sha"}, {"name": "foo-baz", "image": "registry.redhat.io/foo/baz@sha256:my-sha"}]}'
         elif [[ $1 == "render" && $2 == "valid-operator-bundle-1" ]]; then
             echo '{"schema":"olm.bundle", "relatedImages": [{"name": "", "image": "quay.io/securesign/rhtas-operator:something"}]}'
         elif [[ $1 == "render" && $2 == "registry.redhat.io/redhat/redhat-operator-index:v4.15" ]]; then
-            echo '{"schema": "olm.package", "name": "rhbk-operator"}{"schema": "olm.bundle", "package": "rhbk-operator", "image": "registry.redhat.io/rhbk/keycloak-operator-bundle@random-image", "properties":[]}{"schema": "olm.package", "name": "not-rhbk-operator"}{"schema": "olm.bundle", "package": "not-rhbk-operator", "image": "registry.redhat.io/not-rhbk/operator-bundle@not-my-other-sha", "properties":[]}'
+            echo '{"schema": "olm.package", "name": "rhbk-operator"}{"schema": "olm.bundle", "package": "rhbk-operator", "image": "registry.redhat.io/rhbk/keycloak-operator-bundle@random-image", "properties":[], "relatedImages": [{"name": "foo-baz", "image": "registry.redhat.io/foo/baz@sha256:my-sha"}]}{"schema": "olm.package", "name": "not-rhbk-operator"}{"schema": "olm.bundle", "package": "not-rhbk-operator", "image": "registry.redhat.io/not-rhbk/operator-bundle@not-my-other-sha", "properties":[], "relatedImages": [{"name": "foo-baz", "image": "registry.redhat.io/foo/bar@sha256:my-bar-sha"}]}'
+            return 0
+        elif [[ $1 == "render" && $2 == "registry.io/random-index:v4.15" ]]; then
+            echo '{"schema": "olm.package", "name": "rhbk-operator"}{"schema": "olm.bundle", "package": "rhbk-operator", "image": "registry.redhat.io/rhbk/keycloak-operator-bundle@random-image", "properties":[], "relatedImages": [{"name": "foo-bar", "image": "registry.redhat.io/foo/bar@sha256:my-bar-sha"}, {"name": "foo-baz", "image": "registry.redhat.io/foo/baz@sha256:my-sha"}]}{"schema": "olm.package", "name": "not-rhbk-operator"}{"schema": "olm.bundle", "package": "not-rhbk-operator", "image": "registry.redhat.io/not-rhbk/operator-bundle@my-other-sha", "properties":[]}'
             return 0
         elif [[ $1 == "render" && $2 == "registry.io/random-index:v4.20" ]]; then
             echo '{"schema": "olm.package", "name": "rhbk-operator"}{"schema": "olm.bundle", "package": "rhbk-operator", "image": "registry.redhat.io/rhbk/keycloak-operator-bundle@random-image", "properties":[]}{"schema": "olm.package", "name": "not-rhbk-operator"}{"schema": "olm.bundle", "package": "not-rhbk-operator", "image": "registry.redhat.io/not-rhbk/operator-bundle@my-other-sha", "properties":[]}'
@@ -206,7 +214,7 @@ setup() {
 }
 
 @test "Get Unreleased Bundle: valid-fragment-fbc-success and index with tag" {
-    run get_unreleased_bundle -i valid-fragment-fbc-success -b registry.redhat.io/redhat/redhat-operator-index:v4.27@randomsha256
+    run get_unreleased_bundle -i valid-fragment-fbc-success -b registry.redhat.io/redhat/redhat-operator-index:v4.15@randomsha256
     EXPECTED_RESPONSE=$(echo "registry.redhat.io/rhbk/keycloak-operator-bundle@my-sha registry.redhat.io/not-rhbk/operator-bundle@my-other-sha"  | tr ' ' '\n')
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
@@ -214,6 +222,48 @@ setup() {
 @test "Get Unreleased Bundle: valid-fragment-fbc-success-2 and custom index" {
     run get_unreleased_bundle -i valid-fragment-fbc-success-2 -b registry.io/random-index:v4.20
     EXPECTED_RESPONSE="registry.redhat.io/rhbk/keycloak-operator-bundle@my-sha"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get Unreleased FBC related images: missing FBC_FRAGMENT" {
+    run get_unreleased_fbc_related_images
+    EXPECTED_RESPONSE='Missing parameter FBC_FRAGMENT'
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
+}
+
+@test "Get Unreleased FBC related images: invalid-url" {
+    run get_unreleased_fbc_related_images -i invalid-url
+    EXPECTED_RESPONSE='Could not get ocp version for the fragment'
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+}
+
+@test "Get Unreleased FBC related images: invalid-fragment-fbc" {
+    run get_unreleased_fbc_related_images -i invalid-fragment-fbc
+    EXPECTED_RESPONSE='Could not render image invalid-fragment-fbc'
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+}
+
+@test "Get Unreleased FBC related images: valid-fragment-fbc and invalid index" {
+    run get_unreleased_fbc_related_images -i valid-fragment-fbc
+    EXPECTED_RESPONSE='Could not render image registry.redhat.io/redhat/redhat-operator-index:v4.12'
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+}
+
+@test "Get Unreleased FBC related images: valid-fbc-fragment-isolated and missing index" {
+    run get_unreleased_fbc_related_images -i valid-fbc-fragment-isolated
+    EXPECTED_RESPONSE=$(echo "[ **\"registry.redhat.io/foo/bar@sha256:my-bar-sha\" ]" | tr ' ' '\n' | tr '*' ' ')
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get Unreleased FBC related images: valid-fbc-fragment-isolated and index with tag" {
+    run get_unreleased_fbc_related_images -i valid-fbc-fragment-isolated -b registry.redhat.io/redhat/redhat-operator-index:v4.15@randomsha256
+    EXPECTED_RESPONSE=$(echo "[ **\"registry.redhat.io/foo/bar@sha256:my-bar-sha\" ]" | tr ' ' '\n' | tr '*' ' ')
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get Unreleased FBC related images: valid-fbc-fragment-isolated and custom index" {
+    run get_unreleased_fbc_related_images -i valid-fbc-fragment-isolated -b registry.io/random-index:v4.20
+    EXPECTED_RESPONSE="[]"
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
 
