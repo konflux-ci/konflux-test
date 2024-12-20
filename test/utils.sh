@@ -271,6 +271,28 @@ extract_unique_bundles_from_catalog() {
 }
 
 # Given output of `opm render` command and package name, this function returns
+# all related images for the given package in the catalog
+extract_related_images_from_catalog() {
+  local RENDER_OUT="$1"
+  local PACKAGE_NAME="$2"
+
+  if [ -z "$RENDER_OUT" ]; then
+    echo "Missing 'opm render' output for the image" >&2
+    exit 2
+  fi
+
+  if [ -z "$PACKAGE_NAME" ]; then
+    echo "Missing package name" >&2
+    exit 2
+  fi
+
+  # Jq query to extract related images from `opm render` command output
+  local jq_related_images='select( .package == "'$PACKAGE_NAME'" ) | select(.schema == "olm.bundle") | select( [.properties[]|select(.type == "olm.deprecated")] == []) | ["\(.relatedImages[]? | .image)"]'
+  # flatten the lists into one and determine the unique values
+  echo "$RENDER_OUT" | tr -d '\000-\031' | jq "$jq_related_images" | jq -s "flatten(1) | unique"
+}
+
+# Given output of `opm render` command and package name, this function returns
 # unique package names in the catalog
 extract_unique_package_names_from_catalog() {
   local RENDER_OUT="$1"
@@ -356,6 +378,87 @@ get_unreleased_bundle() {
   unreleased_bundles=$(diff <(echo "$unique_bundles_fbc") <(echo "$unique_bundles_index") | grep '^<' | sed 's/^< //' | tr '\n' ' ')
 
   echo "${unreleased_bundles}" | tr ' ' '\n'
+
+}
+
+# This function will be used by tekton tasks in build-definitions
+# It returns a list of unreleased related images as indicated in a FBC fragment.
+# It compares the provided FBC fragment against the corresponding production index image
+get_unreleased_fbc_related_images() {
+  # FBC fragment containing the unreleased bundle
+  local FBC_FRAGMENT=""
+  local INDEX_IMAGE="registry.redhat.io/redhat/redhat-operator-index"
+
+ get_unreleased_fbc_related_images_usage()
+  {
+    echo "
+  get_unreleased_fbc_related_images  -i FBC_FRAGMENT [-b INDEX_IMAGE]
+  " >&2
+    exit 2
+  }
+
+  local opt
+  while getopts "i:b:" opt; do
+      case "${opt}" in
+          i)
+              FBC_FRAGMENT="${OPTARG}" ;;
+          b)
+              INDEX_IMAGE="${OPTARG}" ;;
+          *)
+              get_unreleased_fbc_related_images_usage ;;
+      esac
+  done
+
+  if [ -z "$FBC_FRAGMENT" ]; then
+    echo "Missing parameter FBC_FRAGMENT" >&2
+    exit 2
+  fi
+
+  # If the index image is provided and has a tag, remove it.
+  # The target ocp version is determined from the fragment
+  if [[ "$INDEX_IMAGE" == *:* ]]; then
+    INDEX_IMAGE="${INDEX_IMAGE%%:*}"
+  fi
+
+  #Get target ocp version from the fragment
+  local ocp_version
+  if ! ocp_version=$(get_ocp_version_from_fbc_fragment "$FBC_FRAGMENT"); then
+    echo "Could not get ocp version for the fragment" >&2
+    exit 1
+  fi
+
+  # Run opm render on the FBC fragment to extract package names
+  local render_out_fbc unique_bundles_fbc package_names
+  if ! render_out_fbc=$(opm render "$FBC_FRAGMENT"); then
+    echo "Could not render image $FBC_FRAGMENT" >&2
+    exit 1
+  fi
+  package_names=$(extract_unique_package_names_from_catalog "$render_out_fbc")
+
+  # Run opm render on the index image
+  local render_out_index unique_bundles_index tagged_index
+  tagged_index="${INDEX_IMAGE}:${ocp_version}"
+  if ! render_out_index=$(opm render "$tagged_index"); then
+    echo "Could not render image $tagged_index" >&2
+    exit 1
+  fi
+
+  # Get unique bundles for each package from the fragment and the index
+  for package_name in $package_names; do
+    related_images_fbc+="$(extract_related_images_from_catalog "$render_out_fbc" "$package_name")"$'\n'
+    related_images_index+="$(extract_related_images_from_catalog "$render_out_index" "$package_name")"$'\n'
+  done
+
+  # Ensure that the jq arrays are flattened and unique
+  related_images_fbc=$(echo "$related_images_fbc" | jq -s "flatten(1) | unique")
+  related_images_index=$(echo "$related_images_index" | jq -s "flatten(1) | unique")
+
+  # Get the images that are only in the fbc fragment
+  local unreleased_related_images
+  unreleased_related_images=$(jq -n --argjson released "$related_images_index" --argjson unreleased "$related_images_fbc" '{"released": $released,"unreleased":$unreleased} | .unreleased-.released')
+
+  # output as json array
+  echo -n "${unreleased_related_images}"
 
 }
 
