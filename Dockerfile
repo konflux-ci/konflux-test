@@ -10,7 +10,7 @@ RUN curl -k -s -L -o check-payload.tar.gz "https://github.com/openshift/check-pa
     CGO_ENABLED=0 go build -ldflags="-X main.Commit=${CHECK_PAYLOAD_VERSION}" -o /opt/app-root/src/check-payload-binary && chmod +x /opt/app-root/src/check-payload-binary
 
 # Container image that runs your code
-FROM docker.io/snyk/snyk:linux@sha256:e7403dd7529378608c12dea9db4abe4e7acc3f5aba95805e333acd14b8803f1d as snyk
+FROM docker.io/snyk/snyk:linux@sha256:3a408e2b39cf9ce8423c6cb0c02fa89af34893b244b9617170af5b4cb6c03d95 as snyk
 FROM quay.io/enterprise-contract/ec-cli:snapshot@sha256:dc7d404596385e7d3c624ec0492524a1d57efe2b0c10cf0ec2158d49c0290a83 AS ec-cli
 FROM ghcr.io/sigstore/cosign/cosign:v99.99.91@sha256:8caf794491167c331776203c60b7c69d4ff24b4b4791eba348d8def0fd0cc343 as cosign-bin
 FROM registry.access.redhat.com/ubi9/ubi-minimal:9.5
