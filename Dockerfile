@@ -5,9 +5,10 @@ WORKDIR /opt/app-root/src
 
 ARG CHECK_PAYLOAD_VERSION=0.3.2
 
-RUN curl -k -s -L -o check-payload.tar.gz "https://github.com/openshift/check-payload/archive/refs/tags/${CHECK_PAYLOAD_VERSION}.tar.gz" && \
+RUN curl -s -L -o check-payload.tar.gz "https://github.com/openshift/check-payload/archive/refs/tags/${CHECK_PAYLOAD_VERSION}.tar.gz" && \
     tar -xzf check-payload.tar.gz && rm check-payload.tar.gz && cd check-payload-${CHECK_PAYLOAD_VERSION} && \
-    CGO_ENABLED=0 go build -ldflags="-X main.Commit=${CHECK_PAYLOAD_VERSION}" -o /opt/app-root/src/check-payload-binary && chmod +x /opt/app-root/src/check-payload-binary
+    CGO_ENABLED=0 go build -ldflags="-X main.Commit=${CHECK_PAYLOAD_VERSION}" -o /opt/app-root/src/check-payload-binary && \
+    chmod +x /opt/app-root/src/check-payload-binary
 
 # Container image that runs your code
 FROM docker.io/snyk/snyk:linux@sha256:ca26401ab7b6506a2e22287b65c070775f4fdc9093c017e5dd2f5f16a2595ce4 as snyk
