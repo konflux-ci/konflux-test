@@ -2,6 +2,8 @@
 
 # SPDX-License-Identifier: Apache-2.0
 
+OPM_RENDER_CACHE=/tmp/konflux-test-opm-cache
+DEFAULT_INDEX_IMAGE="registry.redhat.io/redhat/redhat-operator-index"
 
 # returns TEST_OUTPUT json with predefined default. Function accepts optional args to modify result
 # see make_result_json_usage for usage
@@ -177,9 +179,99 @@ handle_error()
   fi
 }
 
+# The function can be used to parse an image url. It will return a json
+# object with keys:
+#
+# `registry_repository` - The repository of the image including an the registry and its optional port
+# `tag` - The tag of the image reference
+# `digest` - The digest of the image reference
+#
+# If an image tag or digest is not found then the values will be empty.
+parse_image_url() {
+  local image_url=$1
+
+  if [ -z "$image_url" ]; then
+    echo "parse_image_url: Missing positional parameter \$1 (image url)" >&2
+    exit 2
+  fi
+
+  digest=""
+  tag=""
+  registry_repository="$(echo -n "$image_url" | cut -d@ -f1)"
+
+  # Digest will be the last portion after an "@"
+  at_number=$(echo -n "$image_url" | tr -cd "@" | wc -c | tr -d '[:space:]')
+  colon_number=$(echo -n "$registry_repository" | tr -cd ":" | wc -c | tr -d '[:space:]')
+  if [[ $at_number == 1 ]]; then
+    digest="$(echo -n "${image_url}" | cut -d@ -f2)"
+  elif [[ $at_number != 0 ]]; then
+    # The only other supported format is registry/repository
+    echo "parse_image_url: $image_url does not match the format registry(:port)/repository(:tag)(@digest)"
+    exit 3
+  fi
+
+  # Isolate to find the tag and name
+  # Trim off digest
+  registry_repository="$(echo -n "$image_url" | cut -d@ -f1)"
+  if [[ $colon_number == 2 ]]; then
+    # format is now registry:port/repository:tag
+    # trim off everything after the last colon
+    tag=${registry_repository##*:}
+    registry_repository=${registry_repository%:*}
+  elif [[ $colon_number == 1 ]]; then
+    # we have either a port or a tag so inspect the content after
+    # the colon to determine if it is a valid tag.
+    # https://github.com/opencontainers/distribution-spec/blob/main/spec.md
+    # [a-zA-Z0-9_][a-zA-Z0-9._-]{0,127} is the regex for a valid tag
+    # If not a valid tag, leave the colon alone.
+    if [[ "$(echo -n "$registry_repository" | cut -d: -f2 | tr -d '[:space:]')" =~ ^([a-zA-Z0-9_][a-zA-Z0-9._-]{0,127})$ ]]; then
+      # We match a tag so trim it off
+      tag=$(echo -n "$registry_repository" | cut -d: -f2)
+      registry_repository=$(echo -n "$registry_repository" | cut -d: -f1)
+    fi
+  elif [[ $colon_number != 0 ]]; then
+    # The only other supported format is registry/repository
+    echo "parse_image_url: $image_url does not match the format registry(:port)/repository(:tag)(@digest)"
+    exit 3
+  fi
+
+  echo -n "{\"registry_repository\": \"$registry_repository\", \"tag\": \"$tag\", \"digest\": \"$digest\"}"
+}
+
+# Helper function to just get the pullspec in repository format
+get_image_registry_and_repository() {
+  local image_url=$1
+
+  parse_image_url "$image_url" | jq -jr '.registry_repository'
+}
+
+# Helper function to just get the pullspec in repository:tag format
+get_image_registry_repository_tag() {
+  local image_url=$1
+
+  parse_image_url "$image_url" | jq -jr '.registry_repository + if .tag != "" then ":" + .tag else "" end'
+}
+
+# Helper function to just get the pullspec in repository:tag@digest format
+get_image_registry_repository_tag_digest() {
+  local image_url=$1
+
+ parse_image_url "$image_url" | jq -jr '.registry_repository + if .tag != "" then ":" + .tag else "" end + if .digest != "" then "@" + .digest else "" end'
+}
+
+# Helper function to just get the pullspec in repository@digest format
+get_image_registry_repository_digest() {
+  local image_url=$1
+
+  parse_image_url "$image_url" | jq -jr '.registry_repository + if .digest != "" then "@" + .digest else "" end'
+}
 
 # The function will be used by the tekton tasks of build-definitions
 # It returns a map of {arch:digest} for the given image_url
+#
+# The architecture and digest for an image manifest are not part of the
+# spec: https://github.com/opencontainers/image-spec/blob/main/manifest.md
+# Instead, architecture and digest are properties that buildah sets by default.
 get_image_manifests() {
   local image_url=""
 
@@ -204,28 +296,69 @@ get_image_manifests() {
   shift $((OPTIND-1))
 
   if [ -z "${image_url}" ]; then
-    echo "Missing parameter: -i IMAGE_URL" >&2
+    echo "get_image_manifests: Missing keyword parameter (-i IMAGE_URL)" >&2
     exit 2
   fi
 
+  # Ensure that we don't have a tag and digest for skopeo
+  image_url=$(get_image_registry_repository_digest "$image_url")
   if ! raw_inspect_output=$(skopeo inspect --no-tags --raw docker://"${image_url}"); then
-    echo "The raw image inspect command failed" >&2
+    echo "get_image_manifests: The raw image inspect command failed" >&2
     exit 1
   fi
 
   image_manifests=''
   if [ "$(echo "${raw_inspect_output}" | jq 'has("manifests")')" = "true" ]; then
+    # We have an OCI image index, so return each of the included manifests
     image_manifests=$(echo "${raw_inspect_output}" | jq -rce ' .manifests | map ( {(.platform.architecture|tostring|ascii_downcase):  .digest} ) | add' )
   else
     if ! image_manifest_command_output=$(skopeo inspect --no-tags docker://"${image_url}"); then
-      echo "The image manifest could not be inspected" >&2
+      echo "get_image_manifests: The image manifest could not be inspected" >&2
       exit 1
     fi
-    image_manifests=$(echo "${image_manifest_command_output}" | jq -rce '{(.Architecture) : .Digest}')
+    if [[ "$(echo "${image_manifest_command_output}" | jq 'has("Architecture")')" = "true" && "$(echo "${image_manifest_command_output}" | jq 'has("Digest")')" = "true" ]]; then
+      image_manifests=$(echo "${image_manifest_command_output}" | jq -rce '{(.Architecture|tostring|ascii_downcase) : .Digest}')
+    else
+      echo "get_image_manifests: The image manifest does not have an architecture and digest" >&2
+      exit 1
+    fi
   fi
 
   echo "${image_manifests}"
+}
 
+# Get the repository:tag@digest for the base image as reported in the annotations
+get_base_image() {
+  local image="$1"
+
+  if [ -z "$image" ]; then
+    echo "get_base_image: Missing positional parameter \$1 (IMAGE)" >&2
+    exit 2
+  fi
+
+  # Ensure that we have a digest-pinned image manifest
+  image_manifest_digest=$(get_image_manifests -i "$image" | jq -er ".amd64")
+  if [ -z "$image_manifest_digest" ]; then
+    echo "get_base_image: manifest digest not found" >&2
+    exit 1
+  fi
+  image_manifest=$(parse_image_url "$image" | jq -ej ".registry_repository + \"@$image_manifest_digest\"")
+
+  # Get target ocp version from the fragment
+  local ocp_version annotations
+  annotations=$(get_image_annotations "$image_manifest")
+  base_image=$(echo "$annotations" | grep 'org.opencontainers.image.base.name=' | cut -d= -f2 || true)
+  base_image_digest=$(echo "$annotations" | grep 'org.opencontainers.image.base.digest=' | cut -d= -f2 || true)
+  # It is okay if the digest doesn't exist
+  if [ -z "$base_image" ]; then
+    echo "get_base_image: base image annotation not found" >&2
+    exit 1
+  fi
+  if [ -n "$base_image_digest" ]; then
+    # While the digests should match, we want to ensure that we use the digest reported
+    base_image="$(get_image_registry_repository_tag "$base_image")@$base_image_digest"
+  fi
+  echo -n "$base_image"
 }
 
 # This function will be used by tekton tasks in build-definitions
@@ -234,19 +367,14 @@ get_ocp_version_from_fbc_fragment() {
   local FBC_FRAGMENT="$1"
 
   if [ -z "$FBC_FRAGMENT" ]; then
-    echo "Missing FBC_FRAGMENT parameter" >&2
+    echo "get_ocp_version_from_fbc_fragment: Missing positional parameter \$1 (FBC_FRAGMENT)" >&2
     exit 2
   fi
 
-  #Get target ocp version from the fragment
-  local ocp_version
-  if ! ocp_version=$(skopeo inspect --no-tags --raw docker://"$FBC_FRAGMENT"); then
-    echo "Could not inspect image $FBC_FRAGMENT"
-    exit 1
-  fi
-
-  ocp_version=$(echo "$ocp_version" |  jq -r '.annotations."org.opencontainers.image.base.name"' | sed -e "s/@.*$//" -e "s/^.*://")
-  echo "$ocp_version"
+  local base_image
+  base_image=$(get_image_registry_repository_tag "$(get_base_image "$FBC_FRAGMENT")")
+  ocp_version=$(parse_image_url "$base_image" | jq -ej '.tag')
+  echo -n "$ocp_version"
 }
 
 # Given output of `opm render` command and package name, this function returns
@@ -256,12 +384,12 @@ extract_unique_bundles_from_catalog() {
   local PACKAGE_NAME="$2"
 
   if [ -z "$RENDER_OUT" ]; then
-    echo "Missing 'opm render' output for the image" >&2
+    echo "extract_unique_bundles_from_catalog: missing positional parameter \$1 (opm render output)" >&2
     exit 2
   fi
 
   if [ -z "$PACKAGE_NAME" ]; then
-    echo "Missing package name" >&2
+    echo "extract_unique_bundles_from_catalog: missing positional parameter \$2 (package name)" >&2
     exit 2
   fi
 
@@ -277,12 +405,12 @@ extract_related_images_from_catalog() {
   local PACKAGE_NAME="$2"
 
   if [ -z "$RENDER_OUT" ]; then
-    echo "Missing 'opm render' output for the image" >&2
+    echo "extract_related_images_from_catalog: missing positional parameter \$1 (opm render output)" >&2
     exit 2
   fi
 
   if [ -z "$PACKAGE_NAME" ]; then
-    echo "Missing package name" >&2
+    echo "extract_related_images_from_catalog: missing positional parameter \$2 (package name)" >&2
     exit 2
   fi
 
@@ -298,30 +426,28 @@ extract_unique_package_names_from_catalog() {
   local RENDER_OUT="$1"
 
   if [ -z "$RENDER_OUT" ]; then
-    echo "Missing 'opm render' output for the image" >&2
+    echo "extract_unique_package_names_from_catalog: missing positional parameter \$1 (opm render output)" >&2
     exit 2
   fi
 
   echo "$RENDER_OUT" | tr -d '\000-\031' | jq -r 'select(.schema == "olm.package") | .name'
 }
 
-# This function will be used by tekton tasks in build-definitions
-# It returns a list of unreleased bundles in the FBC fragment by comparing it with
-# the corresponding production index image
-get_unreleased_bundle() {
-  # FBC fragment containing the unreleased bundle
+# This function can be used to get the target catalog image for a FBC fragment.
+# context: https://konflux-ci.dev/architecture/ADR/0026-specifying-ocp-targets-for-fbc.html
+get_target_fbc_catalog_image() {
   local FBC_FRAGMENT=""
-  local INDEX_IMAGE="registry.redhat.io/redhat/redhat-operator-index"
+  local INDEX_IMAGE="$DEFAULT_INDEX_IMAGE"
 
-  get_unreleased_bundle_usage()
+  get_target_fbc_catalog_image_usage()
   {
     echo "
-  get_unreleased_bundle  -i FBC_FRAGMENT [-b INDEX_IMAGE]
+  get_target_fbc_catalog_image -i FBC_FRAGMENT -b INDEX_IMAGE
   " >&2
     exit 2
   }
 
-  local opt
+  local OPTIND opt
   while getopts "i:b:" opt; do
       case "${opt}" in
           i)
@@ -329,75 +455,249 @@ get_unreleased_bundle() {
           b)
               INDEX_IMAGE="${OPTARG}" ;;
           *)
-              get_unreleased_bundle_usage ;;
+              get_target_fbc_catalog_image_usage ;;
       esac
   done
 
   if [ -z "$FBC_FRAGMENT" ]; then
-    echo "Missing parameter FBC_FRAGMENT" >&2
+    echo "get_target_fbc_catalog_image: missing keyword parameter (-i FBC_FRAGMENT)" >&2
+    exit 2
+  fi
+
+  if [ -z "$INDEX_IMAGE" ]; then
+    echo "get_target_fbc_catalog_image: missing keyword parameter (-b INDEX_IMAGE)" >&2
     exit 2
   fi
 
   # If the index image is provided and has a tag, remove it.
   # The target ocp version is determined from the fragment
-  if [[ "$INDEX_IMAGE" == *:* ]]; then
-    INDEX_IMAGE="${INDEX_IMAGE%%:*}"
-  fi
+  INDEX_IMAGE=$(parse_image_url "$INDEX_IMAGE" | jq -jr '.registry_repository')
 
   #Get target ocp version from the fragment
   local ocp_version
   if ! ocp_version=$(get_ocp_version_from_fbc_fragment "$FBC_FRAGMENT"); then
-    echo "Could not get ocp version for the fragment" >&2
+    echo "get_target_fbc_catalog_image: could not get ocp version for the fragment" >&2
     exit 1
   fi
-
-  # Run opm render on the FBC fragment to extract package names
-  local render_out_fbc unique_bundles_fbc package_names
-  if ! render_out_fbc=$(opm render "$FBC_FRAGMENT"); then
-    echo "Could not render image $FBC_FRAGMENT" >&2
-    exit 1
-  fi
-  package_names=$(extract_unique_package_names_from_catalog "$render_out_fbc")
-
-  # Run opm render on the index image
-  local render_out_index unique_bundles_index tagged_index
-  tagged_index="${INDEX_IMAGE}:${ocp_version}"
-  if ! render_out_index=$(opm render "$tagged_index"); then
-    echo "Could not render image $tagged_index" >&2
-    exit 1
-  fi
-
-  # Get unique bundles for each package from the fragment and the index
-  for package_name in $package_names; do
-    unique_bundles_fbc+="$(extract_unique_bundles_from_catalog "$render_out_fbc" "$package_name")"$'\n'
-    unique_bundles_index+="$(extract_unique_bundles_from_catalog "$render_out_index" "$package_name")"$'\n'
-  done
-
-  # Compare the bundle lists and return the diff
-  local unreleased_bundles
-  unreleased_bundles=$(diff <(echo "$unique_bundles_fbc") <(echo "$unique_bundles_index") | grep '^<' | sed 's/^< //' | tr '\n' ' ')
-
-  echo "${unreleased_bundles}" | tr ' ' '\n'
-
+  
+  echo "$INDEX_IMAGE:$ocp_version"
 }
 
-# This function will be used by tekton tasks in build-definitions
-# It returns a list of unreleased related images as indicated in a FBC fragment.
-# It compares the provided FBC fragment against the corresponding production index image
-get_unreleased_fbc_related_images() {
-  # FBC fragment containing the unreleased bundle
-  local FBC_FRAGMENT=""
-  local INDEX_IMAGE="registry.redhat.io/redhat/redhat-operator-index"
+# This function can be used to render catalogs using a dedicated cache directory.
+# It will make it easier to share processing of the catalogs within functions and
+# outside of them.
+# The OPM_RENDER_CACHE environment variable determines where to store the cache and
+# rendered catalogs will be stored in a directory matching the index's digest.
+render_opm() {
+  local RENDER_TARGET=""
 
- get_unreleased_fbc_related_images_usage()
+  render_opm_usage()
   {
     echo "
-  get_unreleased_fbc_related_images  -i FBC_FRAGMENT [-b INDEX_IMAGE]
+  render_opm -t RENDER_TARGET
   " >&2
     exit 2
   }
 
-  local opt
+  local OPTIND opt
+  while getopts "t:" opt; do
+      case "${opt}" in
+          t)
+              RENDER_TARGET="${OPTARG}" ;;
+          *)
+              render_opm_usage ;;
+      esac
+  done
+
+  if [ -z "$RENDER_TARGET" ]; then
+    echo "render_opm: missing keyword parameter (-t RENDER_TARGET)" >&2
+    exit 2
+  fi
+
+  local CACHE_DIR CACHE_SUBDIR RENDER_OUTPUT
+  # shellcheck disable=SC2001
+  CACHE_DIR=$(echo "$OPM_RENDER_CACHE" | sed 's:/*$::')
+  # Ensure that the cache directory is present
+  mkdir -p "$CACHE_DIR"
+  CACHE_SUBDIR=$(parse_image_url "$RENDER_TARGET" | jq -jr '.registry_repository + if .tag != "" then "/" + .tag else "" end + if .digest != "" then "/" + .digest else "" end')
+  if [[ -d "$CACHE_DIR/$CACHE_SUBDIR" ]]; then
+    cat "$CACHE_DIR/$CACHE_SUBDIR/catalog"
+  else
+    if ! RENDER_OUTPUT=$(opm render "$RENDER_TARGET"); then
+      echo "render_opm: could not render catalog $RENDER_TARGET" >&2
+      exit 1
+    fi
+    mkdir -p "$CACHE_DIR/$CACHE_SUBDIR"
+    echo "$RENDER_OUTPUT" | tee "$CACHE_DIR/$CACHE_SUBDIR/catalog"
+  fi
+}
+
+# This helper function can be used to render and extract information from a FBC
+# fragment and its matching index image (i.e according to the tag for the fragment's
+# base image). 
+# It will identify all packages in the FBC fragment and then apply a function on each
+# of those packages in both the FBC fragment as well as the reference index.
+# This function will return a list of content that is present in the FBC fragment but not
+# in the target index according to the extraction operation provided.
+# `-e unique_bundles` invokes extract_unique_bundles_from_catalog()
+# `-e related_images` invokes extract_related_images_from_catalog()
+extract_differential_fbc_metadata() {
+  local EXTRACT_OPERATION=""
+  local FBC_FRAGMENT=""
+  local INDEX_IMAGE="$DEFAULT_INDEX_IMAGE"
+
+  extract_differential_fbc_metadata_usage()
+  {
+    echo "
+  extract_differential_fbc_metadata -i FBC_FRAGMENT -b INDEX_IMAGE -e EXTRACT_OPERATION
+  " >&2
+    exit 2
+  }
+
+  local OPTIND opt
+  while getopts "i:b:e:" opt; do
+      case "${opt}" in
+          i)
+              FBC_FRAGMENT="${OPTARG}" ;;
+          b)
+              INDEX_IMAGE="${OPTARG}" ;;
+          e)
+              EXTRACT_OPERATION="${OPTARG}" ;;
+          *)
+              extract_differential_fbc_metadata_usage ;;
+      esac
+  done
+
+  if [ -z "$FBC_FRAGMENT" ]; then
+    echo "extract_differential_fbc_metadata: missing keyword parameter (-i FBC_FRAGMENT)" >&2
+    exit 2
+  fi
+
+  if [ -z "$EXTRACT_OPERATION" ]; then
+    echo "extract_differential_fbc_metadata: missing keyword parameter (-e EXTRACT_OPERATION)" >&2
+    exit 2
+  fi
+
+  if [ -z "$INDEX_IMAGE" ]; then
+    echo "extract_differential_fbc_metadata: missing keyword parameter (-b INDEX_IMAGE)" >&2
+    exit 2
+  fi
+
+  # Run opm render on the FBC fragment to extract package names
+  local render_out_fbc package_names
+  if ! render_out_fbc=$(render_opm -t "$FBC_FRAGMENT"); then
+    echo "extract_differential_fbc_metadata: could not render FBC fragment $FBC_FRAGMENT" >&2
+    exit 1
+  fi
+  package_names=$(extract_unique_package_names_from_catalog "$render_out_fbc")
+
+  # Run opm render on the matching index image
+  local render_out_index tagged_index
+  if ! tagged_index=$(get_target_fbc_catalog_image -i "$FBC_FRAGMENT" -b "$INDEX_IMAGE"); then
+    echo "extract_differential_fbc_metadata: could not get a matching catalog image" >&2
+    exit 1
+  fi
+  if ! render_out_index=$(render_opm -t "$tagged_index"); then
+    echo "extract_differential_fbc_metadata: could not render index image $tagged_index" >&2
+    exit 1
+  fi
+
+  local package_result_fbc package_result_index
+  # Get unique bundles for each package from the fragment and the index
+  if [[ "$EXTRACT_OPERATION" == "unique_bundles" ]]; then
+    for package_name in $package_names; do
+      package_result_fbc+="$(extract_unique_bundles_from_catalog "$render_out_fbc" "$package_name") "
+      package_result_index+="$(extract_unique_bundles_from_catalog "$render_out_index" "$package_name") "
+    done
+  elif [[ "$EXTRACT_OPERATION" == "related_images" ]]; then
+    for package_name in $package_names; do
+      package_result_fbc+="$(extract_related_images_from_catalog "$render_out_fbc" "$package_name") "
+      package_result_index+="$(extract_related_images_from_catalog "$render_out_index" "$package_name") "
+    done
+  else
+    echo "extract_differential_fbc_metadata: extract operation $EXTRACT_OPERATION not supported: [unique_bundles, related_images]" >&2
+    exit 1
+  fi
+
+  # Ensure that the jq arrays are flattened and unique. The process is different for each operation
+  if [[ "$EXTRACT_OPERATION" == "unique_bundles" ]]; then
+    unique_fbc=$(echo "$package_result_fbc" | jq -cR 'split(" ") | map( select(length > 0))')
+    unique_index=$(echo "$package_result_index" | jq -cR 'split(" ") | map( select(length > 0))')
+  elif [[ "$EXTRACT_OPERATION" == "related_images" ]]; then
+    unique_fbc=$(echo "$package_result_fbc" | jq -s "flatten(1) | unique")
+    unique_index=$(echo "$package_result_index" | jq -s "flatten(1) | unique")
+  fi
+
+  # Get the images that are only in the fbc fragment
+  local unreleased_result
+  unreleased_result=$(jq -n --argjson released "$unique_index" --argjson unreleased "$unique_fbc" '{"released": $released,"unreleased":$unreleased} | .unreleased-.released')
+  echo "$unreleased_result"
+}
+
+# This function will be used by tekton tasks in build-definitions
+# It returns a newline-delimited list of unreleased bundles in the FBC fragment by
+# comparing it with the corresponding production index image
+get_unreleased_bundles() {
+  # Parse input here to return usage message if needed
+  local FBC_FRAGMENT=""
+  local INDEX_IMAGE="$DEFAULT_INDEX_IMAGE"
+  get_unreleased_bundles_usage()
+  {
+    echo "
+  get_unreleased_bundles -i FBC_FRAGMENT [-b INDEX_IMAGE]
+  " >&2
+    exit 2
+  }
+
+  local OPTIND opt
+  while getopts "i:b:" opt; do
+      case "${opt}" in
+          i)
+              FBC_FRAGMENT="${OPTARG}" ;;
+          b)
+              INDEX_IMAGE="${OPTARG}" ;;
+          *)
+              get_unreleased_bundles_usage ;;
+      esac
+  done
+
+  if [ -z "$FBC_FRAGMENT" ]; then
+    echo "get_unreleased_bundles: missing keyword parameter (-i FBC_FRAGMENT)" >&2
+    exit 2
+  fi
+
+  result=$(extract_differential_fbc_metadata -i "$FBC_FRAGMENT" -b "$INDEX_IMAGE" -e "unique_bundles")
+  result_exit=$?
+
+  if [[ "$result_exit" != "0" ]]; then
+    exit $result_exit
+  fi
+
+  # Convert output from a json array to a newline delimited list
+  echo "${result}" | jq -r '.[]'
+}
+# Maintaining backwards compatibility, this function just passes through to the other.
+# get_unreleased_bundles was renamed for consistency
+get_unreleased_bundle() {
+  get_unreleased_bundles "$@"
+}
+
+# This function will be used by tekton tasks in build-definitions
+# It returns a json array of unreleased related images as indicated in a FBC fragment.
+# It compares the provided FBC fragment against the corresponding production index image
+get_unreleased_fbc_related_images() {
+  # Parse input here to return usage message if needed
+  local FBC_FRAGMENT=""
+  local INDEX_IMAGE="$DEFAULT_INDEX_IMAGE"
+  get_unreleased_fbc_related_images_usage()
+  {
+    echo "
+  get_unreleased_fbc_related_images -i FBC_FRAGMENT [-b INDEX_IMAGE]
+  " >&2
+    exit 2
+  }
+
+  local OPTIND opt
   while getopts "i:b:" opt; do
       case "${opt}" in
           i)
@@ -410,56 +710,19 @@ get_unreleased_fbc_related_images() {
   done
 
   if [ -z "$FBC_FRAGMENT" ]; then
-    echo "Missing parameter FBC_FRAGMENT" >&2
+    echo "get_unreleased_fbc_related_images: missing keyword parameter (-i FBC_FRAGMENT)" >&2
     exit 2
   fi
 
-  # If the index image is provided and has a tag, remove it.
-  # The target ocp version is determined from the fragment
-  if [[ "$INDEX_IMAGE" == *:* ]]; then
-    INDEX_IMAGE="${INDEX_IMAGE%%:*}"
+  result=$(extract_differential_fbc_metadata -i "$FBC_FRAGMENT" -b "$INDEX_IMAGE" -e related_images)
+  result_exit=$?
+
+  if [[ "$result_exit" != "0" ]]; then
+    exit $result_exit
   fi
 
-  #Get target ocp version from the fragment
-  local ocp_version
-  if ! ocp_version=$(get_ocp_version_from_fbc_fragment "$FBC_FRAGMENT"); then
-    echo "Could not get ocp version for the fragment" >&2
-    exit 1
-  fi
-
-  # Run opm render on the FBC fragment to extract package names
-  local render_out_fbc unique_bundles_fbc package_names
-  if ! render_out_fbc=$(opm render "$FBC_FRAGMENT"); then
-    echo "Could not render image $FBC_FRAGMENT" >&2
-    exit 1
-  fi
-  package_names=$(extract_unique_package_names_from_catalog "$render_out_fbc")
-
-  # Run opm render on the index image
-  local render_out_index unique_bundles_index tagged_index
-  tagged_index="${INDEX_IMAGE}:${ocp_version}"
-  if ! render_out_index=$(opm render "$tagged_index"); then
-    echo "Could not render image $tagged_index" >&2
-    exit 1
-  fi
-
-  # Get unique bundles for each package from the fragment and the index
-  for package_name in $package_names; do
-    related_images_fbc+="$(extract_related_images_from_catalog "$render_out_fbc" "$package_name")"$'\n'
-    related_images_index+="$(extract_related_images_from_catalog "$render_out_index" "$package_name")"$'\n'
-  done
-
-  # Ensure that the jq arrays are flattened and unique
-  related_images_fbc=$(echo "$related_images_fbc" | jq -s "flatten(1) | unique")
-  related_images_index=$(echo "$related_images_index" | jq -s "flatten(1) | unique")
-
-  # Get the images that are only in the fbc fragment
-  local unreleased_related_images
-  unreleased_related_images=$(jq -n --argjson released "$related_images_index" --argjson unreleased "$related_images_fbc" '{"released": $released,"unreleased":$unreleased} | .unreleased-.released')
-
-  # output as json array
-  echo -n "${unreleased_related_images}"
-
+  # result is already a json array, so just output it directly
+  echo -n "${result}"
 }
 
 # This function will be used by tekton tasks in build-definitions
@@ -468,18 +731,41 @@ get_image_labels() {
   local image=$1
 
   if [ -z "$image" ]; then
-    echo "Missing image pull spec" >&2
+    echo "get_image_labels: missing positional parameter \$1 (image pull spec)" >&2
     exit 2
   fi
 
   local image_labels
-  if ! image_labels=$(skopeo inspect --config docker://"${image}"); then
-    echo "Failed to inspect the image" >&2
+  # Ensure that we don't have a tag and digest for skopeo
+  image=$(get_image_registry_repository_digest "$image")
+  if ! image_labels=$(skopeo inspect --no-tags docker://"${image}"); then
+    echo "get_image_labels: failed to inspect the image" >&2
     exit 1
   fi
 
-  echo "${image_labels}" | jq -r '.config.Labels // {} | to_entries[] | "\(.key)=\(.value)"'
+  echo "${image_labels}" | jq -jr '.Labels // {} | to_entries[] | "\(.key)=\(.value)\n"'
+}
 
+# This function will be used by tekton tasks in build-definitions
+# It returns a list of annotations on the image
+# If no annotations exist, it returns an empty string
+get_image_annotations() {
+  local image=$1
+
+  if [ -z "$image" ]; then
+    echo "get_image_annotations: missing positional parameter \$1 (image pull spec)" >&2
+    exit 2
+  fi
+
+  # Ensure that we don't have a tag and digest for skopeo
+  image=$(get_image_registry_repository_digest "$image")
+
+  local image_annotations
+  if ! image_annotations=$(skopeo inspect --no-tags --raw docker://"${image}"); then
+    echo "get_image_annotations: failed to inspect the image" >&2
+    exit 1
+  fi
+  echo "${image_annotations}" | jq -jr 'if .annotations != null then .annotations | to_entries[] | "\(.key)=\(.value)\n" else "" end'
 }
 
 # This function will be used by tekton tasks in build-definitions
@@ -488,19 +774,18 @@ extract_related_images_from_bundle(){
   local image=$1
 
   if [ -z "$image" ]; then
-    echo "Missing image pull spec" >&2
+    echo "extract_related_images_from_bundle: missing positional parameter \$1 (image pull spec)" >&2
     exit 2
   fi
 
   local bundle_render_out related_images
-  if ! bundle_render_out=$(opm render "${image}"); then
-    echo "Failed to render the image" >&2
+  if ! bundle_render_out=$(render_opm -t "${image}"); then
+    echo "extract_related_images_from_bundle: failed to render the image ${image}" >&2
     exit 1
   fi
   related_images=$(echo "${bundle_render_out}" | tr -d '\000-\031' | jq -r '.relatedImages[]?.image')
 
   echo "${related_images}" | tr ' ' '\n'
-
 }
 
 # This function will be used by tasks in build-definitions
@@ -510,7 +795,7 @@ process_image_digest_mirror_set() {
   local pullspec_map="{"
 
   if ! echo "${yaml_input}" | yq '.' &>/dev/null; then
-    echo "Invalid YAML input" >&2
+    echo "process_image_digest_mirror_set: Invalid YAML input" >&2
     exit 2
   fi
 
@@ -523,7 +808,6 @@ process_image_digest_mirror_set() {
   pullspec_map="${pullspec_map%,}}"
 
   echo "${pullspec_map}"
-
 }
 
 # This function will be used by tasks in build-definitions
@@ -534,7 +818,7 @@ replace_image_pullspec() {
   local mirror="$2"
 
   if [[ -z "$image" || -z "$mirror" ]]; then
-    echo "Invalid input. Usage: replace_image_pullspec <image> <mirror>" >&2
+    echo "replace_image_pullspec: Usage: replace_image_pullspec <image> <mirror>" >&2
     exit 2
   fi
 
@@ -553,7 +837,7 @@ replace_image_pullspec() {
 
     echo "${mirror}${tag}${digest}"
   else
-    echo "Invalid pullspec format: ${image}" >&2
+    echo "replace_image_pullspec: invalid pullspec format: ${image}" >&2
     exit 2
   fi
 }
