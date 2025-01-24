@@ -359,3 +359,198 @@ EOF
     EXPECTED_RESPONSE="Invalid pullspec format: registry.io/unavailable/pullspec@sha256:short-sha"
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
 }
+
+@test "Get package from catalog: success single package" {
+    RENDER_OUT_FBC=$(cat <<EOF
+{
+    "schema": "olm.package",
+    "name": "kubevirt-hyperconverged",
+    "defaultChannel": "stable"
+}
+EOF
+)
+    run get_package_from_catalog "${RENDER_OUT_FBC}"
+    EXPECTED_RESPONSE="kubevirt-hyperconverged"
+    echo "${output}"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get package from catalog: success multiple packages" {
+    RENDER_OUT_FBC=$(cat <<EOF
+{
+    "schema": "olm.package",
+    "name": "kubevirt-hyperconverged-v1",
+    "defaultChannel": "stable"
+}
+{
+    "schema": "olm.package",
+    "name": "kubevirt-hyperconverged-v2",
+    "defaultChannel": "dev-preview"
+}
+{
+    "schema": "olm.channel",
+    "name": "dev-preview",
+    "package": "kubevirt-hyperconverged-v2",
+    "entries": [
+        {
+            "name": "kubevirt-hyperconverged-operator.v4.99.0-0.1723448771"
+        }
+    ]
+}
+{
+    "schema": "olm.channel",
+    "name": "stable",
+    "package": "kubevirt-hyperconverged-v1",
+    "entries": [
+        {
+            "name": "kubevirt-hyperconverged-operator.v4.17.3"
+        },
+        {
+            "name": "kubevirt-hyperconverged-operator.v4.17.4"
+        }
+    ]
+}
+{
+    "schema": "olm.channel",
+    "name": "dev-preview-2",
+    "package": "kubevirt-hyperconverged-v2",
+    "entries": [
+        {
+            "name": "kubevirt-hyperconverged-operator.v5.00.0-0.1723448771"
+        }
+    ]
+}
+EOF
+)
+    run get_package_from_catalog "${RENDER_OUT_FBC}"
+    EXPECTED_RESPONSE="kubevirt-hyperconverged-v2"
+    echo "${output}"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get package from catalog: missing image" {
+    run get_package_from_catalog
+    EXPECTED_RESPONSE="get_package_from_catalog: Missing 'opm render' output for the image"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
+}
+
+@test "Get channel from catalog: success" {
+    RENDER_OUT_FBC=$(cat <<EOF
+{
+    "schema": "olm.package",
+    "name": "kubevirt-hyperconverged",
+    "defaultChannel": "stable"
+}
+EOF
+)
+    PACKAGE_NAME="kubevirt-hyperconverged"
+    run get_channel_from_catalog "${RENDER_OUT_FBC}" "${PACKAGE_NAME}"
+    EXPECTED_RESPONSE="stable"
+    echo "${output}"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get channel from catalog: failure, package not found" {
+    RENDER_OUT_FBC=$(cat <<EOF
+{
+    "schema": "olm.package",
+    "name": "kubevirt-hyperconverged",
+    "defaultChannel": "stable"
+}
+EOF
+)
+    PACKAGE_NAME="kubevirt"
+    run get_channel_from_catalog "${RENDER_OUT_FBC}" "${PACKAGE_NAME}"
+    EXPECTED_RESPONSE="get_channel_from_catalog: Package name kubevirt not found in the rendered FBC"
+    echo "${output}"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+}
+
+@test "Get channel from catalog: failure, invalid input" {
+    RENDER_OUT_FBC=$(cat <<EOF
+{
+    "schema": "olm.package",
+    "name": "kubevirt-hyperconverged",
+    "defaultChannel": "stable"
+}
+EOF
+)
+    run get_channel_from_catalog "${RENDER_OUT_FBC}"
+    EXPECTED_RESPONSE="get_channel_from_catalog: Invalid input. Usage: get_channel_from_catalog <RENDER_OUT_FBC> <PACKAGE_NAME>"
+    echo "${output}"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
+}
+
+@test "Get highest bundle version from catalog: success" {
+    PACKAGE_NAME="kubevirt-hyperconverged-v1"
+    CHANNEL_NAME="stable"
+    RENDER_OUT_FBC=$(cat <<EOF
+{
+    "schema": "olm.package",
+    "name": "kubevirt-hyperconverged-v1",
+    "defaultChannel": "stable"
+}
+{
+    "schema": "olm.channel",
+    "name": "stable",
+    "package": "kubevirt-hyperconverged-v1",
+    "entries": [
+        {
+            "name": "kubevirt-hyperconverged-operator.v4.17.3"
+        },
+        {
+            "name": "kubevirt-hyperconverged-operator.v4.17.4"
+        },
+        {
+            "name": "kubevirt-hyperconverged-operator.v4.17.5"
+        }
+    ]
+}
+EOF
+)
+    run get_highest_bundle_version "${RENDER_OUT_FBC}" "${PACKAGE_NAME}" "${CHANNEL_NAME}"
+    EXPECTED_RESPONSE="kubevirt-hyperconverged-operator.v4.17.5"
+    echo "${output}"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get highest bundle version from catalog: missing image" {
+    PACKAGE_NAME="kubevirt-hyperconverged-v1"
+    CHANNEL_NAME="stable"
+    run get_highest_bundle_version "${PACKAGE_NAME}" "${CHANNEL_NAME}"
+    EXPECTED_RESPONSE="get_highest_bundle_version: Invalid input. Usage: get_highest_bundle_version <RENDER_OUT_FBC> <PACKAGE_NAME> <CHANNEL_NAME>"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
+}
+
+@test "Get highest bundle version from catalog: no bundle found" {
+    PACKAGE_NAME="kubevirt-hyperconverged"
+    CHANNEL_NAME="stable"
+    RENDER_OUT_FBC=$(cat <<EOF
+{
+    "schema": "olm.package",
+    "name": "kubevirt-hyperconverged-v1",
+    "defaultChannel": "stable"
+}
+{
+    "schema": "olm.channel",
+    "name": "stable",
+    "package": "kubevirt-hyperconverged-v1",
+    "entries": [
+        {
+            "name": "kubevirt-hyperconverged-operator.v4.17.3"
+        },
+        {
+            "name": "kubevirt-hyperconverged-operator.v4.17.4"
+        },
+        {
+            "name": "kubevirt-hyperconverged-operator.v4.17.5"
+        }
+    ]
+}
+EOF
+)
+    run get_highest_bundle_version "${RENDER_OUT_FBC}" "${PACKAGE_NAME}" "${CHANNEL_NAME}"
+    EXPECTED_RESPONSE="get_highest_bundle_version: No valid bundle version found for package: kubevirt-hyperconverged, channel: stable"
+    echo "${output}"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+}
