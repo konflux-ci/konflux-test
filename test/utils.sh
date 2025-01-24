@@ -557,3 +557,77 @@ replace_image_pullspec() {
     exit 2
   fi
 }
+
+# This function will be used by tasks in tekton-integration-catalog
+# Given the output of 'opm render $fbc_fragment' command, this function returns a package name
+# If there is only one 'olm.package', it returns it's name
+# If there are multiple 'olm.package' entries, it returns the one with the highest bundle version in the package’s 'defaultChannel'
+get_package_from_catalog() {
+  local RENDER_OUT_FBC="$1"
+  local package_count
+  local package_name
+
+  if [ -z "$RENDER_OUT_FBC" ]; then
+    echo "Missing 'opm render' output for the image" >&2
+    exit 2
+  fi
+
+  # Count 'olm.package' entries in the rendered FBC output
+  package_count=$(echo "$RENDER_OUT_FBC" | tr -d '\000-\031' | jq -s '[.[] | select(.schema == "olm.package")] | length')
+
+  if [[ "$package_count" -eq 1 ]]; then
+    # Return the single package name
+    package_name=$(echo "$RENDER_OUT_FBC" | tr -d '\000-\031' | jq -r 'select(.schema == "olm.package") | .name')
+    echo "$package_name"
+  else
+    # Handle multiple packages
+    # Find the highest bundle version for each package based on the entries in their respective defaulChannel
+    package_name=$(echo "$RENDER_OUT_FBC" | tr -d '\000-\031' | jq -r '
+    reduce inputs as $obj (
+      {
+        packages: [],
+        channels: []
+      };
+      if $obj.schema == "olm.package" then
+        .packages += [$obj]
+      elif $obj.schema == "olm.channel" then
+        .channels += [$obj]
+      else . end
+    ) | 
+    .packages[] as $pkg |
+    (.channels[] | select(.package == $pkg.name and .name == $pkg.defaultChannel)) as $channel |
+    ($channel.entries | map({
+        name: .name,
+        version: (.name | split(".") | map(try tonumber // 0))
+    }) | max_by(.version)) as $highest |
+    if $highest.name then $pkg.name else empty end
+  ')
+    echo "$package_name"
+  fi
+}
+
+# This function will be used by tasks in tekton-integration-catalog
+# Given the output of 'opm render $fbc_fragment' command and a package name, this function returns the defaultChannel value specified in the olm.package entry
+get_channel_from_catalog() {
+  local RENDER_OUT_FBC="$1"
+  local PACKAGE_NAME="$2"
+  local default_channel
+
+  if [[ -z "$RENDER_OUT_FBC" || -z "$PACKAGE_NAME" ]]; then
+    echo "Invalid input. Usage: get_channel_from_catalog <RENDER_OUT_FBC> <PACKAGE_NAME>" >&2
+    exit 2
+  fi
+
+  # Extract the defaultChannel for a given package
+  default_channel=$(echo "$RENDER_OUT_FBC" | tr -d '\000-\031' | jq -r --arg PACKAGE_NAME "$PACKAGE_NAME" '
+    select(.schema == "olm.package" and .name == $PACKAGE_NAME) | .defaultChannel
+  ')
+
+  # Handle case when PACKAGE_NAME is not found in RENDER_OUT_FBC
+  if [[ -z "$default_channel" || "$default_channel" == "null" ]]; then
+    echo "Package name $PACKAGE_NAME not found in the rendered FBC" >&2
+    exit 1
+  fi
+
+  echo "$default_channel"
+}
