@@ -76,7 +76,7 @@ setup() {
         elif [[ $1 == "render" && $2 == "registry/fbc-fragment:tag@isolated" ]]; then
             echo '{"invalid-control-char": "This is an invalid control char \\t", "schema": "olm.package", "name": "rhbk-operator"}{"schema": "olm.bundle", "package": "rhbk-operator", "image": "registry.redhat.io/rhbk/keycloak-operator-bundle@my-sha", "properties":[], "relatedImages": [{"name": "foo-bar", "image": "registry.redhat.io/foo/bar@sha256:my-bar-sha"}, {"name": "foo-baz", "image": "registry.redhat.io/foo/baz@sha256:my-sha"}]}'
         elif [[ $1 == "render" && $2 == "valid-operator-bundle-1" ]]; then
-            echo '{"schema":"olm.bundle", "relatedImages": [{"name": "", "image": "quay.io/securesign/rhtas-operator:something"}]}'
+            echo '{"schema":"olm.bundle", "relatedImages": [{"name": "", "image": "quay.io/securesign/rhtas-operator:something"},{"name": "", "image": "valid-operator-bundle-1"}]}'
         elif [[ $1 == "render" && $2 == "registry.redhat.io/redhat/redhat-operator-index:v4.15" ]]; then
             echo '{"schema": "olm.package", "name": "rhbk-operator"}{"schema": "olm.bundle", "package": "rhbk-operator", "image": "registry.redhat.io/rhbk/keycloak-operator-bundle@random-image", "properties":[], "relatedImages": [{"name": "foo-baz", "image": "registry.redhat.io/foo/baz@sha256:my-sha"}]}{"schema": "olm.package", "name": "not-rhbk-operator"}{"schema": "olm.bundle", "package": "not-rhbk-operator", "image": "registry.redhat.io/not-rhbk/operator-bundle@not-my-other-sha", "properties":[], "relatedImages": [{"name": "foo-baz", "image": "registry.redhat.io/foo/bar@sha256:my-bar-sha"}]}'
             return 0

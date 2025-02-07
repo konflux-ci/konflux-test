@@ -778,12 +778,15 @@ extract_related_images_from_bundle(){
     exit 2
   fi
 
-  local bundle_render_out related_images
+  local bundle_render_out jq_related_images related_images
   if ! bundle_render_out=$(render_opm -t "${image}"); then
     echo "extract_related_images_from_bundle: failed to render the image ${image}" >&2
     exit 1
   fi
-  related_images=$(echo "${bundle_render_out}" | tr -d '\000-\031' | jq -r '.relatedImages[]?.image')
+  # opm render on a bundle will always add the bundle. We want to make sure that
+  # we strip that out.
+  jq_related_images='[.relatedImages[]?.image] - ["'${image}'"] | .[]'
+  related_images=$(echo "${bundle_render_out}" | tr -d '\000-\031' | jq -r "$jq_related_images")
 
   echo "${related_images}" | tr ' ' '\n'
 }
