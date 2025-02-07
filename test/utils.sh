@@ -823,23 +823,26 @@ replace_image_pullspec() {
   fi
 
   local image_regex="^([^:@]+)(:[^@]+)?(@sha256:[a-f0-9]{64})?$"
-  if [[ "$image" =~ $image_regex ]]; then
-    local digest=""
-    if [[ "$image" =~ (@sha256:[a-f0-9]{64}) ]]; then
-      digest=$(echo "$image" | sed -E 's/^.*(@sha256:[a-f0-9]{64})$/\1/')
-      image=${image%%@*}
-    fi
-
-    local tag=""
-    if [[ "$image" =~ (:[^@]+) ]]; then
-      tag=$(echo "$image" | sed -E 's/^.*(:[^@]+).*$/\1/')
-    fi
-
-    echo "${mirror}${tag}${digest}"
-  else
+  if ! [[ "$image" =~ $image_regex ]]; then
     echo "replace_image_pullspec: invalid pullspec format: ${image}" >&2
     exit 2
   fi
+
+  local parsed_image tag digest
+  parsed_image=$(parse_image_url "${image}")
+  tag=$(echo "$parsed_image" | jq -r '.tag // empty')
+  digest=$(echo "$parsed_image" | jq -r '.digest // empty')
+
+  local replaced_pullspec="$mirror"
+  if [ -n "$tag" ]; then
+    replaced_pullspec+=":${tag}"
+  fi
+
+  if [ -n "$digest" ]; then
+    replaced_pullspec+="@${digest}"
+  fi
+
+  echo "${replaced_pullspec}"
 }
 
 # This function will be used by tasks in tekton-integration-catalog
