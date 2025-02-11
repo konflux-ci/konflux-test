@@ -621,16 +621,27 @@ extract_differential_fbc_metadata() {
 
   # Ensure that the jq arrays are flattened and unique. The process is different for each operation
   if [[ "$EXTRACT_OPERATION" == "unique_bundles" ]]; then
-    unique_fbc=$(echo "$package_result_fbc" | jq -cR 'split(" ") | map( select(length > 0))')
-    unique_index=$(echo "$package_result_index" | jq -cR 'split(" ") | map( select(length > 0))')
+    unique_fbc=$(echo "$package_result_fbc" | tr '\n' ' ' | jq -Rc 'split(" ") | map(select(length > 0))')
+    unique_index=$(echo "$package_result_index" | tr '\n' ' ' | jq -Rc 'split(" ") | map(select(length > 0))')
   elif [[ "$EXTRACT_OPERATION" == "related_images" ]]; then
     unique_fbc=$(echo "$package_result_fbc" | jq -s "flatten(1) | unique")
     unique_index=$(echo "$package_result_index" | jq -s "flatten(1) | unique")
   fi
 
+  # Store JSON variables into temporary files to avoid "/usr/bin/jq: Argument list too long"
+  echo "$unique_index" > /tmp/unique_index.json
+  echo "$unique_fbc" > /tmp/unique_fbc.json
+
   # Get the images that are only in the fbc fragment
   local unreleased_result
-  unreleased_result=$(jq -n --argjson released "$unique_index" --argjson unreleased "$unique_fbc" '{"released": $released,"unreleased":$unreleased} | .unreleased-.released')
+  unreleased_result=$(jq -n \
+    --slurpfile released /tmp/unique_index.json \
+    --slurpfile unreleased /tmp/unique_fbc.json \
+    '{"released": $released[0], "unreleased": $unreleased[0]} | .unreleased - .released')
+
+  # Cleanup temporary files
+  rm -f /tmp/unique_index.json /tmp/unique_fbc.json
+
   echo "$unreleased_result"
 }
 
@@ -948,5 +959,17 @@ get_highest_bundle_version() {
     exit 1
   fi
 
-  echo "$highest_bundle"
+  # Find the corresponding image name for the highest bundle
+  local bundle_image
+  bundle_image=$(echo "$RENDER_OUT_FBC" | jq -r --arg bundle "$highest_bundle" '
+    select(.schema == "olm.bundle" and .name == $bundle) | .image
+  ')
+
+  # Check if an image was found
+  if [[ -z "$bundle_image" || "$bundle_image" == "null" ]]; then
+    echo "get_highest_bundle_version: No image found for bundle: $highest_bundle" >&2
+    exit 1
+  fi
+
+  echo "$bundle_image"
 }

@@ -376,6 +376,7 @@ teardown() {
 
 @test "Get Unreleased Bundle: registry/fbc-fragment:tag@valid-success" {
     run get_unreleased_bundles -i registry/fbc-fragment:tag@valid-success
+    echo "$output"
     EXPECTED_RESPONSE=$(echo "registry.redhat.io/rhbk/keycloak-operator-bundle@my-sha registry.redhat.io/not-rhbk/operator-bundle@my-other-sha"  | tr ' ' '\n')
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
@@ -674,10 +675,17 @@ EOF
         }
     ]
 }
+{
+    "schema": "olm.bundle",
+    "name": "kubevirt-hyperconverged-operator.v4.17.5",
+    "package": "kubevirt-hyperconverged-v1",
+    "image": "registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:4f100135ccbfc726f4b1887703ef7a08453b48c202ba04c0fb7382f0fec637db",
+    "properties": []
+}
 EOF
 )
     run get_highest_bundle_version "${RENDER_OUT_FBC}" "${PACKAGE_NAME}" "${CHANNEL_NAME}"
-    EXPECTED_RESPONSE="kubevirt-hyperconverged-operator.v4.17.5"
+    EXPECTED_RESPONSE="registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:4f100135ccbfc726f4b1887703ef7a08453b48c202ba04c0fb7382f0fec637db"
     echo "${output}"
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
