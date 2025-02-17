@@ -632,17 +632,22 @@ extract_differential_fbc_metadata() {
   echo "$unique_index" > /tmp/unique_index.json
   echo "$unique_fbc" > /tmp/unique_fbc.json
 
-  # Get the images that are only in the fbc fragment
-  local unreleased_result
-  unreleased_result=$(jq -n \
-    --slurpfile released /tmp/unique_index.json \
-    --slurpfile unreleased /tmp/unique_fbc.json \
-    '{"released": $released[0], "unreleased": $unreleased[0]} | .unreleased - .released')
+  # Get the images that are only in the fbc fragment. We previously used jq to slurp
+  # in these files and subtract the lists. That was consuming too much memory. Instead,
+  # we will just keep the lists as files. Use `comm` to compare the sorted files. This
+  # will end up creating an invalid array, so we need to massage the contents back to
+  # return it to be a valid array
+  comm -13 /tmp/unique_index.json /tmp/unique_fbc.json > /tmp/unreleased_result
+  # Since we are simply getting the unique values, may have some extra whitespace and
+  # a dangling comma
+  sed -i -e 's/^[[:space:]]*//;s/[[:space:]]*$//;s/,$//' /tmp/unreleased_result
 
+  # leading and trailing brackets will always be in common and therefore removed, so
+  # add them back before returning the result
+  echo "[$(cat /tmp/unreleased_result)]"
   # Cleanup temporary files
-  rm -f /tmp/unique_index.json /tmp/unique_fbc.json
+  rm -f /tmp/unique_index.json /tmp/unique_fbc.json /tmp/unreleased_result
 
-  echo "$unreleased_result"
 }
 
 # This function will be used by tekton tasks in build-definitions

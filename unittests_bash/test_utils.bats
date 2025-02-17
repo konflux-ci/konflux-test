@@ -420,13 +420,13 @@ teardown() {
 
 @test "Get Unreleased FBC related images: registry/fbc-fragment:tag@isolated and missing index" {
     run get_unreleased_fbc_related_images -i registry/fbc-fragment:tag@isolated
-    EXPECTED_RESPONSE=$(echo "[ **\"registry.redhat.io/foo/bar@sha256:my-bar-sha\" ]" | tr ' ' '\n' | tr '*' ' ')
+    EXPECTED_RESPONSE=$(echo "[\"registry.redhat.io/foo/bar@sha256:my-bar-sha\"]" | tr ' ' '\n' | tr '*' ' ')
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
 
 @test "Get Unreleased FBC related images: registry/fbc-fragment:tag@isolated and index with tag" {
     run get_unreleased_fbc_related_images -i registry/fbc-fragment:tag@isolated -b registry.redhat.io/redhat/redhat-operator-index:v4.15@randomsha256
-    EXPECTED_RESPONSE=$(echo "[ **\"registry.redhat.io/foo/bar@sha256:my-bar-sha\" ]" | tr ' ' '\n' | tr '*' ' ')
+    EXPECTED_RESPONSE=$(echo "[\"registry.redhat.io/foo/bar@sha256:my-bar-sha\"]" | tr ' ' '\n' | tr '*' ' ')
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
 
