@@ -395,7 +395,7 @@ extract_unique_bundles_from_catalog() {
 
   # Jq query to extract unique bundles from `opm render` command output
   local jq_unique_bundles='select( .package == "'$PACKAGE_NAME'" ) | select(.schema == "olm.bundle") | select( [.properties[]|select(.type == "olm.deprecated")] == []) | "\(.image)"'
-  echo "$RENDER_OUT" | tr -d '\000-\031' | jq -r "$jq_unique_bundles"
+  echo "$RENDER_OUT" | tr -d '\000-\031' | jq -r "$jq_unique_bundles" | jq -Rc 'split("\n")'
 }
 
 # Given output of `opm render` command and package name, this function returns
@@ -541,6 +541,9 @@ render_opm() {
 # in the target index according to the extraction operation provided.
 # `-e unique_bundles` invokes extract_unique_bundles_from_catalog()
 # `-e related_images` invokes extract_related_images_from_catalog()
+# 
+# Additional extract operations added should return the results as JSON arrays so that
+# we can have a common post-processing behavior.
 extract_differential_fbc_metadata() {
   local EXTRACT_OPERATION=""
   local FBC_FRAGMENT=""
@@ -606,7 +609,7 @@ extract_differential_fbc_metadata() {
   # Get unique bundles for each package from the fragment and the index
   if [[ "$EXTRACT_OPERATION" == "unique_bundles" ]]; then
     for package_name in $package_names; do
-      package_result_fbc+="$(extract_unique_bundles_from_catalog "$render_out_fbc" "$package_name") "
+      package_result_fbc+="$(extract_unique_bundles_from_catalog "$render_out_fbc" "$package_name")"
       package_result_index+="$(extract_unique_bundles_from_catalog "$render_out_index" "$package_name") "
     done
   elif [[ "$EXTRACT_OPERATION" == "related_images" ]]; then
@@ -619,30 +622,31 @@ extract_differential_fbc_metadata() {
     exit 1
   fi
 
-  # Ensure that the jq arrays are flattened and unique. The process is different for each operation
-  if [[ "$EXTRACT_OPERATION" == "unique_bundles" ]]; then
-    unique_fbc=$(echo "$package_result_fbc" | tr '\n' ' ' | jq -Rc 'split(" ") | map(select(length > 0))')
-    unique_index=$(echo "$package_result_index" | tr '\n' ' ' | jq -Rc 'split(" ") | map(select(length > 0))')
-  elif [[ "$EXTRACT_OPERATION" == "related_images" ]]; then
-    unique_fbc=$(echo "$package_result_fbc" | jq -s "flatten(1) | unique")
-    unique_index=$(echo "$package_result_index" | jq -s "flatten(1) | unique")
-  fi
+  # Ensure that the jq arrays are flattened and unique and store JSON arrays
+  # into temporary files to enable more efficient processing. Using large inputs to
+  # jq resulted in lines being too long. Using jq consumes too much memory loading the
+  # arrays. Store all elements of the arrays instead of the arrays themselves
+  echo "$package_result_fbc" | jq -s "flatten(1) | unique " > /tmp/unique_fbc.json
+  echo "$package_result_index" | jq -s "flatten(1) | unique " > /tmp/unique_index.json
+  # Remove the [] to simplify operations without jq
+  sed -i '1d;$d' /tmp/unique_fbc.json /tmp/unique_index.json
 
-  # Store JSON variables into temporary files to avoid "/usr/bin/jq: Argument list too long"
-  echo "$unique_index" > /tmp/unique_index.json
-  echo "$unique_fbc" > /tmp/unique_fbc.json
+  # Get the images that are only in the fbc fragment. We previously used jq to slurp
+  # in these files and subtract the lists. That was consuming too much memory. Instead,
+  # we will just keep the lists as files. Use `comm` to compare the sorted files. This
+  # will end up creating an invalid array, so we need to massage the contents back to
+  # return it to be a valid array
+  comm -13 /tmp/unique_index.json /tmp/unique_fbc.json > /tmp/unreleased_result
+  # Since we are simply getting the unique values, may have some extra whitespace and
+  # a dangling comma if the last entry was removed. The sed operations are as follows:
+  # Remove leading whitespace; remove trailing whitespace; remove trailing comma from last line
+  sed -i -e 's/^[[:space:]]*//;s/[[:space:]]*$//;$s/,$//' /tmp/unreleased_result
 
-  # Get the images that are only in the fbc fragment
-  local unreleased_result
-  unreleased_result=$(jq -n \
-    --slurpfile released /tmp/unique_index.json \
-    --slurpfile unreleased /tmp/unique_fbc.json \
-    '{"released": $released[0], "unreleased": $unreleased[0]} | .unreleased - .released')
+  # We removed the [] so now add them back to make it a valid jq array
+  echo "[$(cat /tmp/unreleased_result)]"
 
   # Cleanup temporary files
-  rm -f /tmp/unique_index.json /tmp/unique_fbc.json
-
-  echo "$unreleased_result"
+  rm -f /tmp/unique_index.json /tmp/unique_fbc.json /tmp/unreleased_result
 }
 
 # This function will be used by tekton tasks in build-definitions
