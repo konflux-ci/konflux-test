@@ -374,6 +374,10 @@ get_ocp_version_from_fbc_fragment() {
   local base_image
   base_image=$(get_image_registry_repository_tag "$(get_base_image "$FBC_FRAGMENT")")
   ocp_version=$(parse_image_url "$base_image" | jq -ej '.tag')
+  if [ -z "${ocp_version}" ]; then
+    echo "get_ocp_version_from_fbc_fragment: No ocp version found; base image tag is empty." >&2
+    exit 2
+  fi
   echo -n "$ocp_version"
 }
 

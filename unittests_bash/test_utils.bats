@@ -41,8 +41,10 @@ setup() {
             echo '{"schemaVersion": 2,"mediaType": "application/vnd.oci.image.manifest.v1+json","config": {"mediaType": "application/vnd.oci.image.config.v1+json","digest": "valid-manifest-amd64","size": 14208}}'
         
         # registry/image-manifest@valid-oci
+        elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "docker://registry/image-manifest@valid-oci" || $1 == "inspect" && $2 == "--no-tags" && $3 == "docker://registry/image-manifest@valid-oci" || $1 == "inspect" && $2 == "--no-tags" && $3 == "docker://registry/image-manifest@valid-oci" ]]; then
+            echo '{"Name": "valid-oci", "Architecture": "amd64", "Labels": {"architecture":"arm64", "name": "my-image"}, "Digest": "valid-oci", "Os": "linux"}'
         elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/image-manifest@valid-oci" || $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/image-manifest@valid-oci" ]]; then
-            echo '{"schemaVersion": 2,"mediaType": "application/vnd.oci.image.manifest.v1+json","config": {"mediaType": "application/vnd.oci.image.config.v1+json","digest": "valid-manifest-amd64","size": 14208}}'
+            echo '{"schemaVersion": 2,"mediaType": "application/vnd.oci.image.manifest.v1+json","config": {"mediaType": "application/vnd.oci.image.config.v1+json","digest": "valid-oci","size": 14208},"annotations": {"org.opencontainers.image.base.name": "registry.redhat.io/openshift4/ose-operator-registry@sha256:12345"}}'
 
         # registry/fbc-fragment@valid-success
         elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "docker://registry/fbc-fragment@valid-success" ]]; then
@@ -297,6 +299,12 @@ teardown() {
     run get_base_image registry/fbc-fragment@valid-success
     EXPECTED_RESPONSE='registry.redhat.io/openshift4/ose-operator-registry:v4.15@boo'
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get OCP version from fragment: registry/image-manifest@valid-oci" {
+    run get_ocp_version_from_fbc_fragment registry/image-manifest@valid-oci
+    EXPECTED_RESPONSE='get_ocp_version_from_fbc_fragment: No ocp version found; base image tag is empty.'
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
 }
 
 @test "Get OCP version from fragment: registry/fbc-fragment@valid-success" {
