@@ -730,3 +730,87 @@ EOF
     echo "${output}"
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
 }
+
+@test "Get bundle arches: 4.17" {
+    BUNDLE_IMAGE="registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:4f100135ccbfc726f4b1887703ef7a08453b48c202ba04c0fb7382f0fec637db"
+    TARGET_OCP_VERSION="4.17"
+    RENDER_OUT_FBC=$(cat <<EOF
+{
+    "schema": "olm.package",
+    "name": "kubevirt-hyperconverged-v1",
+    "defaultChannel": "stable"
+}
+{
+    "schema": "olm.channel",
+    "name": "stable",
+    "package": "kubevirt-hyperconverged-v1",
+    "entries": [
+        {
+            "name": "kubevirt-hyperconverged-operator.v4.17.5"
+        }
+    ]
+}
+{
+    "schema": "olm.bundle",
+    "name": "kubevirt-hyperconverged-operator.v4.17.5",
+    "package": "kubevirt-hyperconverged-v1",
+    "image": "registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:4f100135ccbfc726f4b1887703ef7a08453b48c202ba04c0fb7382f0fec637db",
+    "properties": [
+        {
+            "type": "olm.csv.metadata",
+            "value": {
+                "labels": {
+                        "operatorframework.io/arch.amd64": "supported",
+                        "operatorframework.io/arch.arm64": "supported",
+                        "operatorframework.io/os.linux": "supported"
+                    }
+            }
+        }
+    ]
+}
+EOF
+)
+    run get_bundle_arches "${RENDER_OUT_FBC}" "${BUNDLE_IMAGE}" "${TARGET_OCP_VERSION}"
+    EXPECTED_RESPONSE=$(echo "amd64 arm64"  | tr ' ' '\n')
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get bundle arches: 4.16" {
+    BUNDLE_IMAGE="registry.redhat.io/container-native-virtualization/hco-bundle-registry-rhel9@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89"
+    TARGET_OCP_VERSION="4.16"
+    RENDER_OUT_FBC=$(cat <<EOF
+{
+    "schema": "olm.package",
+    "name": "kubevirt-hyperconverged",
+    "defaultChannel": "stable"
+}
+{
+    "schema": "olm.channel",
+    "name": "stable",
+    "package": "kubevirt-hyperconverged",
+    "entries": [
+        {
+            "name": "kubevirt-hyperconverged-operator.v4.16.7"
+        }
+    ]
+}
+{
+    "schema": "olm.bundle",
+    "name": "kubevirt-hyperconverged-operator.v4.16.7",
+    "package": "kubevirt-hyperconverged",
+    "image": "registry.redhat.io/container-native-virtualization/hco-bundle-registry-rhel9@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89",
+    "properties": [
+        {
+            "type": "olm.bundle.object",
+            "value": {
+                "data": "eyJhcGlWZXJzaW9uIjogIm9wZXJhdG9ycy5jb3Jlb3MuY29tL3YxYWxwaGExIiwgImtpbmQiOiAiQ2x1c3RlclNlcnZpY2VWZXJzaW9uIiwgIm1ldGFkYXRhIjogeyJhbm5vdGF0aW9ucyI6IHsiY29udGFpbmVySW1hZ2UiOiAicXVheS5pby8zc2NhbGUvYXBpY2FzdC1vcGVyYXRvcjptYXN0ZXIiLCAiY3JlYXRlZEF0IjogIjIwMTktMTAtMjdUMjI6NDA6MDBaIiwgIm9wZXJhdG9ycy5vcGVuc2hpZnQuaW8vaW5mcmFzdHJ1Y3R1cmUtZmVhdHVyZXMiOiAiW1wiRGlzY29ubmVjdGVkXCJdIiwgIm9wZXJhdG9ycy5vcGVyYXRvcmZyYW1ld29yay5pby9idWlsZGVyIjogIm9wZXJhdG9yLXNkay12MS4yLjAiLCAib3BlcmF0b3JzLm9wZXJhdG9yZnJhbWV3b3JrLmlvL3Byb2plY3RfbGF5b3V0IjogImdvLmt1YmVidWlsZGVyLmlvL3YyIiwgInJlcG9zaXRvcnkiOiAiaHR0cHM6Ly9naXRodWIuY29tLzNzY2FsZS9hcGljYXN0LW9wZXJhdG9yIiwgInN1cHBvcnQiOiAiUmVkIEhhdCJ9LCAibGFiZWxzIjogeyJvcGVyYXRvcmZyYW1ld29yay5pby9hcmNoLmFtZDY0IjogInN1cHBvcnRlZCIsICJvcGVyYXRvcmZyYW1ld29yay5pby9hcmNoLmFybTY0IjogInN1cHBvcnRlZCIsICJvcGVyYXRvcmZyYW1ld29yay5pby9hcmNoLnBwYzY0bGUiOiAic3VwcG9ydGVkIiwgIm9wZXJhdG9yZnJhbWV3b3JrLmlvL2FyY2guczM5MHgiOiAic3VwcG9ydGVkIn19fQ=="
+            }
+        }
+    ]
+}
+EOF
+)
+    run get_bundle_arches "${RENDER_OUT_FBC}" "${BUNDLE_IMAGE}" "${TARGET_OCP_VERSION}"
+    EXPECTED_RESPONSE=$(echo "amd64 arm64 ppc64le s390x"  | tr ' ' '\n')
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
