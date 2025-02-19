@@ -730,3 +730,53 @@ EOF
     echo "${output}"
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
 }
+
+@test "Get bundle arches: success" {
+    RENDER_OUT_BUNDLE=$(cat <<EOF
+{
+    "schema": "olm.bundle",
+    "name": "kubevirt-hyperconverged-operator.v4.16.7",
+    "package": "kubevirt-hyperconverged",
+    "image": "registry.redhat.io/container-native-virtualization/hco-bundle-registry-rhel9@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89",
+    "properties": [
+        {
+            "type": "olm.csv.metadata",
+            "value": {
+                "labels": {
+                    "operatorframework.io/arch.amd64": "supported",
+                    "operatorframework.io/arch.arm64": "supported",
+                    "operatorframework.io/arch.ppc64le": "supported",
+                    "operatorframework.io/arch.s390x": "supported",
+                    "operatorframework.io/os.linux": "supported"
+                }
+            }
+        }
+    ]
+}
+EOF
+)
+    run get_bundle_arches "${RENDER_OUT_BUNDLE}"
+    EXPECTED_RESPONSE=$(echo "amd64 arm64 ppc64le s390x"  | tr ' ' '\n')
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get bundle arches: no arches found" {
+    RENDER_OUT_BUNDLE=$(cat <<EOF
+{
+    "schema": "olm.bundle",
+    "name": "kubevirt-hyperconverged-operator.v4.16.7",
+    "package": "kubevirt-hyperconverged",
+    "image": "registry.redhat.io/container-native-virtualization/hco-bundle-registry-rhel9@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89",
+    "properties": [
+        {
+            "type": "olm.csv.metadata",
+            "value": {}
+        }
+    ]
+}
+EOF
+)
+    run get_bundle_arches "${RENDER_OUT_BUNDLE}"
+    EXPECTED_RESPONSE="get_bundle_arches: Error: No architectures found for bundle image."
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+}
