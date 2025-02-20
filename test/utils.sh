@@ -978,3 +978,42 @@ get_highest_bundle_version() {
 
   echo "$bundle_image"
 }
+
+# This function will be used by tasks in tekton-integration-catalog
+# Given the output of the 'opm render $fbc_fragment' command, a bundle image, and the target OCP version of an FBC fragment, this function returns the supported architectures for the bundle
+# The process is different depending on OCP version:
+# all bundles in all catalogs in 4.12 - 4.16 have an "olm.bundle.object"
+# all bundles in all catalogs in 4.17+ have an "olm.csv.metadata"
+get_bundle_arches() {
+  local RENDER_OUT_FBC="$1"
+  local BUNDLE_IMAGE="$2"
+  local TARGET_OCP_VERSION="$3"
+  local arches
+
+  # Validate input parameters
+  if [[ -z "$RENDER_OUT_FBC" || -z "$BUNDLE_IMAGE" || -z "$TARGET_OCP_VERSION" ]]; then
+    echo "get_bundle_arches: Invalid input. Usage: get_bundle_arches <RENDER_OUT_FBC> <BUNDLE_IMAGE> <TARGET_OCP_VERSION>" >&2
+    exit 2
+  fi
+
+  # Extract bundle architectures based on OpenShift version
+  if (( $(echo "$TARGET_OCP_VERSION > 4.16" | bc -l) )); then
+    # For OCP 4.17 and above, extract arches from "olm.csv.metadata"
+    arches=$(echo "$RENDER_OUT_FBC" | tr -d '\000-\031' | jq -r \
+      --arg bundleImage "$BUNDLE_IMAGE" \
+      'select(.schema == "olm.bundle" and .image == $bundleImage) | .properties[] | select(.type == "olm.csv.metadata") | .value.labels? // {} | to_entries | map(select(.key | startswith("operatorframework.io/arch."))) | .[].key | split("operatorframework.io/arch.") | .[1]')
+  else
+    # For OCP 4.16 and below, extract arches from "olm.bundle.object"
+    arches=$(echo "$RENDER_OUT_FBC" | jq -cs \
+      --arg bundleImage "$BUNDLE_IMAGE" \
+      '.[] | select(.schema == "olm.bundle" and .image == $bundleImage) | {"labels": .properties[] | select(.type == "olm.bundle.object").value.data | @base64d | fromjson | select(.kind == "ClusterServiceVersion") | .metadata.labels}' \
+      | jq -r '.labels | keys[] | sub("operatorframework.io/arch.";"")')
+  fi
+
+  if [[ -z "$arches" ]]; then
+    echo "get_bundle_arches: Error: No architectures found for bundle image: $BUNDLE_IMAGE" >&2
+    exit 1
+  fi
+
+  echo "$arches"
+}
