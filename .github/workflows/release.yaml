@@ -21,7 +21,7 @@ jobs:
 
   github-release:
     name: Build and push image
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs:
       - call-build-test-and-push-workflow
     steps:

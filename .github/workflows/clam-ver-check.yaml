@@ -10,7 +10,7 @@ on:
 jobs:
   test:
     name: Check for latest clamav version
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
 
     steps:
      - name: Get clamav version from latest konflux-test release
