@@ -68,7 +68,7 @@
               {
                 "Severity": "Unknown",
                 "NamespaceName": "pyupio",
-                "Link": "",
+                "Link": "https://access.redhat.com/errata/RHSA-2022:5311",
                 "FixedBy": "1.34.1-r3",
                 "Description": "TEST Patched vulnerability",
                 "Name": "pyup.io-42219 (PVE-2021-42219)",
@@ -89,7 +89,7 @@
               {
                 "Severity": "Negligible",
                 "NamespaceName": "pyupio",
-                "Link": "",
+                "Link": "https://access.redhat.com/errata/RHSA-2022:5311",
                 "FixedBy": "1.34.1-r4",
                 "Description": "TEST Negligible Patched vulnerability",
                 "Name": "pyup.io-42213 (PVE-2021-42213)",
@@ -152,7 +152,7 @@
               {
                 "Severity": "Low",
                 "NamespaceName": "pyupio",
-                "Link": "",
+                "Link": "https://access.redhat.com/errata/RHSA-2022:5311",
                 "FixedBy": "1.34.1-r3",
                 "Description": "TEST patched vulnerability",
                 "Name": "pyup.io-42556(CVE-2021-3575)",
@@ -215,7 +215,7 @@
               {
                 "Severity": "Critical",
                 "NamespaceName": "pyupio",
-                "Link": "",
+                "Link": "https://access.redhat.com/errata/RHSA-2022:5311",
                 "FixedBy": "1.34.1-r3",
                 "Description": "Pip 21.1 updates its dependency 'urllib3' to v1.26.4 due to security issues. (TEST an patched vulnerability)",
                 "Name": "pyup.io-40291 (CVE-2021-28367)",
@@ -245,7 +245,7 @@
               {
                 "Severity": "Medium",
                 "NamespaceName": "alpine-main-v3.15-updater",
-                "Link": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=ALPINE-13661",
+                "Link": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=ALPINE-13661 https://access.redhat.com/errata/RHSA-2022:5311",
                 "FixedBy": "1.34.1-r5",
                 "Description": "",
                 "Name": "ALPINE-13661",
@@ -275,7 +275,7 @@
               {
                 "Severity": "High",
                 "NamespaceName": "alpine-main-v3.15-updater",
-                "Link": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-25032",
+                "Link": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-25032 https://access.redhat.com/errata/RHSA-2022:5311",
                 "FixedBy": "1.2.12-r0",
                 "Description": "",
                 "Name": "CVE-2018-25032",
@@ -305,7 +305,7 @@
               {
                 "Severity": "High",
                 "NamespaceName": "alpine-main-v3.15-updater",
-                "Link": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-25032",
+                "Link": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-25032 https://access.redhat.com/errata/RHSA-2022:5311",
                 "FixedBy": "1.2.12-r0",
                 "Description": "TEST: The same vulnerability, but different version of package",
                 "Name": "CVE-2018-25032",
