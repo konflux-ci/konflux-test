@@ -32,6 +32,12 @@ setup() {
         elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/image@valid-manifest-amd64" || $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/fbc-fragment@invalid" || $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/fbc-fragment@valid-manifest-amd64" ]]; then
             echo '{"schemaVersion": 2,"mediaType": "application/vnd.oci.image.manifest.v1+json","config": {"mediaType": "application/vnd.oci.image.config.v1+json","digest": "valid-manifest-amd64","size": 14208},"annotations": {"org.opencontainers.image.base.name": "registry.redhat.io/openshift4/ose-operator-registry:v4.12"}}'
 
+        #registry/image@valid-url-arm64
+        elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "docker://registry/image@valid-url-arm64" ]]; then
+            echo '{"Name": "valid-manifest-arm64", "Architecture": "arm64", "Labels": {"architecture":"arm64", "name": "my-image"}, "Digest": "valid-manifest-arm64", "Os": "linux"}'
+        elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/image@valid-manifest-arm64" ]]; then
+            echo '{"schemaVersion": 2,"mediaType": "application/vnd.oci.image.manifest.v1+json","config": {"mediaType": "application/vnd.oci.image.config.v1+json","digest": "valid-manifest-arm64","size": 14208},"annotations": {"org.opencontainers.image.base.name": "registry.redhat.io/openshift4/ose-operator-registry:v4.12"}}'
+
         # registry/image-manifest@valid-labels
         elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "docker://registry/image-manifest@valid-labels" ]]; then
             echo '{"Name": "valid-labels", "Architecture": "amd64", "Labels": {"architecture":"arm64", "name": "my-image"}, "Digest": "valid-labels", "Os": "linux"}'
@@ -43,7 +49,7 @@ setup() {
         # registry/image-manifest@valid-oci
         elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "docker://registry/image-manifest@valid-oci" || $1 == "inspect" && $2 == "--no-tags" && $3 == "docker://registry/image-manifest@valid-oci" || $1 == "inspect" && $2 == "--no-tags" && $3 == "docker://registry/image-manifest@valid-oci" ]]; then
             echo '{"Name": "valid-oci", "Architecture": "amd64", "Labels": {"architecture":"arm64", "name": "my-image"}, "Digest": "valid-oci", "Os": "linux"}'
-        elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/image-manifest@valid-oci" || $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/image-manifest@valid-oci" ]]; then
+        elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/image-manifest@valid-oci" || $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/image-manifest@valid-oci" || $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/image@valid-url-arm64" ]]; then
             echo '{"schemaVersion": 2,"mediaType": "application/vnd.oci.image.manifest.v1+json","config": {"mediaType": "application/vnd.oci.image.config.v1+json","digest": "valid-oci","size": 14208},"annotations": {"org.opencontainers.image.base.name": "registry.redhat.io/openshift4/ose-operator-registry@sha256:12345"}}'
 
         # registry/fbc-fragment@valid-success
@@ -291,6 +297,12 @@ teardown() {
 
 @test "Get base image: registry/image@valid-url" {
     run get_base_image registry/image@valid-url
+    EXPECTED_RESPONSE='registry.redhat.io/openshift4/ose-operator-registry:v4.12'
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get base image: registry/image@valid-url-arm64" {
+    run get_base_image registry/image@valid-url-arm64
     EXPECTED_RESPONSE='registry.redhat.io/openshift4/ose-operator-registry:v4.12'
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
