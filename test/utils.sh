@@ -336,8 +336,11 @@ get_base_image() {
     exit 2
   fi
 
-  # Ensure that we have a digest-pinned image manifest
-  image_manifest_digest=$(get_image_manifests -i "$image" | jq -er ".amd64")
+  # Ensure that we have a digest-pinned image manifest. For image manifests of archs other than amd64,
+  # grab the first value in the map.
+  local image_manifests
+  image_manifests=$(get_image_manifests -i "$image")
+  image_manifest_digest=$(echo "$image_manifests" | jq -er ".amd64 // (to_entries | .[0].value)" || echo "")
   if [ -z "$image_manifest_digest" ]; then
     echo "get_base_image: manifest digest not found" >&2
     exit 1
