@@ -981,3 +981,30 @@ get_highest_bundle_version() {
 
   echo "$bundle_image"
 }
+
+# This function will be used by tasks in tekton-integration-catalog
+# Given the output of 'opm render $bundle_image' command, this function returns the supported architectures for the bundle
+get_bundle_arches() {
+  local RENDER_OUT_BUNDLE="$1"
+  local arches
+
+  # Validate input parameters
+  if [[ -z "$RENDER_OUT_BUNDLE" ]]; then
+    echo "get_bundle_arches: Invalid input. Usage: get_bundle_arches <RENDER_OUT_BUNDLE>" >&2
+    exit 2
+  fi
+
+  arches=$(echo "$RENDER_OUT_BUNDLE" | tr -d '\000-\031' | jq -r '
+    select(.schema == "olm.bundle") 
+    | .properties[]? 
+    | select(.type == "olm.csv.metadata").value.labels 
+    | if . then keys[] | select(startswith("operatorframework.io/arch.")) | sub("operatorframework.io/arch.";"") else empty end
+  ')
+
+  if [[ -z "$arches" ]]; then
+    echo "get_bundle_arches: Error: No architectures found for bundle image." >&2
+    exit 1
+  fi
+
+  echo "$arches"
+}
