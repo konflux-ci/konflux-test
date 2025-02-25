@@ -1008,3 +1008,33 @@ get_bundle_arches() {
 
   echo "$arches"
 }
+
+# This function will be used by tasks in tekton-integration-catalog
+# Given the output of 'opm render $fbc_fragment, and bundle images, this function groups bundle images by package
+# It returns a map in the format {"package1":["bundleImage1","bundleImage2"],"package2":["bundleImage3"]}
+group_bundle_images_by_package() {
+  local RENDER_OUT_FBC="$1"
+  local BUNDLE_IMAGES="$2"
+  local package_image_map
+
+  # Validate input parameters
+  if [[ -z "$RENDER_OUT_FBC" || -z "$BUNDLE_IMAGES" ]]; then
+    echo "group_bundle_images_by_package: Invalid input. Usage: group_bundle_images_by_package <RENDER_OUT_FBC> <BUNDLE_IMAGES>" >&2
+    exit 2
+  fi
+
+  # Group bundle images by package
+  package_image_map=$(echo "$RENDER_OUT_FBC" | tr -d '\000-\031' | jq -cs \
+    --argjson bundles "$(printf '%s\n' "${BUNDLE_IMAGES[@]}" | jq -R . | jq -s .)" \
+    '[.[] | select(.schema == "olm.bundle" and (.image as $img | $bundles | index($img) != null))] |
+      group_by(.package) |
+      map({(.[0].package): [.[].image]}) | add')
+
+  # Check if package_image_map is empty or null
+  if [[ -z "$package_image_map" || "$package_image_map" == "null" || "$package_image_map" == "{}" ]]; then
+    echo "group_bundle_images_by_package: No matching packages found for the provided bundle images." >&2
+    exit 1
+  fi
+
+  echo "$package_image_map"
+}
