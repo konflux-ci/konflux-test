@@ -810,3 +810,75 @@ EOF
     EXPECTED_RESPONSE="get_bundle_arches: Error: No architectures found for bundle image."
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
 }
+
+@test "Group bundle images by package: two packages" {
+    BUNDLE_IMAGES=$(echo "registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:4f100135ccbfc726f4b1887703ef7a08453b48c202ba04c0fb7382f0fec637db registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89"  | tr ' ' '\n')
+    RENDER_OUT_FBC=$(cat <<EOF
+{
+    "schema": "olm.bundle",
+    "name": "kubevirt-hyperconverged-operator.v4.17.5",
+    "package": "kubevirt-hyperconverged-v1",
+    "image": "registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:4f100135ccbfc726f4b1887703ef7a08453b48c202ba04c0fb7382f0fec637db",
+    "properties": []
+}
+{
+    "schema": "olm.bundle",
+    "name": "kubevirt-hyperconverged-operator.v4.99.0",
+    "package": "kubevirt-hyperconverged-v2",
+    "image": "registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89",
+    "properties": []
+}
+EOF
+)
+    run group_bundle_images_by_package "${RENDER_OUT_FBC}" "${BUNDLE_IMAGES}"
+    EXPECTED_RESPONSE='{"kubevirt-hyperconverged-v1":["registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:4f100135ccbfc726f4b1887703ef7a08453b48c202ba04c0fb7382f0fec637db"],"kubevirt-hyperconverged-v2":["registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89"]}'
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Group bundle images by package: one package" {
+    BUNDLE_IMAGES=$(echo "registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:4f100135ccbfc726f4b1887703ef7a08453b48c202ba04c0fb7382f0fec637db registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89"  | tr ' ' '\n')
+    RENDER_OUT_FBC=$(cat <<EOF
+{
+    "schema": "olm.bundle",
+    "name": "kubevirt-hyperconverged-operator.v4.17.5",
+    "package": "kubevirt-hyperconverged-v1",
+    "image": "registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:4f100135ccbfc726f4b1887703ef7a08453b48c202ba04c0fb7382f0fec637db",
+    "properties": []
+}
+{
+    "schema": "olm.bundle",
+    "name": "kubevirt-hyperconverged-operator.v4.99.0",
+    "package": "kubevirt-hyperconverged-v1",
+    "image": "registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89",
+    "properties": []
+}
+EOF
+)
+    run group_bundle_images_by_package "${RENDER_OUT_FBC}" "${BUNDLE_IMAGES}"
+    EXPECTED_RESPONSE='{"kubevirt-hyperconverged-v1":["registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:4f100135ccbfc726f4b1887703ef7a08453b48c202ba04c0fb7382f0fec637db","registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89"]}'
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Group bundle images by package: no packages found" {
+    BUNDLE_IMAGES=$(echo "registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:4f100135ccbfc726f4b1887703ef7a08453b48c202ba04c0fb7382f0fec637db registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89"  | tr ' ' '\n')
+    RENDER_OUT_FBC=$(cat <<EOF
+{
+    "schema": "olm.bundle",
+    "name": "kubevirt-hyperconverged-operator.v4.17.5",
+    "package": "kubevirt-hyperconverged-v1",
+    "image": "registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:4f100135ccbfc726f4b1887703ef7a08453b48c202ba04c0fb7382f0feczxcvb",
+    "properties": []
+}
+{
+    "schema": "olm.bundle",
+    "name": "kubevirt-hyperconverged-operator.v4.99.0",
+    "package": "kubevirt-hyperconverged-v1",
+    "image": "registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f911asdfg",
+    "properties": []
+}
+EOF
+)
+    run group_bundle_images_by_package "${RENDER_OUT_FBC}" "${BUNDLE_IMAGES}"
+    EXPECTED_RESPONSE="group_bundle_images_by_package: No matching packages found for the provided bundle images."
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+}
