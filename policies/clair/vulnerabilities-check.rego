@@ -4,7 +4,7 @@ package required_checks
 get_patched_vulnerabilities(input_data, severity) := vulnerabilities {
   vulnerabilities := [{"name": rpm.Name, "version": rpm.Version, "vulnerabilities": vuln} |
     rpm := input_data.data[_].Features[_]
-    vuln := {v.Name | v:=rpm.Vulnerabilities[_]; v.Severity == severity; v.FixedBy != ""}
+    vuln := {v.Name | v:=rpm.Vulnerabilities[_]; v.Severity == severity; v.FixedBy != ""; contains(v.Link,"RHSA")}
     count(vuln) > 0
   ]
 }
