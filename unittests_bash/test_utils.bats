@@ -776,7 +776,7 @@ EOF
                     "operatorframework.io/arch.amd64": "supported",
                     "operatorframework.io/arch.arm64": "supported",
                     "operatorframework.io/arch.ppc64le": "supported",
-                    "operatorframework.io/arch.s390x": "supported",
+                    "operatorframework.io/arch.s390x": "unsupported",
                     "operatorframework.io/os.linux": "supported"
                 }
             }
@@ -786,7 +786,7 @@ EOF
 EOF
 )
     run get_bundle_arches "${RENDER_OUT_BUNDLE}"
-    EXPECTED_RESPONSE=$(echo "amd64 arm64 ppc64le s390x"  | tr ' ' '\n')
+    EXPECTED_RESPONSE=$(echo "amd64 arm64 ppc64le"  | tr ' ' '\n')
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
 
@@ -880,5 +880,82 @@ EOF
 )
     run group_bundle_images_by_package "${RENDER_OUT_FBC}" "${BUNDLE_IMAGES}"
     EXPECTED_RESPONSE="group_bundle_images_by_package: No matching packages found for the provided bundle images."
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+}
+
+@test "Get highest version from bundles list: success" {
+    PACKAGE_NAME="kubevirt-hyperconverged"
+    CHANNEL_NAME="stable"
+    BUNDLE_IMAGES=$(echo "registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:4f100135ccbfc726f4b1887703ef7a08453b48c202ba04c0fb7382f0fec637db registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89"  | tr ' ' '\n')
+    RENDER_OUT_FBC=$(cat <<EOF
+{
+    "schema": "olm.package",
+    "name": "kubevirt-hyperconverged",
+    "defaultChannel": "stable"
+}
+{
+    "schema": "olm.channel",
+    "name": "stable",
+    "package": "kubevirt-hyperconverged",
+    "entries": [
+        {
+            "name": "kubevirt-hyperconverged-operator.v4.17.3"
+        },
+        {
+            "name": "kubevirt-hyperconverged-operator.v4.17.4"
+        },
+        {
+            "name": "kubevirt-hyperconverged-operator.v4.17.5"
+        }
+    ]
+}
+{
+    "schema": "olm.bundle",
+    "name": "kubevirt-hyperconverged-operator.v4.17.3",
+    "package": "kubevirt-hyperconverged",
+    "image": "registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:4f100135ccbfc726f4b1887703ef7a08453b48c202ba04c0fb7382f0fec637db",
+    "properties": []
+}
+{
+    "schema": "olm.bundle",
+    "name": "kubevirt-hyperconverged-operator.v4.17.4",
+    "package": "kubevirt-hyperconverged",
+    "image": "registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89",
+    "properties": []
+}
+EOF
+)
+    run get_highest_version_from_bundles_list "${RENDER_OUT_FBC}" "${PACKAGE_NAME}" "${CHANNEL_NAME}" "${BUNDLE_IMAGES}"
+    EXPECTED_RESPONSE="registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get highest version from bundles list: no matching bundle versions found" {
+    PACKAGE_NAME="kubevirt-hyperconverged"
+    CHANNEL_NAME="stable"
+    BUNDLE_IMAGES=$(echo "registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:4f100135ccbfc726f4b1887703ef7a08453b48c202ba04c0fb7382f0fec637db registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89"  | tr ' ' '\n')
+    RENDER_OUT_FBC=$(cat <<EOF
+{
+    "schema": "olm.package",
+    "name": "kubevirt-hyperconverged",
+    "defaultChannel": "stable"
+}
+{
+    "schema": "olm.channel",
+    "name": "stable",
+    "package": "kubevirt-hyperconverged",
+    "entries": [
+        {
+            "name": "kubevirt-hyperconverged-operator.v4.17.0"
+        },
+        {
+            "name": "kubevirt-hyperconverged-operator.v4.17.1"
+        }
+    ]
+}
+EOF
+)
+    run get_highest_version_from_bundles_list "${RENDER_OUT_FBC}" "${PACKAGE_NAME}" "${CHANNEL_NAME}" "${BUNDLE_IMAGES}"
+    EXPECTED_RESPONSE="get_highest_version_from_bundles_list: No matching bundle versions found in the provided image list."
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
 }

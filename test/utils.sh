@@ -995,10 +995,12 @@ get_bundle_arches() {
   fi
 
   arches=$(echo "$RENDER_OUT_BUNDLE" | tr -d '\000-\031' | jq -r '
-    select(.schema == "olm.bundle") 
-    | .properties[]? 
-    | select(.type == "olm.csv.metadata").value.labels 
-    | if . then keys[] | select(startswith("operatorframework.io/arch.")) | sub("operatorframework.io/arch.";"") else empty end
+    .properties[]
+    | select(.type == "olm.csv.metadata")
+    | (.value.labels // {})
+    | to_entries[]
+    | select(.value == "supported").key
+    | scan("^operatorframework.io/arch.\\K.*")
   ')
 
   if [[ -z "$arches" ]]; then
@@ -1037,4 +1039,43 @@ group_bundle_images_by_package() {
   fi
 
   echo "$package_image_map"
+}
+
+# This function will be used by tasks in tekton-integration-catalog
+# Given the output of 'opm render $fbc_fragment' command, a package name, a channel name, and a bundle images list this function returns the highest bundle version from the provided BUNDLE_IMAGES list
+get_highest_version_from_bundles_list() {
+  local RENDER_OUT_FBC="$1"
+  local PACKAGE_NAME="$2"
+  local CHANNEL_NAME="$3"
+  local BUNDLE_IMAGES="$4"
+
+  # Validate input parameters
+  if [[ -z "$RENDER_OUT_FBC" || -z "$PACKAGE_NAME" || -z "$CHANNEL_NAME" || -z "$BUNDLE_IMAGES" ]]; then
+    echo "get_highest_version_from_bundles_list: Invalid input. Usage: get_highest_version_from_bundles_list <RENDER_OUT_FBC> <PACKAGE_NAME> <CHANNEL_NAME> <BUNDLE_IMAGES>" >&2
+    exit 2
+  fi
+
+  # Extract bundle names from `olm.channel`
+  local bundle_names_from_channel
+  bundle_names_from_channel=$(echo "$RENDER_OUT_FBC" | jq -nc --arg PACKAGE_NAME "$PACKAGE_NAME" --arg CHANNEL_NAME "$CHANNEL_NAME" '
+    [inputs | select(.schema == "olm.channel" and .package == $PACKAGE_NAME and .name == $CHANNEL_NAME)
+    | .entries[].name] | unique')
+
+  # Extract bundles from `olm.bundle` matching given BUNDLE_IMAGES list
+  local valid_bundles
+  valid_bundles=$(echo "$RENDER_OUT_FBC" | jq -nc --argjson bundle_names "$bundle_names_from_channel" --argjson images "$(echo "$BUNDLE_IMAGES" | jq -R -s -c 'split("\n") | map(select(length > 0))')" '
+    [inputs | select(.schema == "olm.bundle" and (.name | IN($bundle_names[])) and (.image | IN($images[])))
+    | { version: (.name | capture("v(?<version>[0-9]+\\.[0-9]+\\.[0-9]+)$").version), image: .image }]')
+
+  # Exit if no valid bundles found
+  if [[ -z "$valid_bundles" || "$valid_bundles" == "[]" ]]; then
+    echo "get_highest_version_from_bundles_list: No matching bundle versions found in the provided image list." >&2
+    exit 1
+  fi
+
+  # Find the highest version and its corresponding image
+  local highest_image
+  highest_image=$(echo "$valid_bundles" | jq -r 'max_by(.version | split(".") | map(tonumber)) | .image')
+
+  echo "$highest_image"
 }
