@@ -1065,7 +1065,7 @@ get_highest_version_from_bundles_list() {
   local valid_bundles
   valid_bundles=$(echo "$RENDER_OUT_FBC" | jq -nc --argjson bundle_names "$bundle_names_from_channel" --argjson images "$(echo "$BUNDLE_IMAGES" | jq -R -s -c 'split("\n") | map(select(length > 0))')" '
     [inputs | select(.schema == "olm.bundle" and (.name | IN($bundle_names[])) and (.image | IN($images[])))
-    | { version: (.name | capture("v(?<version>[0-9]+\\.[0-9]+\\.[0-9]+)$").version), image: .image }]')
+    | { version: (.name | capture("v(?<version>[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9]+)?)$").version // "0"), image: .image }]')
 
   # Exit if no valid bundles found
   if [[ -z "$valid_bundles" || "$valid_bundles" == "[]" ]]; then
@@ -1075,7 +1075,8 @@ get_highest_version_from_bundles_list() {
 
   # Find the highest version and its corresponding image
   local highest_image
-  highest_image=$(echo "$valid_bundles" | jq -r 'max_by(.version | split(".") | map(tonumber)) | .image')
+  highest_image=$(echo "$valid_bundles" | jq -r '
+    max_by(.version | split("-") | map(split(".") | map(tonumber)) | flatten) | .image')
 
   echo "$highest_image"
 }
