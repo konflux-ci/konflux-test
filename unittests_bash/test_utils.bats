@@ -959,3 +959,32 @@ EOF
     EXPECTED_RESPONSE="get_highest_version_from_bundles_list: No matching bundle versions found in the provided image list."
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
 }
+
+@test "Get highest version from bundles list: success bundle vX.Y.Z-suffixes" {
+    PACKAGE_NAME="kubevirt-hyperconverged"
+    CHANNEL_NAME="dev-preview"
+    BUNDLE_IMAGES=$(echo "registry.redhat.io/container-native-virtualization/hco-bundle-registry-rhel9@sha256:4f100135ccbfc726f4b1887703ef7a08453b48c202ba04c0fb7382f0fec11122 registry.redhat.io/container-native-virtualization/hco-bundle-registry-rhel9@sha256:ee84abe0ae4bb7a905fbfa99fe193428cf3842a895f081696f6cde04230d3255"  | tr ' ' '\n')
+    RENDER_OUT_FBC=$(cat <<EOF
+{
+    "schema": "olm.channel",
+    "name": "dev-preview",
+    "package": "kubevirt-hyperconverged",
+    "entries": [
+        {
+            "name": "kubevirt-hyperconverged-operator.v4.99.0-0.1738868945"
+        }
+    ]
+}
+{
+    "schema": "olm.bundle",
+    "name": "kubevirt-hyperconverged-operator.v4.99.0-0.1738868945",
+    "package": "kubevirt-hyperconverged",
+    "image": "registry.redhat.io/container-native-virtualization/hco-bundle-registry-rhel9@sha256:ee84abe0ae4bb7a905fbfa99fe193428cf3842a895f081696f6cde04230d3255",
+    "properties": []
+}
+EOF
+)
+    run get_highest_version_from_bundles_list "${RENDER_OUT_FBC}" "${PACKAGE_NAME}" "${CHANNEL_NAME}" "${BUNDLE_IMAGES}"
+    EXPECTED_RESPONSE="registry.redhat.io/container-native-virtualization/hco-bundle-registry-rhel9@sha256:ee84abe0ae4bb7a905fbfa99fe193428cf3842a895f081696f6cde04230d3255"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
