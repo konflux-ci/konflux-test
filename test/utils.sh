@@ -1080,3 +1080,100 @@ get_highest_version_from_bundles_list() {
 
   echo "$highest_image"
 }
+
+# This function will be used by tasks in tekton-integration-catalog
+# Given the output of 'opm render $bundle_image' command, this function returns the suggested namespace for the bundle
+get_bundle_suggested_namespace() {
+  local RENDER_OUT_BUNDLE="$1"
+
+  # Validate input parameters
+  if [[ -z "$RENDER_OUT_BUNDLE" ]]; then
+    echo "get_bundle_suggested_namespace: Invalid input. Usage: get_bundle_suggested_namespace <RENDER_OUT_BUNDLE>" >&2
+    exit 2
+  fi
+
+  # Check if 'olm.csv.metadata' exists in the bundle
+  local metadata_exists
+  metadata_exists=$(echo "$RENDER_OUT_BUNDLE" | tr -d '\000-\031' | jq -e '
+    any(.properties[]?; .type == "olm.csv.metadata")' 2>/dev/null)
+
+  if [[ "$metadata_exists" != "true" ]]; then
+    echo "get_bundle_suggested_namespace: No 'olm.csv.metadata' entry found in bundle properties" >&2
+    exit 1
+  fi
+
+  local namespace
+  namespace=$(echo "$RENDER_OUT_BUNDLE" | tr -d '\000-\031' | jq -r '
+    .properties[]? 
+    | select(.type == "olm.csv.metadata") 
+    | .value.annotations["operatorframework.io/suggested-namespace"]')
+
+  # Ensure namespace is not empty
+  if [[ -z "$namespace" || "$namespace" == "null" ]]; then
+    echo "get_bundle_suggested_namespace: No suggested namespace found in bundle" >&2
+    exit 1
+  fi
+
+  echo "$namespace"
+}
+
+# This function will be used by tasks in tekton-integration-catalog
+# Given the output of 'opm render $bundle_image' command, this function returns the supported install modes for the bundle
+get_bundle_install_modes() {
+  local RENDER_OUT_BUNDLE="$1"
+
+  # Validate input parameters
+  if [[ -z "$RENDER_OUT_BUNDLE" ]]; then
+    echo "get_bundle_install_modes: Invalid input. Usage: get_bundle_install_modes <RENDER_OUT_BUNDLE>" >&2
+    exit 2
+  fi
+
+  # Check if 'olm.csv.metadata' exists in the bundle
+  local metadata_exists
+  metadata_exists=$(echo "$RENDER_OUT_BUNDLE" | tr -d '\000-\031' | jq -e '
+    any(.properties[]?; .type == "olm.csv.metadata")' 2>/dev/null)
+
+  if [[ "$metadata_exists" != "true" ]]; then
+    echo "get_bundle_install_modes: No 'olm.csv.metadata' entry found in bundle properties" >&2
+    exit 1
+  fi
+
+  local install_modes
+  install_modes=$(echo "$RENDER_OUT_BUNDLE" | tr -d '\000-\031' | jq -r '
+    .properties[]? 
+    | select(.type == "olm.csv.metadata") 
+    | .value.installModes[]? 
+    | select(.supported == true) 
+    | .type')
+
+  # Ensure install modes are not empty
+  if [[ -z "$install_modes" ]]; then
+    echo "get_bundle_install_modes: No supported install modes found in bundle" >&2
+    exit 1
+  fi
+
+  echo "$install_modes"
+}
+
+# This function will be used by tasks in tekton-integration-catalog
+# Given the output of 'opm render $bundle_image' command, this function returns the name of the bundle
+get_bundle_name() {
+  local RENDER_OUT_BUNDLE="$1"
+
+  # Validate input parameters
+  if [[ -z "$RENDER_OUT_BUNDLE" ]]; then
+    echo "get_bundle_name: Invalid input. Usage: get_bundle_name <RENDER_OUT_BUNDLE>" >&2
+    exit 2
+  fi
+
+  local bundle_name
+  bundle_name=$(echo "$RENDER_OUT_BUNDLE" | tr -d '\000-\031' | jq -r '.name')
+
+  # Ensure the bundle name is not empty
+  if [[ -z "$bundle_name" || "$bundle_name" == "null" ]]; then
+    echo "get_bundle_name: No bundle name found" >&2
+    exit 1
+  fi
+
+  echo "$bundle_name"
+}

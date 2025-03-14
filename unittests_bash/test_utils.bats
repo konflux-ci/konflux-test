@@ -988,3 +988,157 @@ EOF
     EXPECTED_RESPONSE="registry.redhat.io/container-native-virtualization/hco-bundle-registry-rhel9@sha256:ee84abe0ae4bb7a905fbfa99fe193428cf3842a895f081696f6cde04230d3255"
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
+
+@test "Get bundle suggested namespace: success" {
+    RENDER_OUT_BUNDLE=$(cat <<EOF
+{
+    "schema": "olm.bundle",
+    "name": "kubevirt-hyperconverged-operator.v4.16.7",
+    "package": "kubevirt-hyperconverged",
+    "image": "registry.redhat.io/container-native-virtualization/hco-bundle-registry-rhel9@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89",
+    "properties": [
+        {
+            "type": "olm.csv.metadata",
+            "value": {
+                "annotations": {
+                    "operatorframework.io/suggested-namespace": "openshift-cnv"
+                }
+            }
+        }
+    ]
+}
+EOF
+)
+    run get_bundle_suggested_namespace "${RENDER_OUT_BUNDLE}"
+    EXPECTED_RESPONSE="openshift-cnv"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get bundle suggested namespace: failure" {
+    RENDER_OUT_BUNDLE=$(cat <<EOF
+{
+    "schema": "olm.bundle",
+    "name": "kubevirt-hyperconverged-operator.v4.16.7",
+    "package": "kubevirt-hyperconverged",
+    "image": "registry.redhat.io/container-native-virtualization/hco-bundle-registry-rhel9@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89",
+    "properties": [
+        {
+            "type": "olm.csv.metadata",
+            "value": {}
+        }
+    ]
+}
+EOF
+)
+    run get_bundle_suggested_namespace "${RENDER_OUT_BUNDLE}"
+    EXPECTED_RESPONSE="get_bundle_suggested_namespace: No suggested namespace found in bundle"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+}
+
+@test "Get bundle suggested namespace: no olm.csv.metadata found" {
+    RENDER_OUT_BUNDLE=$(cat <<EOF
+{
+    "schema": "olm.bundle",
+    "name": "kubevirt-hyperconverged-operator.v4.16.7",
+    "package": "kubevirt-hyperconverged",
+    "image": "registry.redhat.io/container-native-virtualization/hco-bundle-registry-rhel9@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89",
+    "properties": []
+}
+EOF
+)
+    run get_bundle_suggested_namespace "${RENDER_OUT_BUNDLE}"
+    EXPECTED_RESPONSE="get_bundle_suggested_namespace: No 'olm.csv.metadata' entry found in bundle properties"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+}
+
+@test "Get bundle install modes: success" {
+    RENDER_OUT_BUNDLE=$(cat <<EOF
+{
+    "schema": "olm.bundle",
+    "name": "kubevirt-hyperconverged-operator.v4.16.7",
+    "package": "kubevirt-hyperconverged",
+    "image": "registry.redhat.io/container-native-virtualization/hco-bundle-registry-rhel9@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89",
+    "properties": [
+        {
+            "type": "olm.csv.metadata",
+            "value": {
+                "installModes": [
+                    {
+                        "type": "OwnNamespace",
+                        "supported": true
+                    },
+                    {
+                        "type": "SingleNamespace",
+                        "supported": true
+                    },
+                    {
+                        "type": "MultiNamespace",
+                        "supported": false
+                    },
+                    {
+                        "type": "AllNamespaces",
+                        "supported": false
+                    }
+                ]
+            }
+        }
+    ]
+}
+EOF
+)
+    run get_bundle_install_modes "${RENDER_OUT_BUNDLE}"
+    EXPECTED_RESPONSE=$(echo "OwnNamespace SingleNamespace"  | tr ' ' '\n')
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get bundle install modes: no install modes found" {
+    RENDER_OUT_BUNDLE=$(cat <<EOF
+{
+    "schema": "olm.bundle",
+    "name": "kubevirt-hyperconverged-operator.v4.16.7",
+    "package": "kubevirt-hyperconverged",
+    "image": "registry.redhat.io/container-native-virtualization/hco-bundle-registry-rhel9@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89",
+    "properties": [
+        {
+            "type": "olm.csv.metadata",
+            "value": {}
+        }
+    ]
+}
+EOF
+)
+    run get_bundle_install_modes "${RENDER_OUT_BUNDLE}"
+    EXPECTED_RESPONSE="get_bundle_install_modes: No supported install modes found in bundle"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+}
+
+@test "Get bundle install modes: no olm.csv.metadata found" {
+    RENDER_OUT_BUNDLE=$(cat <<EOF
+{
+    "schema": "olm.bundle",
+    "name": "kubevirt-hyperconverged-operator.v4.16.7",
+    "package": "kubevirt-hyperconverged",
+    "image": "registry.redhat.io/container-native-virtualization/hco-bundle-registry-rhel9@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89",
+    "properties": []
+}
+EOF
+)
+    run get_bundle_install_modes "${RENDER_OUT_BUNDLE}"
+    EXPECTED_RESPONSE="get_bundle_install_modes: No 'olm.csv.metadata' entry found in bundle properties"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+}
+
+@test "Get bundle name: success" {
+    RENDER_OUT_BUNDLE=$(cat <<EOF
+{
+    "schema": "olm.bundle",
+    "name": "kubevirt-hyperconverged-operator.v4.16.7",
+    "package": "kubevirt-hyperconverged",
+    "image": "registry.redhat.io/container-native-virtualization/hco-bundle-registry-rhel9@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89"
+}
+EOF
+)
+    run get_bundle_name "${RENDER_OUT_BUNDLE}"
+    EXPECTED_RESPONSE="kubevirt-hyperconverged-operator.v4.16.7"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
