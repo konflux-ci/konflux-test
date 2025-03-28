@@ -1,5 +1,5 @@
 # Build step for check-payload tool
-FROM registry.access.redhat.com/ubi9/go-toolset:9.5 as check-payload-build
+FROM brew.registry.redhat.io/rh-osbs/openshift-golang-builder:v1.23 as check-payload-build
 
 WORKDIR /opt/app-root/src
 
