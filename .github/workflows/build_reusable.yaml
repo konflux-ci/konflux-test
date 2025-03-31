@@ -29,6 +29,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y qemu-user-static podman
 
+      - name: Log in to Brew Registry
+        uses: redhat-actions/podman-login@v1
+        with:
+          registry: brew.registry.redhat.io
+          username: ${{ secrets.BREW_REGISTRY_USER }}
+          password: ${{ secrets.BREW_REGISTRY_PASSWORD }}
+
       - name: Build Image
         id: build-image
         uses: redhat-actions/buildah-build@v2
