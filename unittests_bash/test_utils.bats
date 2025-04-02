@@ -4,6 +4,7 @@ setup() {
     source test/utils.sh
     OPM_RENDER_CACHE=$(mktemp -d)
 
+    RETRY_COUNT=0
     DEBUG=0
 
     test_json_eq() {
@@ -45,7 +46,7 @@ setup() {
         # registry/image-manifest@valid
         elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/image-manifest@valid" || $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/image-manifest@invalid" ]]; then
             echo '{"schemaVersion": 2,"mediaType": "application/vnd.oci.image.manifest.v1+json","config": {"mediaType": "application/vnd.oci.image.config.v1+json","digest": "valid-manifest-amd64","size": 14208}}'
-        
+
         # registry/image-manifest@valid-oci
         elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "docker://registry/image-manifest@valid-oci" || $1 == "inspect" && $2 == "--no-tags" && $3 == "docker://registry/image-manifest@valid-oci" || $1 == "inspect" && $2 == "--no-tags" && $3 == "docker://registry/image-manifest@valid-oci" ]]; then
             echo '{"Name": "valid-oci", "Architecture": "amd64", "Labels": {"architecture":"arm64", "name": "my-image"}, "Digest": "valid-oci", "Os": "linux"}'
@@ -69,7 +70,7 @@ setup() {
             echo '{"Name": "isolated", "Architecture": "amd64", "Labels": {"architecture":"arm64", "name": "my-image"}, "Digest": "isolated", "Os": "linux"}'
         elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/fbc-fragment@isolated" ]]; then
             echo '{"schemaVersion": 2,"mediaType": "application/vnd.oci.image.manifest.v1+json","config": {"mediaType": "application/vnd.oci.image.config.v1+json","digest": "isolated","size": 14208},"annotations": {"org.opencontainers.image.base.name": "registry.redhat.io/openshift4/ose-operator-registry:v4.15"}}'
-        
+
         # Some skopeo commands fail
         else
             echo 'Unrecognized call to mock skopeo'
@@ -106,6 +107,19 @@ setup() {
             echo 'Invalid value'
             return 1
         fi
+    }
+
+    get_retry_expected_output() {
+        local -r interval=${RETRY_INTERVAL:-5}
+        local -r max_retries=${RETRY_COUNT:-3}
+        expected_string=""
+
+        if [[ max_retries -gt 0 ]];then
+        for (( i=1; i<=${max_retries}; i++ ));do
+            expected_string+="info: Retrying again in ${interval} seconds...\n"
+        done
+        fi
+        echo -n "${expected_string}"
     }
 }
 
@@ -1141,4 +1155,43 @@ EOF
     run get_bundle_name "${RENDER_OUT_BUNDLE}"
     EXPECTED_RESPONSE="kubevirt-hyperconverged-operator.v4.16.7"
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Retry Get Image Annotations: registry/image:tag@invalid-url" {
+    unset RETRY_COUNT # Use default interval and max_retries
+    retry_output=$(get_retry_expected_output)
+    run get_image_annotations -i registry/image:tag@invalid-url
+    EXPECTED_RESPONSE=$(echo -e -n "${retry_output}"get_image_annotations: failed to inspect the image"")
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+
+}
+
+@test "Retry Get Image Labels: registry/image:tag@invalid-url" {
+    RETRY_COUNT=1
+    RETRY_INTERVAL=1
+    retry_output=$(get_retry_expected_output)
+    run get_image_labels -i registry/image:tag@invalid-url
+    EXPECTED_RESPONSE=$(echo -e -n "${retry_output}"get_image_labels: failed to inspect the image"")
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+
+}
+
+@test "Retry Get Image Index Manifests: registry/image:tag@invalid-url" {
+    RETRY_COUNT=1
+    RETRY_INTERVAL=1
+    retry_output=$(get_retry_expected_output)
+    run get_image_manifests -i registry/image:tag@invalid-url
+    EXPECTED_RESPONSE=$(echo -e -n "${retry_output}get_image_manifests: The raw image inspect command failed")
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+
+}
+
+@test "Retry OPM Render: registry/image:tag@invalid-url" {
+    RETRY_COUNT=1
+    RETRY_INTERVAL=1
+    retry_output=$(get_retry_expected_output)
+    run render_opm -t registry/image:tag@invalid-url
+    EXPECTED_RESPONSE=$(echo -e -n "${retry_output}"render_opm: could not render catalog registry/image:tag@invalid-url"")
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+
 }
