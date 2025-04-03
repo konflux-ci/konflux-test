@@ -302,7 +302,7 @@ get_image_manifests() {
 
   # Ensure that we don't have a tag and digest for skopeo
   image_url=$(get_image_registry_repository_digest "$image_url")
-  if ! raw_inspect_output=$(skopeo inspect --no-tags --raw docker://"${image_url}"); then
+  if ! raw_inspect_output=$(retry skopeo inspect --no-tags --raw docker://"${image_url}"); then
     echo "get_image_manifests: The raw image inspect command failed" >&2
     exit 1
   fi
@@ -312,7 +312,7 @@ get_image_manifests() {
     # We have an OCI image index, so return each of the included manifests
     image_manifests=$(echo "${raw_inspect_output}" | jq -rce ' .manifests | map ( {(.platform.architecture|tostring|ascii_downcase):  .digest} ) | add' )
   else
-    if ! image_manifest_command_output=$(skopeo inspect --no-tags docker://"${image_url}"); then
+    if ! image_manifest_command_output=$(retry skopeo inspect --no-tags docker://"${image_url}"); then
       echo "get_image_manifests: The image manifest could not be inspected" >&2
       exit 1
     fi
@@ -530,7 +530,7 @@ render_opm() {
   if [[ -d "$CACHE_DIR/$CACHE_SUBDIR" ]]; then
     cat "$CACHE_DIR/$CACHE_SUBDIR/catalog"
   else
-    if ! RENDER_OUTPUT=$(opm render "$RENDER_TARGET"); then
+    if ! RENDER_OUTPUT=$(retry opm render "$RENDER_TARGET"); then
       echo "render_opm: could not render catalog $RENDER_TARGET" >&2
       exit 1
     fi
@@ -757,7 +757,7 @@ get_image_labels() {
   local image_labels
   # Ensure that we don't have a tag and digest for skopeo
   image=$(get_image_registry_repository_digest "$image")
-  if ! image_labels=$(skopeo inspect --no-tags docker://"${image}"); then
+  if ! image_labels=$(retry skopeo inspect --no-tags docker://"${image}"); then
     echo "get_image_labels: failed to inspect the image" >&2
     exit 1
   fi
@@ -780,7 +780,7 @@ get_image_annotations() {
   image=$(get_image_registry_repository_digest "$image")
 
   local image_annotations
-  if ! image_annotations=$(skopeo inspect --no-tags --raw docker://"${image}"); then
+  if ! image_annotations=$(retry skopeo inspect --no-tags --raw docker://"${image}"); then
     echo "get_image_annotations: failed to inspect the image" >&2
     exit 1
   fi
@@ -1176,4 +1176,32 @@ get_bundle_name() {
   fi
 
   echo "$bundle_name"
+}
+
+# Retry a given command RETRY_COUNT times, defaults to 3.
+# Retry stops once the expected exit status is encountered.
+# Expected exit status is given in the first positional argument.
+retry() {
+  local status
+  local retry=0
+  local -r interval=${RETRY_INTERVAL:-5}
+  local -r max_retries=${RETRY_COUNT:-3}
+  local expected_status
+  if grep -q "^[[:digit:]]\+$" <<<"$1"; then
+      expected_status=$1
+      shift
+  fi
+  while true; do
+      "$@" && break
+      status=$?
+      if [[ -v expected_status ]] && [[ ${status} -eq ${expected_status} ]]; then
+          return ${status}
+      fi
+      ((retry+=1))
+      if [ "${retry}" -gt "${max_retries}" ]; then
+          return "${status}"
+      fi
+      echo "info: Retrying again in ${interval} seconds..." 1>&2
+      sleep "${interval}"
+  done
 }
