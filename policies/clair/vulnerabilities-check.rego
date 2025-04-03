@@ -13,7 +13,7 @@ get_patched_vulnerabilities(input_data, severity) := vulnerabilities {
 get_unpatched_vulnerabilities(input_data, severity) := vulnerabilities {
   vulnerabilities := [{"name": rpm.Name, "version": rpm.Version, "vulnerabilities": vuln} |
     rpm := input_data.data[_].Features[_]
-    vuln := {v.Name | v:=rpm.Vulnerabilities[_]; v.Severity == severity; v.FixedBy == ""}
+    vuln := {v.Name | v:=rpm.Vulnerabilities[_]; v.Severity == severity; any([v.FixedBy == "", contains(v.Link,"RHSA") == false ])}
     count(vuln) > 0
   ]
 }
