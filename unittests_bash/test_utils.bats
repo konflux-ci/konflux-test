@@ -1028,7 +1028,7 @@ EOF
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
 
-@test "Get bundle suggested namespace: failure" {
+@test "Get bundle suggested namespace: suggested namespace is not defined" {
     RENDER_OUT_BUNDLE=$(cat <<EOF
 {
     "schema": "olm.bundle",
@@ -1045,8 +1045,8 @@ EOF
 EOF
 )
     run get_bundle_suggested_namespace "${RENDER_OUT_BUNDLE}"
-    EXPECTED_RESPONSE="get_bundle_suggested_namespace: No suggested namespace found in bundle"
-    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+    EXPECTED_RESPONSE=null
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
 
 @test "Get bundle suggested namespace: no olm.csv.metadata found" {
