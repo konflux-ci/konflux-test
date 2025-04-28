@@ -1105,14 +1105,8 @@ get_bundle_suggested_namespace() {
   local namespace
   namespace=$(echo "$RENDER_OUT_BUNDLE" | tr -d '\000-\031' | jq -r '
     .properties[]? 
-    | select(.type == "olm.csv.metadata") 
+    | select(.type == "olm.csv.metadata" and (.value | type == "object"))
     | .value.annotations["operatorframework.io/suggested-namespace"]')
-
-  # Ensure namespace is not empty
-  if [[ -z "$namespace" || "$namespace" == "null" ]]; then
-    echo "get_bundle_suggested_namespace: No suggested namespace found in bundle" >&2
-    exit 1
-  fi
 
   echo "$namespace"
 }
