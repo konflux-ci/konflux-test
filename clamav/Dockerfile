@@ -11,6 +11,7 @@ RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.
     jq \
     tar \
     skopeo \
+    findutils \
     && microdnf clean all
 
 COPY ./test/utils.sh /utils.sh
