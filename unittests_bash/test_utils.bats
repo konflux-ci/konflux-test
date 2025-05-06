@@ -1195,3 +1195,9 @@ EOF
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
 
 }
+
+@test "Resolve to 0th manifest digest: success" {
+    run resolve_to_0th_manifest_digest registry/image@valid-url
+    EXPECTED_RESPONSE="registry/image@valid-manifest-amd64"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
