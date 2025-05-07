@@ -1199,3 +1199,29 @@ retry() {
       sleep "${interval}"
   done
 }
+
+# This function will be used by tasks in tekton-integration-catalog
+# Update the image digest with the 0th manifest
+resolve_to_0th_manifest_digest() {
+  local image_url="$1"
+
+  # Validate input parameters
+  if [[ -z "$image_url" ]]; then
+    echo "resolve_to_0th_manifest_digest: Invalid input. Usage: resolve_to_0th_manifest_digest <image_url>" >&2
+    exit 2
+  fi
+
+  # Get image manifests as a map of {arch:digest}
+  local manifests
+  manifests=$(get_image_manifests -i "$image_url")
+
+  # Extract 0th manifest's digest
+  local new_digest
+  new_digest=$(echo "$manifests" | jq -r 'to_entries[0].value')
+
+  # Remove an existing digest from the original image
+  local image_no_digest
+  image_no_digest=$(get_image_registry_repository_tag "$image_url")
+
+  echo -n "${image_no_digest}@${new_digest}"
+}
