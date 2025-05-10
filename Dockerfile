@@ -12,7 +12,7 @@ RUN curl -s -L -o check-payload.tar.gz "https://github.com/openshift/check-paylo
 
 # Container image that runs your code
 FROM docker.io/snyk/snyk:linux@sha256:7d08e7757d9e81b1979cdc6f0cbea6b4822a5354d9da9f98d6d5273b60ed9710 as snyk
-FROM quay.io/enterprise-contract/ec-cli:snapshot@sha256:6491f75e335015b8e800ca4508ac0cd155aeaf3a89399bc98949f93860a3b0a5 AS ec-cli
+FROM quay.io/enterprise-contract/ec-cli:snapshot@sha256:669bf10a33e7a713da5727868fe72a0ff6354a1e5eed9f42990bd2fadacad576 AS ec-cli
 FROM ghcr.io/sigstore/cosign/cosign:v99.99.91@sha256:8caf794491167c331776203c60b7c69d4ff24b4b4791eba348d8def0fd0cc343 as cosign-bin
 FROM registry.access.redhat.com/ubi9/ubi-minimal:9.5-1745855087
 
