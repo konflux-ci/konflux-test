@@ -1,5 +1,5 @@
 FROM registry.access.redhat.com/ubi9/ubi-minimal:9.6-1747218906
-FROM quay.io/enterprise-contract/ec-cli:snapshot@sha256:dc7d404596385e7d3c624ec0492524a1d57efe2b0c10cf0ec2158d49c0290a83 AS ec-cli
+FROM quay.io/enterprise-contract/ec-cli:snapshot@sha256:55a86155737476349007fdacfe68eead62a5d93a63ff5da52a6787dd9de98bef AS ec-cli
 
 ENV POLICY_PATH="/project"
 # Install required packages
