@@ -1,6 +1,6 @@
 # Konflux-test
 This is Konflux-test repository for building the image of the same name.
-Purpose of this repo is to store resources, currently for tekton tasks and pipelines.
+The purpose of this repo is to store resources and utilities for running test tasks within Konflux pipelines.
 
 ## Prerequisites
 
