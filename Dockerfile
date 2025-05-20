@@ -59,6 +59,7 @@ RUN ARCH=$(uname -m) && curl -s -L https://github.com/open-policy-agent/conftest
     curl -s -LO "https://github.com/bats-core/bats-core/archive/refs/tags/v$BATS_VERSION.tar.gz" && \
     curl -s -L https://github.com/operator-framework/operator-registry/releases/download/"${OPM_VERSION}"/linux-amd64-opm > /usr/bin/opm && chmod +x /usr/bin/opm && \
     curl -s -L https://github.com/opencontainers/umoci/releases/download/"${UMOCI_VERSION}"/umoci.amd64 > /usr/bin/umoci && chmod +x /usr/bin/umoci && \
+    OPA_VERSION=$(/usr/bin/conftest --version | grep OPA | cut -d" " -f2) && curl -L -o /usr/bin/opa https://openpolicyagent.org/downloads/v"${OPA_VERSION}"/opa_linux_amd64_static && chmod +x /usr/bin/opa && \
     tar -xf "v$BATS_VERSION.tar.gz" && \
     cd "bats-core-$BATS_VERSION" && \
     ./install.sh /usr && \
