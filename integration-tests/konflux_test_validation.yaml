@@ -1,0 +1,136 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: konflux-test-validation
+spec:
+  description: |
+    The konflux-test validation integration pipeline runs the tests within the newly built konflux-test image. 
+    This verifies that the OPA policies and the bash functions that were built into the image
+    conform to the defined testing requirements.
+  params:
+    - description: |
+        Spec section of an Snapshot resource. Not all fields of the
+        resource are required. A minimal example:
+          {
+            "components": [
+              {
+                "containerImage": "quay.io/example/repo:latest",
+                "source": {
+                  "git": {
+                    "url": "https://github.com/org/repo",
+                    "revision": "6c1cbf4193930582d998770411f81d5c70aea29b"
+                  }
+                }
+              }
+            ]
+          }
+      name: SNAPSHOT
+      type: string
+  tasks:
+    - name: test-metadata
+      taskRef:
+        resolver: git
+        params:
+          - name: url
+            value: https://github.com/konflux-ci/tekton-integration-catalog.git
+          - name: revision
+            value: main
+          - name: pathInRepo
+            value: /tasks/test-metadata/0.1/test-metadata.yaml
+      params:
+        - name: SNAPSHOT
+          value: $(params.SNAPSHOT)
+        - name: test-name
+          value: "konflux-test"
+    - name: shellcheck
+      runAfter:
+        - test-metadata
+      taskRef:
+        resolver: git
+        params:
+          - name: url
+            value: https://github.com/konflux-ci/tekton-integration-catalog.git
+          - name: revision
+            value: main
+          - name: pathInRepo
+            value: tasks/linters/shellcheck/0.1/shellcheck.yaml
+      params:
+        - name: git-url
+          value: "$(tasks.test-metadata.results.git-url)"
+        - name: git-revision
+          value: "$(tasks.test-metadata.results.git-revision)"
+        - name: exclude-dirs
+          value:
+            - "test/conftest.sh"
+            - "test/selftest.sh"
+    - name: self-test
+      runAfter:
+        - test-metadata
+      taskSpec:
+        results:
+          - description: Tekton task test output.
+            name: TEST_OUTPUT
+        steps:
+          - name: self-test
+            image: "$(tasks.test-metadata.results.container-image)"
+            script: |
+              #!/usr/bin/env bash
+              set -euo pipefail
+              . /utils.sh
+              trap 'handle_error $(results.TEST_OUTPUT.path)' EXIT
+              /selftest.sh
+    - name: unit-tests
+      runAfter:
+        - test-metadata
+      taskSpec:
+        results:
+          - description: Tekton task test output.
+            name: TEST_OUTPUT
+        steps:
+          - name: clone-refs
+            image: "$(tasks.test-metadata.results.container-image)"
+            workingDir: /workspace
+            script: |
+              #!/usr/bin/env bash
+              set -euo pipefail
+              . /utils.sh
+              trap 'handle_error $(results.TEST_OUTPUT.path)' EXIT
+              git clone "$(tasks.test-metadata.results.git-url)" .
+              git checkout "$(tasks.test-metadata.results.git-revision)"
+          - name: bats-unit-tests
+            image: "$(tasks.test-metadata.results.container-image)"
+            workingDir: /workspace
+            script: |
+              #!/usr/bin/env bash
+              set -euo pipefail
+              . /utils.sh
+              trap 'handle_error $(results.TEST_OUTPUT.path)' EXIT
+              
+              echo "Running bats unit tests for bash functions"
+              ls
+              result="SUCCESS"
+              bats unittests_bash || result="FAILURE"
+              
+              if [[ "${result}" == "FAILURE" ]]; then
+                TEST_OUTPUT=$(make_result_json -r "${result}" -t "The bats bash unit tests resulted in ${result}.")
+                echo -n "${TEST_OUTPUT}" | tee $(results.TEST_OUTPUT.path)
+              fi
+          - name: opa-policy-unittests
+            image: "$(tasks.test-metadata.results.container-image)"
+            workingDir: /workspace
+            script: |
+              #!/usr/bin/env bash
+              set -euo pipefail
+              . /utils.sh
+              trap 'handle_error $(results.TEST_OUTPUT.path)' EXIT
+              
+              echo "Running OPA unit tests for rego policies"
+              /usr/bin/opa test --coverage --format json ./policies ./unittests ./unittests/test_data > opa_results.json
+              jq -c '.files | to_entries[] | {"file":.key, "coverage": .value.coverage}' opa_results.json
+              result=$(jq -j -r 'if .coverage < 100 then "FAILURE" else "SUCCESS" end' opa_results.json)
+              coverage=$(jq -j -r .coverage opa_results.json)
+              
+              if [[ "${result}" == "FAILURE" ]]; then
+                TEST_OUTPUT=$(make_result_json -r "${result}" -t "The coverage percentage is ${coverage}.")
+                echo -n "${TEST_OUTPUT}" | tee $(results.TEST_OUTPUT.path)
+              fi
