@@ -60,7 +60,7 @@ jobs:
 
       - name: Get ClamAV version
         run: |
-          podman run --rm -t ${{ steps.build-image.outputs.image-with-tag }} clamscan --version
+          podman run --rm -t ${{ steps.build-image.outputs.image-with-tag }} clamdscan --version
 
       - name: Log into registry konflux-ci
         if: ${{ github.event_name != 'pull_request' }}  # don't login from PR; secrets are not passed to PRs from fork
