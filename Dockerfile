@@ -20,7 +20,7 @@ FROM registry.access.redhat.com/ubi9/ubi-minimal:9.6-1747218906
 # To find the OPA version associated with conftest run the following with the relevant version of conftest:
 # $ conftest --version
 ARG conftest_version=0.45.0
-ARG BATS_VERSION=1.6.0
+ARG BATS_VERSION=1.8.2
 ARG sbom_utility_version=0.12.0
 ARG OPM_VERSION=v1.40.0
 ARG UMOCI_VERSION=v0.4.7
