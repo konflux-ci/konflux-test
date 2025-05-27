@@ -1201,3 +1201,23 @@ EOF
     EXPECTED_RESPONSE="registry/image@valid-manifest-amd64"
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
+
+@test "Serialize image mirrors yaml: success" {
+    yaml_input=$(cat <<EOF
+---
+apiVersion: operator.openshift.io/v1alpha1
+kind: ImageDigestMirrorSet
+metadata:
+  name: example-mirror-set
+spec:
+  imageDigestMirrors:
+    - mirrors:
+        - quay.io/mirror-namespace/mirror-repo
+        - other-registry.io/namespace/repo
+      source: quay.io/gatekeeper/gatekeeper
+EOF
+)
+    run serialize_image_mirrors_yaml "${yaml_input}"
+    EXPECTED_RESPONSE="- mirrors:\n    - quay.io/mirror-namespace/mirror-repo\n    - other-registry.io/namespace/repo\n  source: quay.io/gatekeeper/gatekeeper"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}

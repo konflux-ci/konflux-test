@@ -1225,3 +1225,25 @@ resolve_to_0th_manifest_digest() {
 
   echo -n "${image_no_digest}@${new_digest}"
 }
+
+# This function will be used by tasks in tekton-integration-catalog
+# Given an image mirror set yaml, it transforms the YAML into a single-line string where each entry is separated by \n and indentation is preserved using spaces.
+serialize_image_mirrors_yaml() {
+  local yaml_input="$1"
+
+  # Validate YAML input string
+  if ! echo "${yaml_input}" | yq '.' &>/dev/null; then
+    echo "serialize_image_mirrors_yaml: Invalid YAML input" >&2
+    return 2
+  fi
+
+  # Extract and format as escaped string
+  local serialized_mirrors
+  serialized_mirrors=$(yq --output-format=json '.spec.imageDigestMirrors' <<<"${yaml_input}" |
+    jq -r '.[] |
+      "- mirrors:\n    - " + (.mirrors | join("\n    - ")) + "\n  source: " + .source' |
+    paste -sd'\n' - |
+    sed ':a;N;$!ba;s/\n/\\n/g')
+  
+  echo "${serialized_mirrors}"
+}
