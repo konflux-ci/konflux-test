@@ -37,7 +37,7 @@ warn_critical_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, 
 
   name := "clair_critical_vulnerabilities"
   vulns_num := count_vulnerabilities(rpms_with_critical_vulnerabilities)
-  msg := "Found packages with critical vulnerabilities. Consider updating to a newer version of those packages, they may no longer be affected by the reported CVEs."
+  msg := "Found packages with critical vulnerabilities associated with RHSA fixes. Consider updating to a newer version of those packages, they may no longer be affected by the reported CVEs."
   description := generate_description(rpms_with_critical_vulnerabilities)
   url := "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
 }
@@ -59,7 +59,7 @@ warn_high_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "det
 
   name := "clair_high_vulnerabilities"
   vulns_num = count_vulnerabilities(rpms_with_high_vulnerabilities)
-  msg := "Found packages with high vulnerabilities. Consider updating to a newer version of those packages, they may no longer be affected by the reported CVEs."
+  msg := "Found packages with high vulnerabilities associated with RHSA fixes. Consider updating to a newer version of those packages, they may no longer be affected by the reported CVEs."
   description := generate_description(rpms_with_high_vulnerabilities)
   url := "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
 }
@@ -81,7 +81,7 @@ warn_medium_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "d
 
   name := "clair_medium_vulnerabilities"
   vulns_num := count_vulnerabilities(rpms_with_medium_vulnerabilities)
-  msg := "Found packages with medium vulnerabilities. Consider updating to a newer version of those packages, they may no longer be affected by the reported CVEs."
+  msg := "Found packages with medium vulnerabilities associated with RHSA fixes. Consider updating to a newer version of those packages, they may no longer be affected by the reported CVEs."
   description := generate_description(rpms_with_medium_vulnerabilities)
   url := "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
 }
@@ -105,7 +105,7 @@ warn_low_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "deta
 
   name := "clair_low_vulnerabilities"
   vulns_num := count_vulnerabilities(rpms_with_low_neg_vulnerabilities)
-  msg := "Found packages with low/negligible vulnerabilities. Consider updating to a newer version of those packages, they may no longer be affected by the reported CVEs."
+  msg := "Found packages with low/negligible vulnerabilities associated with RHSA fixes. Consider updating to a newer version of those packages, they may no longer be affected by the reported CVEs."
   description := generate_description(rpms_with_low_neg_vulnerabilities)
   url := "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
 }
