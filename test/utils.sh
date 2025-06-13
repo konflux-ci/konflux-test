@@ -1247,3 +1247,29 @@ serialize_image_mirrors_yaml() {
   
   echo "${serialized_mirrors}"
 }
+
+# This function will be used by tasks in tekton-integration-catalog
+# Given a plain text file of image pull event logs and a deployment start timestamp, this function returns the images that were pulled on or after the specified timestamp.
+# The input file should contain lines similar to the output of `oc get events` or `kubectl get events`, such as: '2025-06-10T08:15:52Z,Pulling image "quay.io/example/image:tag"'
+# The timestamp must be in ISO 8601 format (e.g., 2025-06-10T08:15:52Z).
+parse_collected_image_pulls() {
+  local image_pull_events_file="$1"
+  local deployment_start_time="$2"
+
+  awk -v start="$deployment_start_time" -F',' '
+    {
+      if ($1 >= start) {
+        match($2, /image "[^"]+"/, arr)
+        if (arr[0] != "") {
+          gsub(/image "|"/, "", arr[0])
+          images[arr[0]]
+        }
+      }
+    }
+    END {
+      for (img in images) {
+        print img
+      }
+    }
+  ' "$image_pull_events_file" | sort
+}

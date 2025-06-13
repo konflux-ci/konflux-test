@@ -1221,3 +1221,29 @@ EOF
     EXPECTED_RESPONSE="- mirrors:\n    - quay.io/mirror-namespace/mirror-repo\n    - other-registry.io/namespace/repo\n  source: quay.io/gatekeeper/gatekeeper"
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
+
+@test "Parse collected image pulls: success" {
+    # Create a temporary file
+    image_pull_events_file=$(mktemp)
+
+    # Write test content to the temp file
+    cat <<EOF > "$image_pull_events_file"
+2025-06-10T08:15:52Z,Pulling image "registry-proxy.engineering.redhat.com/rh-osbs/3scale-amp2-apicast-rhel7-operator-metadata@sha256:835301351e6aabdde811a26952e2fae6f32152b59591ca33e62e7cc0dd865984"
+2025-06-10T08:15:53Z,Pulling image "quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:4fdec809fa6fc74b6b205e2c7f599315b8345e7beedea9ac9aa40eec6090e796"
+2025-06-10T08:16:08Z,Pulling image "registry.redhat.io/3scale-amp2/apicast-rhel7-operator@sha256:5888618c5e0f893aabb4a92f34fa8c1146dba2c6ba34470d7dd2e88ef298685c"
+2025-06-10T08:14:28Z,Pulling image "brew.registry.redhat.io/rh-osbs/iib:986652"
+2025-06-10T08:14:29Z,Pulling image "brew.registry.redhat.io/rh-osbs/iib:986652"
+2025-06-10T08:16:45Z,Pulling image "quay.io/operator-framework/scorecard-untar@sha256:2e728c5e67a7f4dec0df157a322dd5671212e8ae60f69137463bd4fdfbff8747"
+2025-06-10T08:16:51Z,Pulling image "quay.io/operator-framework/scorecard-test:v1.28.0"
+2025-06-10T08:16:52Z,Pulling image "quay.io/operator-framework/scorecard-test:v1.28.0"
+EOF
+
+    # Define deployment start time (filtering out events before this)
+    DEPLOY_START="2025-06-10T08:15:52Z"
+
+    run parse_collected_image_pulls "$image_pull_events_file" "$DEPLOY_START"
+
+    EXPECTED_RESPONSE=$'quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:4fdec809fa6fc74b6b205e2c7f599315b8345e7beedea9ac9aa40eec6090e796\nquay.io/operator-framework/scorecard-test:v1.28.0\nquay.io/operator-framework/scorecard-untar@sha256:2e728c5e67a7f4dec0df157a322dd5671212e8ae60f69137463bd4fdfbff8747\nregistry-proxy.engineering.redhat.com/rh-osbs/3scale-amp2-apicast-rhel7-operator-metadata@sha256:835301351e6aabdde811a26952e2fae6f32152b59591ca33e62e7cc0dd865984\nregistry.redhat.io/3scale-amp2/apicast-rhel7-operator@sha256:5888618c5e0f893aabb4a92f34fa8c1146dba2c6ba34470d7dd2e88ef298685c'
+
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
