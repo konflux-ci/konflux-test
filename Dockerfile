@@ -3,7 +3,7 @@ FROM registry.access.redhat.com/ubi9/go-toolset:9.6-1749636489 as check-payload-
 
 WORKDIR /opt/app-root/src
 
-ARG CHECK_PAYLOAD_VERSION=0.3.6
+ARG CHECK_PAYLOAD_VERSION=0.3.7
 
 RUN curl -s -L -o check-payload.tar.gz "https://github.com/openshift/check-payload/archive/refs/tags/${CHECK_PAYLOAD_VERSION}.tar.gz" && \
     tar -xzf check-payload.tar.gz && rm check-payload.tar.gz && cd check-payload-${CHECK_PAYLOAD_VERSION} && \
