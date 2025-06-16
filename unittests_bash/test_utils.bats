@@ -1247,3 +1247,122 @@ EOF
 
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
+
+@test "Collect scorecard config images: success" {
+    yaml_input=$(cat <<EOF
+---
+apiVersion: scorecard.operatorframework.io/v1alpha3
+kind: Configuration
+metadata:
+  name: config
+stages:
+- parallel: true
+  tests:
+  - entrypoint:
+    - scorecard-test
+    - basic-check-spec
+    image: quay.io/operator-framework/scorecard-test:v1.31.0
+    labels:
+      suite: basic
+      test: basic-check-spec-test
+    storage:
+      spec:
+        mountPath: {}
+  - entrypoint:
+    - scorecard-test
+    - olm-bundle-validation
+    image: quay.io/operator-framework/scorecard-test:v1.33.0
+    labels:
+      suite: olm
+      test: olm-bundle-validation-test
+    storage:
+      spec:
+        mountPath: {}
+storage:
+  spec:
+    mountPath: {}
+EOF
+)
+
+    run collect_scorecard_config_images "$yaml_input"
+    EXPECTED_RESPONSE=$'quay.io/operator-framework/scorecard-test:v1.31.0\nquay.io/operator-framework/scorecard-test:v1.33.0'
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Collect scorecard config images: no stages key" {
+    yaml_input=$(cat <<EOF
+---
+apiVersion: scorecard.operatorframework.io/v1alpha3
+kind: Configuration
+metadata:
+  name: config
+storage:
+  spec:
+    mountPath: {}
+EOF
+)
+
+    run collect_scorecard_config_images "$yaml_input"
+    EXPECTED_RESPONSE=""
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Collect scorecard config images: no tests key" {
+    yaml_input=$(cat <<EOF
+---
+apiVersion: scorecard.operatorframework.io/v1alpha3
+kind: Configuration
+metadata:
+  name: config
+stages:
+- parallel: true
+storage:
+  spec:
+    mountPath: {}
+EOF
+)
+
+    run collect_scorecard_config_images "$yaml_input"
+    EXPECTED_RESPONSE=""
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Collect scorecard config images: one image missing" {
+    yaml_input=$(cat <<EOF
+---
+apiVersion: scorecard.operatorframework.io/v1alpha3
+kind: Configuration
+metadata:
+  name: config
+stages:
+- parallel: true
+  tests:
+  - entrypoint:
+    - scorecard-test
+    - basic-check-spec
+    image: quay.io/operator-framework/scorecard-test:v1.31.0
+    labels:
+      suite: basic
+      test: basic-check-spec-test
+    storage:
+      spec:
+        mountPath: {}
+  - entrypoint:
+    - scorecard-test
+    - olm-bundle-validation
+    labels:
+      suite: olm
+      test: olm-bundle-validation-test
+    storage:
+      spec:
+        mountPath: {}
+storage:
+  spec:
+    mountPath: {}
+EOF
+)
+
+    run collect_scorecard_config_images "$yaml_input"
+    EXPECTED_RESPONSE="quay.io/operator-framework/scorecard-test:v1.31.0"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
