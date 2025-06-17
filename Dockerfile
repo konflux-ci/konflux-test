@@ -11,7 +11,7 @@ RUN curl -s -L -o check-payload.tar.gz "https://github.com/openshift/check-paylo
     chmod +x /opt/app-root/src/check-payload-binary
 
 # Container image that runs your code
-FROM docker.io/snyk/snyk:linux@sha256:4f8a787fce0a406c5f3bb83fad2903fe06dae90db67bd7e98af3cb90f16b156a as snyk
+FROM docker.io/snyk/snyk:linux@sha256:dc9e992010878db3e67392f432694392bd610189da68bab340363fdba84acfb9 as snyk
 FROM quay.io/enterprise-contract/ec-cli:snapshot@sha256:6491f75e335015b8e800ca4508ac0cd155aeaf3a89399bc98949f93860a3b0a5 AS ec-cli
 FROM ghcr.io/sigstore/cosign/cosign:v99.99.91@sha256:8caf794491167c331776203c60b7c69d4ff24b4b4791eba348d8def0fd0cc343 as cosign-bin
 FROM quay.io/konflux-ci/buildah-task:latest@sha256:b82d465a06c926882d02b721cf8a8476048711332749f39926a01089cf85a3f9 AS buildah-task-image
