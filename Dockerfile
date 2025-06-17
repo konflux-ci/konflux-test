@@ -1,38 +1,37 @@
-# Build step for check-payload tool
-FROM registry.access.redhat.com/ubi9/go-toolset:1.23.6-1745328278 as check-payload-build
+FROM registry.access.redhat.com/ubi9/go-toolset:9.6-1747333074 as check-payload-build
 
+#check-payload
 WORKDIR /opt/app-root/src
+ARG CHECK_PAYLOAD_VERSION=0.3.6
 
-ARG CHECK_PAYLOAD_VERSION=0.3.5
-
-RUN curl -s -L -o check-payload.tar.gz "https://github.com/openshift/check-payload/archive/refs/tags/${CHECK_PAYLOAD_VERSION}.tar.gz" && \
-    tar -xzf check-payload.tar.gz && rm check-payload.tar.gz && cd check-payload-${CHECK_PAYLOAD_VERSION} && \
+RUN tar -xzf /cachi2/output/deps/generic/check-payload.tar.gz &&  cd check-payload-${CHECK_PAYLOAD_VERSION} && \
     CGO_ENABLED=0 go build -ldflags="-X main.Commit=${CHECK_PAYLOAD_VERSION}" -o /opt/app-root/src/check-payload-binary && \
-    chmod +x /opt/app-root/src/check-payload-binary
+    chmod +x /opt/app-root/src/check-payload-binary 
 
-# Container image that runs your code
-FROM docker.io/snyk/snyk:linux@sha256:5c7f8de797c870a171ad36c8ab38d17bcb4592ee4683d0e4640fea4c27e984fc as snyk
+FROM docker.io/snyk/snyk:linux@sha256:6d26ce5ef31116eb21315b99f1b0970ca3cc6267174cd6f3de1cb375bd782083 as snyk
 FROM quay.io/enterprise-contract/ec-cli:snapshot@sha256:6491f75e335015b8e800ca4508ac0cd155aeaf3a89399bc98949f93860a3b0a5 AS ec-cli
 FROM ghcr.io/sigstore/cosign/cosign:v99.99.91@sha256:8caf794491167c331776203c60b7c69d4ff24b4b4791eba348d8def0fd0cc343 as cosign-bin
-FROM registry.access.redhat.com/ubi9/ubi-minimal:9.5-1745845495
+FROM quay.io/appuio/oc:v4.18 AS oc-bin
+FROM registry.access.redhat.com/ubi9/ubi:9.6-1747219013
 
 # Note that the version of OPA used by pr-checks must be updated manually to reflect conftest updates
 # To find the OPA version associated with conftest run the following with the relevant version of conftest:
 # $ conftest --version
 ARG conftest_version=0.45.0
-ARG BATS_VERSION=1.6.0
+ARG BATS_VERSION=1.8.2
 ARG sbom_utility_version=0.12.0
 ARG OPM_VERSION=v1.40.0
 ARG UMOCI_VERSION=v0.4.7
 
+ARG PATH_TO_ART=/cachi2/output/deps/generic
+
 ENV POLICY_PATH="/project"
 
-ADD https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm epel-release-latest-9.noarch.rpm
+#ADD https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm epel-release-latest-9.noarch.rpm
 
-RUN rpm -Uvh epel-release-latest-9.noarch.rpm && \
-    microdnf -y --setopt=tsflags=nodocs --setopt=install_weak_deps=0 install \
-    findutils \
-    jq \
+# Build dependency offline to streamline build
+#rpm -Uvh epel-release-latest-9.noarch.rpm && \
+RUN dnf install -y --nogpgcheck jq \
     skopeo \
     tar \
     python3 \
@@ -44,28 +43,36 @@ RUN rpm -Uvh epel-release-latest-9.noarch.rpm && \
     golang \
     python3-file-magic \
     python3-pip \
+    clamav-update \
     ShellCheck \
     csmock-plugin-shellcheck-core \
-    clamav-update && \
-    pip3 install --no-cache-dir yq && \
-    curl -s -L https://github.com/CycloneDX/sbom-utility/releases/download/v"${sbom_utility_version}"/sbom-utility-v"${sbom_utility_version}"-linux-amd64.tar.gz --output sbom-utility.tar.gz && \
-    mkdir sbom-utility && tar -xf sbom-utility.tar.gz -C sbom-utility && rm sbom-utility.tar.gz && \
-    cd /usr/bin && \
-    microdnf -y install libicu && \
-    microdnf clean all
+    libicu
 
-RUN ARCH=$(uname -m) && curl -s -L https://github.com/open-policy-agent/conftest/releases/download/v"${conftest_version}"/conftest_"${conftest_version}"_Linux_"$ARCH".tar.gz | tar -xz --no-same-owner -C /usr/bin/ && \
-    curl -L https://mirror.openshift.com/pub/openshift-v4/"$ARCH"/clients/ocp/stable/openshift-client-linux.tar.gz --output oc.tar.gz && tar -xzvf oc.tar.gz -C /usr/bin && rm oc.tar.gz && \
-    curl -s -LO "https://github.com/bats-core/bats-core/archive/refs/tags/v$BATS_VERSION.tar.gz" && \
-    curl -s -L https://github.com/operator-framework/operator-registry/releases/download/"${OPM_VERSION}"/linux-amd64-opm > /usr/bin/opm && chmod +x /usr/bin/opm && \
-    curl -s -L https://github.com/opencontainers/umoci/releases/download/"${UMOCI_VERSION}"/umoci.amd64 > /usr/bin/umoci && chmod +x /usr/bin/umoci && \
-    tar -xf "v$BATS_VERSION.tar.gz" && \
+#yq install, oneline because its pip
+RUN pip install ${PATH_TO_ART}/PyYAML-6.0.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl ${PATH_TO_ART}/argcomplete-3.6.2-py3-none-any.whl ${PATH_TO_ART}/tomlkit-0.13.3-py3-none-any.whl ${PATH_TO_ART}/xmltodict-0.14.2-py2.py3-none-any.whl ${PATH_TO_ART}/yq-3.4.3-py3-none-any.whl
+
+#sbom-utility
+RUN mkdir sbom-utility && tar -xf ${PATH_TO_ART}/sbom-utility.tar.gz -C sbom-utility
+
+#bats-core
+RUN tar -xf ${PATH_TO_ART}/v1.8.2.tar.gz && \
     cd "bats-core-$BATS_VERSION" && \
     ./install.sh /usr && \
-    cd .. && rm -rf "bats-core-$BATS_VERSION" && rm -rf "v$BATS_VERSION.tar.gz" && \
+    cd .. && rm -rf "bats-core-$BATS_VERSION" && \
     cd /
 
+#opm
+RUN  cp ${PATH_TO_ART}/linux-amd64-opm /usr/bin/opm && chmod +x /usr/bin/opm
+
+#umoci
+RUN  cp ${PATH_TO_ART}/umoci.amd64 /usr/bin/umoci && chmod +x /usr/bin/umoci
+
+#opa
+RUN cp ${PATH_TO_ART}/opa_linux_amd64_static /usr/bin/opa && chmod +x /usr/bin/opa
+
 ENV PATH="${PATH}:/sbom-utility"
+
+COPY --from=check-payload-build /opt/app-root/src/check-payload-binary /usr/bin/check-payload
 
 COPY --from=snyk /usr/local/bin/snyk /usr/local/bin/snyk
 
@@ -73,7 +80,7 @@ COPY --from=ec-cli /usr/local/bin/ec /usr/local/bin/ec
 
 COPY --from=cosign-bin /ko-app/cosign /usr/local/bin/cosign
 
-COPY --from=check-payload-build /opt/app-root/src/check-payload-binary /usr/bin/check-payload
+COPY --from=oc-bin /bin/oc /usr/bin/
 
 COPY policies $POLICY_PATH
 COPY test/conftest.sh $POLICY_PATH
