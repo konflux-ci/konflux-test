@@ -14,7 +14,7 @@ RUN curl -s -L -o check-payload.tar.gz "https://github.com/openshift/check-paylo
 FROM docker.io/snyk/snyk:linux@sha256:11ccd89f3273602fa00482fc77caca5d0ec163fb9ad30bae202e5e17cec0d94a as snyk
 FROM quay.io/conforma/cli:snapshot@sha256:a3065e65d016f424975f8ad2341903443d235a813333ae0494c9a521a9366c06 AS conforma
 FROM ghcr.io/sigstore/cosign/cosign:v2.4.1@sha256:b03690aa52bfe94054187142fba24dc54137650682810633901767d8a3e15b31 as cosign-bin
-FROM quay.io/konflux-ci/buildah-task:latest@sha256:b82d465a06c926882d02b721cf8a8476048711332749f39926a01089cf85a3f9 AS buildah-task-image
+FROM quay.io/konflux-ci/buildah-task:latest@sha256:c8d667a4efa2f05e73e2ac36b55928633d78857589165bd919d2628812d7ffcb AS buildah-task-image
 FROM registry.access.redhat.com/ubi9/ubi-minimal:9.6-1750782676
 
 # Note that the version of OPA used by pr-checks must be updated manually to reflect conftest updates
