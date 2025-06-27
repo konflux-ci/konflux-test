@@ -12,6 +12,9 @@ updates:
     commit-message:
       # Prefix all commit messages with "chore(Dockerfile): "
       prefix: "chore(Dockerfile): "
+    ignore:
+      # Ignore updates to cosign packages
+      - dependency-name: "sigstore/cosign/cosign"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
