@@ -19,7 +19,7 @@ updates:
     commit-message:
       prefix: "chore(actions): "
   - package-ecosystem: "docker"
-    directory: "/clamav"
+    directory: "/"
     schedule:
       interval: weekly
     commit-message:
