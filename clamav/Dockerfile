@@ -77,3 +77,4 @@ RUN ARCH="$(uname -m)" && \
     rm oc.tar.gz
 
 ENTRYPOINT ["/start-clamd.sh"]
+
