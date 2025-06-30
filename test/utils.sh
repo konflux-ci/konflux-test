@@ -1322,3 +1322,175 @@ collect_scorecard_config_images() {
     printf "%s\n" "${images[@]}" | sort -u
   fi
 }
+
+# This function will be used by tasks in tekton-integration-catalog
+# Given a Pyxis URL, HTTP method, GraphQL query and variables for Pyxis API, this function handles pagination.
+# It repeatedly calls the Pyxis GraphQL endpoint, fetching all pages of results, aggregating them into a single list of JSON rows.
+handle_pyxis_response_pages() {
+  local pyxis_url="$1"      # e.g., "https://catalog.redhat.com/api/containers/graphql/"
+  local http_method="$2"    # e.g., "POST"
+  local query="$3"          # e.g., the raw GraphQL query string
+  local variables_json="$4" # e.g., '{"repo":"rhel7/rsyslog","registry":"registry.access.redhat.com","page":0}'
+
+  local PAGE=0
+  local ALL_ROWS=()
+  local results_size=0
+  local total=0
+  local page_size=500
+
+  while :; do
+    local request_payload
+    request_payload=$(jq -n \
+      --arg query "$query" \
+      --argjson variables "$(echo "$variables_json" | jq --argjson page "$PAGE" '. + {page: $page}')" \
+      '{ query: $query, variables: $variables }'
+    )
+
+    local RESPONSE
+    RESPONSE=$(curl -s -X "$http_method" "$pyxis_url" \
+      -H "Content-Type: application/json" \
+      --data-raw "$request_payload")
+
+    local ERRORS
+    ERRORS=$(echo "$RESPONSE" | jq -r '.errors // empty')
+    if [[ -n "$ERRORS" && "$ERRORS" != "null" ]]; then
+      echo "{\"data\":[],\"errors\":$ERRORS}"
+      return 1
+    fi
+
+    total=$(echo "$RESPONSE" | jq -r '.data.results.total // 0')
+    page_size=$(echo "$RESPONSE" | jq -r '.data.results.page_size // 500')
+
+    mapfile -t PAGE_ROWS < <(echo "$RESPONSE" | jq -c '.data.results.data[]?')
+
+    ALL_ROWS+=("${PAGE_ROWS[@]}")
+
+    results_size=$((results_size + ${#PAGE_ROWS[@]}))
+
+    # Stop if we've collected all results, or if the current page returned fewer rows than page_size
+    if [[ "$results_size" -ge "$total" || ${#PAGE_ROWS[@]} -lt $page_size ]]; then
+      break
+    fi
+
+    ((PAGE++))
+  done
+
+  # Output all collected rows (one JSON object per line)
+  printf '%s\n' "${ALL_ROWS[@]}"
+}
+
+# This function will be used by tasks in tekton-integration-catalog
+# Given a registry, repository, image digest, and a list of uncompressed layer digests, it queries the Pyxis GraphQL API to determine if a container image is published and certified.
+# It handles pagination, tries to match first by exact docker_image_digest, and falls back to matching by the uncompressed layer digests if needed.
+# It outputs a JSON object: { "certified":"<true/false/Not found>", "published":"<true/false/Not found>" }
+get_image_published_and_certified_status() {
+  local registry="$1"
+  local repo="$2"
+  local digest="$3"
+  shift 3
+  local layerDigestList=("$@")
+
+  if [[ -z "$registry" || -z "$repo" || -z "$digest" || ${#layerDigestList[@]} -eq 0 ]]; then
+    echo "get_image_published_and_certified_status: Invalid input. Usage: get_image_published_and_certified_status <registry> <repo> <digest> <layerDigestList>" >&2
+    exit 2
+  fi
+
+  local query_string="
+  query ImagePublishedAndCertifiedStatus(
+    \$repo: String!
+    \$registry: String!
+    \$page: Int!
+  ) {
+    results: find_images(
+      page_size: 500
+      page: \$page
+      filter: {
+        and: [
+          { repositories: { repository: { eq: \$repo } } }
+          { repositories: { registry: { eq: \$registry } } }
+        ]
+      }
+    ) {
+      page
+      page_size
+      error { status detail }
+      total
+      data {
+        repositories { repository registry published }
+        parsed_data { uncompressed_layer_sizes { layer_id } }
+        docker_image_digest
+        certified
+      }
+    }
+  }"
+
+  local variables_json
+  variables_json=$(jq -nc \
+  --arg repo "$repo" \
+  --arg registry "$registry" \
+  '{ repo: $repo, registry: $registry, page: 0 }')
+
+  local url="https://catalog.redhat.com/api/containers/graphql/"
+  local http_method="POST"
+
+  mapfile -t RESULTS < <(handle_pyxis_response_pages "$url" "$http_method" "$query_string" "$variables_json")
+
+  local CERTIFIED="Not found"
+  local PUBLISHED="Not found"
+
+  # Check for empty results and log
+  if [ "${#RESULTS[@]}" -eq 0 ]; then
+    jq -nc --arg certified "Not found" --arg published "Not found" \
+      '{ certified: $certified, published: $published }'
+    return 0
+  fi
+
+  # Check by digest match first
+  for row in "${RESULTS[@]}"; do
+    local rec_digest
+    rec_digest=$(echo "$row" | jq -r '.docker_image_digest')
+    if [ "$rec_digest" == "$digest" ]; then
+      CERTIFIED=$(echo "$row" | jq -r '.certified')
+      for repo_item in $(echo "$row" | jq -c '.repositories[]'); do
+        local reg
+        reg=$(echo "$repo_item" | jq -r '.registry')
+        local rep
+        rep=$(echo "$repo_item" | jq -r '.repository')
+        if [ "$reg" == "$registry" ] && [ "$rep" == "$repo" ]; then
+          PUBLISHED=$(echo "$repo_item" | jq -r '.published')
+          break
+        fi
+      done
+    fi
+  done
+
+  # Check by uncompressed layer IDs if not found yet
+  if [ "$CERTIFIED" == "Not found" ] || [ "$PUBLISHED" == "Not found" ]; then
+    for row in "${RESULTS[@]}"; do
+      mapfile -t ulids < <(echo "$row" | jq -r '.parsed_data.uncompressed_layer_sizes[].layer_id')
+      
+      # Turn arrays into strings with sorted elements
+      local ulids_sorted
+      local layerDigestList_sorted
+      ulids_sorted=$(printf "%s\n" "${ulids[@]}" | sort | tr '\n' ' ')
+      layerDigestList_sorted=$(printf "%s\n" "${layerDigestList[@]}" | sort | tr '\n' ' ')
+
+      if [ "$ulids_sorted" == "$layerDigestList_sorted" ]; then
+        CERTIFIED=$(echo "$row" | jq -r '.certified')
+        for repo_item in $(echo "$row" | jq -c '.repositories[]'); do
+          local reg
+          reg=$(echo "$repo_item" | jq -r '.registry')
+          local rep
+          rep=$(echo "$repo_item" | jq -r '.repository')
+          if [ "$reg" == "$registry" ] && [ "$rep" == "$repo" ]; then
+            PUBLISHED=$(echo "$repo_item" | jq -r '.published')
+            break
+          fi
+        done
+      fi
+    done
+  fi
+
+  jq -nc --arg certified "$CERTIFIED" --arg published "$PUBLISHED" \
+    '{ certified: $certified, published: $published }'
+}

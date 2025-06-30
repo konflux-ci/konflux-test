@@ -1366,3 +1366,191 @@ EOF
     EXPECTED_RESPONSE="quay.io/operator-framework/scorecard-test:v1.31.0"
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
+
+@test "Handle pyxis response pages: multiple pages" {
+    local url="https://catalog.redhat.com/api/containers/graphql/"
+    local query="ImagePublishedAndCertifiedStatus"
+    local vars='{ "repo": "rhel7/rsyslog", "registry": "registry.access.redhat.com" }'
+
+    page0_response='{
+        "data": {
+        "results": {
+            "page": 0,
+            "page_size": 1,
+            "total": 2,
+            "data": [
+            {
+                "repositories": [
+                { "repository": "rhel7/rsyslog", "registry": "registry.access.redhat.com", "published": true }
+                ],
+                "parsed_data": {
+                "uncompressed_layer_sizes": [
+                    { "layer_id": "sha256:5d23c8bb24b5ef6c19d0995cbe4003091bc237ab6941657b74ec7c39116c1c67" }
+                ]
+                },
+                "docker_image_digest": "temp:sha256:c310d8e4591d5dcd6f699bcc42defebf6e1a2b9ae316469ccd14549dc5065042",
+                "certified": true
+            }
+            ]
+        }
+        }
+    }'
+
+    page1_response='{
+        "data": {
+        "results": {
+            "page": 1,
+            "page_size": 1,
+            "total": 2,
+            "data": [
+            {
+                "repositories": [
+                { "repository": "rhel7/rsyslog", "registry": "registry.access.redhat.com", "published": false }
+                ],
+                "parsed_data": {
+                "uncompressed_layer_sizes": [
+                    { "layer_id": "sha256:51b15c9293c9ad55df1dc4890a6d1e9511cc2ae1853211084fa0f95447e4ee5d" }
+                ]
+                },
+                "docker_image_digest": "temp:sha256:640e681a32375e843803d06f34a2a4f74eca49be5a3d220c81f0f778d30876c6",
+                "certified": false
+            }
+            ]
+        }
+        }
+    }'
+
+    curl() {
+        local body="${*: -1}"
+        local page=$(echo "$body" | grep -o '"page":[ ]*[0-9]\+' | grep -o '[0-9]\+')
+        case "$page" in
+        0) echo "$page0_response" ;;
+        1) echo "$page1_response" ;;
+        *) echo '{"data":{"results":{"page":99,"page_size":0,"total":2,"data":[]}}}' ;;
+        esac
+    }
+
+    run handle_pyxis_response_pages "$url" POST "$query" "$vars"
+    EXPECTED_RESPONSE=$'{"repositories":[{"repository":"rhel7/rsyslog","registry":"registry.access.redhat.com","published":true}],"parsed_data":{"uncompressed_layer_sizes":[{"layer_id":"sha256:5d23c8bb24b5ef6c19d0995cbe4003091bc237ab6941657b74ec7c39116c1c67"}]},"docker_image_digest":"temp:sha256:c310d8e4591d5dcd6f699bcc42defebf6e1a2b9ae316469ccd14549dc5065042","certified":true}\n{"repositories":[{"repository":"rhel7/rsyslog","registry":"registry.access.redhat.com","published":false}],"parsed_data":{"uncompressed_layer_sizes":[{"layer_id":"sha256:51b15c9293c9ad55df1dc4890a6d1e9511cc2ae1853211084fa0f95447e4ee5d"}]},"docker_image_digest":"temp:sha256:640e681a32375e843803d06f34a2a4f74eca49be5a3d220c81f0f778d30876c6","certified":false}'
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Handle pyxis response pages: single page" {
+    local url="https://catalog.redhat.com/api/containers/graphql/"
+    local query="ImagePublishedAndCertifiedStatus"
+    local vars='{}'
+
+    curl() {
+        echo '{
+        "data": {
+            "results": {
+            "page": 0,
+            "page_size": 2,
+            "total": 2,
+            "data": [
+                {
+                "repositories": [
+                    { "repository": "rhel8/rsyslog", "registry": "registry.access.redhat.com", "published": true }
+                ],
+                "parsed_data": {
+                    "uncompressed_layer_sizes": [
+                    { "layer_id": "sha256:5d23c8bb24b5ef6c19d0995cbe4003091bc237ab6941657b74ec7c39116c1c67" }
+                    ]
+                },
+                "docker_image_digest": "temp:sha256:c310d8e4591d5dcd6f699bcc42defebf6e1a2b9ae316469ccd14549dc5065042",
+                "certified": true
+                },
+                {
+                "repositories": [
+                    { "repository": "rhel8/rsyslog", "registry": "registry.access.redhat.com", "published": true }
+                ],
+                "parsed_data": {
+                    "uncompressed_layer_sizes": [
+                    { "layer_id": "sha256:51b15c9293c9ad55df1dc4890a6d1e9511cc2ae1853211084fa0f95447e4ee5d" }
+                    ]
+                },
+                "docker_image_digest": "temp:sha256:640e681a32375e843803d06f34a2a4f74eca49be5a3d220c81f0f778d30876c6",
+                "certified": false
+                }
+            ]
+            }
+        }
+        }'
+    }
+
+    run handle_pyxis_response_pages "$url" POST "$query" "$vars"
+    EXPECTED_RESPONSE=$'{"repositories":[{"repository":"rhel8/rsyslog","registry":"registry.access.redhat.com","published":true}],"parsed_data":{"uncompressed_layer_sizes":[{"layer_id":"sha256:5d23c8bb24b5ef6c19d0995cbe4003091bc237ab6941657b74ec7c39116c1c67"}]},"docker_image_digest":"temp:sha256:c310d8e4591d5dcd6f699bcc42defebf6e1a2b9ae316469ccd14549dc5065042","certified":true}\n{"repositories":[{"repository":"rhel8/rsyslog","registry":"registry.access.redhat.com","published":true}],"parsed_data":{"uncompressed_layer_sizes":[{"layer_id":"sha256:51b15c9293c9ad55df1dc4890a6d1e9511cc2ae1853211084fa0f95447e4ee5d"}]},"docker_image_digest":"temp:sha256:640e681a32375e843803d06f34a2a4f74eca49be5a3d220c81f0f778d30876c6","certified":false}'
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Handle pyxis response pages: returns empty when no results found" {
+    local url="https://catalog.redhat.com/api/containers/graphql/"
+    local query="ImagePublishedAndCertifiedStatus"
+    local vars='{}'
+
+    curl() {
+        echo '{"data":{"results":{"page":0,"page_size":0,"total":0,"data":[]}}}'
+    }
+
+    run handle_pyxis_response_pages "$url" POST "$query" "$vars"
+    EXPECTED_RESPONSE=""
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Handle pyxis response pages: returns GraphQL error properly" {
+    local url="https://catalog.redhat.com/api/containers/graphql/"
+    local query="ImagePublishedAndCertifiedStatus"
+    local vars='{}'
+
+    curl() {
+        echo '{"errors":[{"message":"Query failed due to something"}]}'
+    }
+
+    run handle_pyxis_response_pages "$url" POST "$query" "$vars"
+    [[ "$output" == *'"errors":'* ]]
+    [ "$status" -eq 1 ]
+}
+
+@test "Get image published and certified status: invalid input" {
+    run get_image_published_and_certified_status "registry.access.redhat.com" "rhel7/doesnotmatch" "temp:sha256:640e681a32375e843803d06f34a2a4f74eca49be5a3d220c81f0f778d30876c6"
+    EXPECTED_RESPONSE="get_image_published_and_certified_status: Invalid input. Usage: get_image_published_and_certified_status <registry> <repo> <digest> <layerDigestList>"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
+}
+
+@test "Get image published and certified status: handles no data returned" {
+    handle_pyxis_response_pages() {
+        # Return nothing to simulate no matches found in Pyxis
+        return 0
+    }
+
+    run get_image_published_and_certified_status "registry.access.redhat.com" "rhel7/rsyslog" "temp:sha256:640e681a32375e843803d06f34a2a4f74eca49be5a3d220c81f0f778d30876c6" "sha256:14883c6c9fde3cfa1b3708299a4a1171985c67bc582491e97cde04a4aa330ef5" "sha256:51b15c9293c9ad55df1dc4890a6d1e9511cc2ae1853211084fa0f95447e4ee5d"
+    EXPECTED_RESPONSE='{"certified":"Not found","published":"Not found"}'
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get image published and certified status: match by docker_image_digest" {
+    handle_pyxis_response_pages() {
+        echo '{"repositories":[{"repository":"rhel7/rsyslog","registry":"registry.access.redhat.com","published":true}],"parsed_data":{"uncompressed_layer_sizes":[{"layer_id":"sha256:14883c6c9fde3cfa1b3708299a4a1171985c67bc582491e97cde04a4aa330ef5"},{"layer_id":"sha256:51b15c9293c9ad55df1dc4890a6d1e9511cc2ae1853211084fa0f95447e4ee5d"}]},"docker_image_digest":"temp:sha256:640e681a32375e843803d06f34a2a4f74eca49be5a3d220c81f0f778d30876c6","certified":false}'
+        echo '{"repositories":[{"repository":"rhel7/rsyslog","registry":"registry.access.redhat.com","published":true}],"parsed_data":{"uncompressed_layer_sizes":[]},"docker_image_digest":"temp:sha256:686262b6bae340ef39974128b7c59730a246e09cefb9d2afaf5ebcfccebb624c","certified":false}'
+        echo '{"repositories":[{"repository":"rhel7/rsyslog","registry":"registry.access.redhat.com","published":true}],"parsed_data":{"uncompressed_layer_sizes":[{"layer_id":"sha256:5d23c8bb24b5ef6c19d0995cbe4003091bc237ab6941657b74ec7c39116c1c67"},{"layer_id":"sha256:abab321ee7e04dd9e35a80d2d9114c22b09f9c926246f8bd5303bd4b6d1613b6"}]},"docker_image_digest":"temp:sha256:c310d8e4591d5dcd6f699bcc42defebf6e1a2b9ae316469ccd14549dc5065042","certified":true}'
+    }
+
+    layerDigestList=("dummy-layer") # Doesn't matter for this test
+
+    run get_image_published_and_certified_status "registry.access.redhat.com" "rhel7/rsyslog" "temp:sha256:c310d8e4591d5dcd6f699bcc42defebf6e1a2b9ae316469ccd14549dc5065042" "${layerDigestList[@]}"
+    EXPECTED_RESPONSE='{"certified":"true","published":"true"}'
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get image published and certified status: match by layer digests" {
+    handle_pyxis_response_pages() {
+        echo '{"repositories":[{"repository":"rhel7/rsyslog","registry":"registry.access.redhat.com","published":true}],"parsed_data":{"uncompressed_layer_sizes":[]},"docker_image_digest":"temp:sha256:686262b6bae340ef39974128b7c59730a246e09cefb9d2afaf5ebcfccebb624c","certified":false}'
+        echo '{"repositories":[{"repository":"rhel7/rsyslog","registry":"registry.access.redhat.com","published":true}],"parsed_data":{"uncompressed_layer_sizes":[{"layer_id":"sha256:5d23c8bb24b5ef6c19d0995cbe4003091bc237ab6941657b74ec7c39116c1c67"},{"layer_id":"sha256:abab321ee7e04dd9e35a80d2d9114c22b09f9c926246f8bd5303bd4b6d1613b6"}]},"docker_image_digest":"temp:sha256:c310d8e4591d5dcd6f699bcc42defebf6e1a2b9ae316469ccd14549dc5065042","certified":true}'
+    }
+
+    layerDigestList=("sha256:5d23c8bb24b5ef6c19d0995cbe4003091bc237ab6941657b74ec7c39116c1c67" "sha256:abab321ee7e04dd9e35a80d2d9114c22b09f9c926246f8bd5303bd4b6d1613b6")
+
+    run get_image_published_and_certified_status "registry.access.redhat.com" "rhel7/rsyslog" "sha256:doesnotmatch" "${layerDigestList[@]}"
+    EXPECTED_RESPONSE='{"certified":"true","published":"true"}'
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
