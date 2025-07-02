@@ -194,6 +194,8 @@ spec:
         workspace: netrc
     - name: build-container
       params:
+      - name: ACTIVATION_KEY
+        value: registry-redhat-io-activation-key
       - name: IMAGE
         value: $(params.output-image)
       - name: DOCKERFILE
