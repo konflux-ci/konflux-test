@@ -39,13 +39,6 @@ jobs:
           dockerfile: Dockerfile
           ignore: DL3003,DL3013,DL3041,DL4006  # DL4006 seems broken
 
-  call-build-and-test-workflow:
-    name: Call build and test workflow
-    uses: ./.github/workflows/build_reusable.yaml
-    with:
-      tags: ${{ github.sha }}
-    secrets: inherit
-
   opa_policies_unittest:
     name: opa_policies_unittest
     runs-on: ubuntu-latest
