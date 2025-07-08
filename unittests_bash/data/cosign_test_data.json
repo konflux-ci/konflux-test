@@ -1,0 +1,12 @@
+{
+    "test_image": "busybox:latest",
+    "signed_image": "gcr.io/projectsigstore/cosign:latest",
+    "expected_commands": [
+      "version",
+      "help",
+      "verify",
+      "generate-key-pair",
+      "triangulate",
+      "tree"
+    ]
+  }
