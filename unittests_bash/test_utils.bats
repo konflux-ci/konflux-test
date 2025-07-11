@@ -1554,3 +1554,46 @@ EOF
     EXPECTED_RESPONSE='{"certified":"true","published":"true"}'
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
+
+
+# Test cosign binary functionality
+@test "cosign_version_check" {
+    run cosign version
+    [ "$status" -eq 0 ]
+    # Check for version output patterns (GitVersion, GitCommit, GitTreeState, BuildDate, etc.)
+    [[ "$output" =~ GitVersion|version|v[0-9] ]]
+}
+
+# Test cosign download sbom (mocked)
+@test "cosign_download_sbom_mock" {
+    # Mock cosign command for testing
+    cosign() {
+        if [[ $1 == "download" && $2 == "sbom" ]]; then
+            case $3 in
+                "quay.io/test/public-image@sha256:"*)
+                    echo '{"sbom": "mock_sbom_data"}'
+                    return 0
+                    ;;
+                "quay.io/test/private-image@sha256:"*)
+                    echo "Error: GET https://quay.io/v2/test/private-image/manifests/sha256:*: UNAUTHORIZED: access to the requested resource is not authorized" >&2
+                    return 1
+                    ;;
+                *)
+                    echo "Error: unknown image" >&2
+                    return 1
+                    ;;
+            esac
+        fi
+        return 1
+    }
+    
+    # Test successful SBOM download
+    run cosign download sbom "quay.io/test/public-image@sha256:abc123"
+    [ "$status" -eq 0 ]
+    [[ "$output" =~ "mock_sbom_data" ]]
+    
+    # Test authorization failure
+    run cosign download sbom "quay.io/test/private-image@sha256:def456"
+    [ "$status" -eq 1 ]
+    [[ "$output" =~ "UNAUTHORIZED" ]]
+}

@@ -67,3 +67,18 @@
   run conftest test --namespace fbc_checks --policy $POLICY_PATH/image/fbc-labels.rego fbc_label_fail.json
   [ "$status" -eq 1 ]
 }
+
+
+# Test cosign functionality in deprecated-image-check context
+@test "cosign_deprecated_image_check_simulation" {
+    # Simulate the deprecated-image-check task workflow
+    local test_image="quay.io/redhat-appstudio/sample-image:test-labels-pass"
+    local arch_imageanddigest="${test_image}@sha256:fc78d878b68b74c965bdb857fab8a87ef75bf7e411f561b3e5fee97382c785ab"
+    
+    # Test cosign download sbom (this should handle auth gracefully)
+    run cosign download sbom "$arch_imageanddigest"
+    # Should not fail with authorization error
+    if [ "$status" -ne 0 ]; then
+        [[ ! "$output" =~ "UNAUTHORIZED" ]]
+    fi
+}

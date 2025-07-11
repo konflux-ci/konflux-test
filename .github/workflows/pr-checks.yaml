@@ -115,3 +115,18 @@ jobs:
         run: python -m pip install gitlint
       - name: Run gitlint check
         run: gitlint --commits origin/${{ github.event.pull_request.base.ref }}..HEAD
+
+  cosign_tests:
+    name: Cosign Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v3
+      
+      - name: Run cosign integration tests
+        run: |
+          # Run specific cosign tests
+          bats unittests_bash/test_utils.bats -f cosign

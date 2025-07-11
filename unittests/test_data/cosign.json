@@ -1,0 +1,106 @@
+{
+  "cosign_sbom_success": {
+    "image": "quay.io/test/public-image@sha256:abc123",
+    "sbom": {
+      "spdxVersion": "SPDX-2.3",
+      "dataLicense": "CC0-1.0",
+      "SPDXID": "SPDXRef-DOCUMENT",
+      "name": "test-image-sbom"
+    },
+    "status": "success"
+  },
+  "cosign_sbom_failure": {
+    "image": "quay.io/test/private-image@sha256:def456",
+    "error": "Error: GET https://quay.io/v2/test/private-image/manifests/sha256:def456: UNAUTHORIZED: access to the requested resource is not authorized",
+    "status": "error",
+    "error_type": "authorization"
+  },
+  "cosign_auth_public_success": {
+    "registry": "quay.io",
+    "image": "quay.io/redhat-appstudio/sample-image@sha256:abc123",
+    "auth_required": false,
+    "access_granted": true,
+    "status": "success"
+  },
+  "cosign_auth_private_unauthorized": {
+    "registry": "quay.io",
+    "image": "quay.io/redhat-user-workloads/private-tenant/app@sha256:def456",
+    "auth_required": true,
+    "credentials_provided": false,
+    "error": "Error: GET https://quay.io/v2/redhat-user-workloads/private-tenant/app/manifests/sha256:def456: UNAUTHORIZED: access to the requested resource is not authorized",
+    "status": "error",
+    "error_type": "unauthorized"
+  },
+  "cosign_auth_invalid_credentials": {
+    "registry": "registry.redhat.io",
+    "image": "registry.redhat.io/ubi8/ubi@sha256:ghi789",
+    "auth_required": true,
+    "credentials_provided": true,
+    "credentials_valid": false,
+    "error": "Error: GET https://registry.redhat.io/v2/ubi8/ubi/manifests/sha256:ghi789: UNAUTHORIZED: authentication required",
+    "status": "error",
+    "error_type": "invalid_credentials"
+  },
+  "cosign_auth_valid_credentials": {
+    "registry": "registry.redhat.io",
+    "image": "registry.redhat.io/ubi8/ubi@sha256:jkl012",
+    "auth_required": true,
+    "credentials_provided": true,
+    "credentials_valid": true,
+    "access_granted": true,
+    "status": "success"
+  },
+  "cosign_auth_token_expired": {
+    "registry": "ghcr.io",
+    "image": "ghcr.io/company/private-app@sha256:mno345",
+    "auth_required": true,
+    "credentials_provided": true,
+    "token_expired": true,
+    "error": "Error: GET https://ghcr.io/v2/company/private-app/manifests/sha256:mno345: UNAUTHORIZED: token expired",
+    "status": "error",
+    "error_type": "token_expired"
+  },
+  "cosign_auth_registry_unavailable": {
+    "registry": "private.registry.com",
+    "image": "private.registry.com/app/image@sha256:pqr678",
+    "auth_required": true,
+    "registry_accessible": false,
+    "error": "Error: Get \"https://private.registry.com/v2/\": dial tcp: lookup private.registry.com: no such host",
+    "status": "error",
+    "error_type": "network"
+  },
+  "cosign_verify_success": {
+    "image": "quay.io/test/signed-image@sha256:abc123",
+    "verification": {
+      "signatures": [
+        {
+          "keyid": "SHA256:abc123def456",
+          "sig": "MEUCIQDxyz789...",
+          "cert": "-----BEGIN CERTIFICATE-----\nMIIB..."
+        }
+      ],
+      "verified": true,
+      "issuer": "https://token.actions.githubusercontent.com",
+      "subject": "https://github.com/example/repo/.github/workflows/build.yml@refs/heads/main"
+    },
+    "status": "success"
+  },
+  "cosign_verify_unsigned": {
+    "image": "quay.io/test/unsigned-image@sha256:def456",
+    "error": "no matching signatures found",
+    "status": "error",
+    "error_type": "unsigned"
+  },
+  "cosign_verify_invalid_cert": {
+    "image": "quay.io/test/invalid-cert-image@sha256:ghi789",
+    "error": "certificate verification failed: x509: certificate signed by unknown authority",
+    "status": "error",
+    "error_type": "certificate"
+  },
+  "cosign_verify_policy_violation": {
+    "image": "quay.io/test/policy-violation-image@sha256:jkl012",
+    "error": "policy verification failed: subject does not match expected pattern",
+    "status": "error",
+    "error_type": "policy"
+  }
+}

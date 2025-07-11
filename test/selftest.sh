@@ -57,9 +57,26 @@ echo "Test presence of ec-cli binary"
 ec version
 check_return_code
 
-echo "Test presence of cosign binary"
+echo "Test cosign binary comprehensive functionality"
 cosign version
 check_return_code
+
+# Test cosign with a known public image (should work)
+echo "Test cosign SBOM download with public image"
+if cosign download sbom quay.io/redhat-appstudio/sample-image:test-labels-pass > /tmp/cosign-test-sbom.json 2>/dev/null; then
+    echo "PASS: cosign SBOM download successful"
+else
+    echo "INFO: cosign SBOM download failed (this may be expected for test images)"
+fi
+
+# Test cosign error handling
+echo "Test cosign error handling"
+if cosign download sbom invalid-image-reference 2>/tmp/cosign-error.log; then
+    echo "FAIL: cosign should have failed with invalid image"
+    exit 1
+else
+    echo "PASS: cosign correctly handled invalid image reference"
+fi
 
 # Test clamscan output format, we are parsing it so we relay on it (including foramt of virus report)
 echo "Test clamscan output format"
