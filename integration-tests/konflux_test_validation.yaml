@@ -106,6 +106,15 @@ spec:
               . /utils.sh
               trap 'handle_error $(results.TEST_OUTPUT.path)' EXIT
               
+              # Install cosign for unit tests
+              echo "Installing cosign for unit tests"
+              curl -O -L "https://github.com/sigstore/cosign/releases/latest/download/cosign-linux-amd64"
+              mv cosign-linux-amd64 /usr/local/bin/cosign
+              chmod +x /usr/local/bin/cosign
+              export PATH="/usr/local/bin:$PATH"  # Add this line
+              echo "Cosign installed successfully"
+              cosign version
+
               echo "Running bats unit tests for bash functions"
               ls
               result="SUCCESS"
