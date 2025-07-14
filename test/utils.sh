@@ -1494,3 +1494,84 @@ get_image_published_and_certified_status() {
   jq -nc --arg certified "$CERTIFIED" --arg published "$PUBLISHED" \
     '{ certified: $certified, published: $published }'
 }
+
+# This function will be used by tasks in tekton-integration-catalog
+# Given container image, the function returns a list of uncompressed layer digests, one per line.
+#
+# 1. Use skopeo to copy the image to a local OCI layout.
+# The structure looks something like this:
+#
+# $ tree image-under-test/
+# image-under-test/
+# ├── blobs
+# │   └── sha256
+# │       ├── dfda741a47851931ae3cade52f8cb5ecb77c00f5b5c95c02d59184d8364a4ef2
+# │       ├── ae9d4215ca7ef264f30c90c30f8f2edecec11d8185ab054cbb0d00c96db57167
+# │       ├── 43b36f43b4e054a7838cf4288fc9aa8abcbb8c70ba11deccfa47ae32ef098603
+# ├── index.json
+# └── oci-layout
+#
+# 2. Parse index.json to get the image index digest.
+# 3. Read the image index blob to get the manifest digest.
+# 4. Read the manifest blob to extract uncompressed layer digests.
+get_uncompressed_layer_digests() {
+  local pull_spec="$1"
+  local tmp_dir oci_dir index_json image_index_digest image_index_file image_manifest_digest image_manifest_file
+
+  if [[ -z "$pull_spec" ]]; then
+    echo "get_uncompressed_layer_digests: Invalid input. Usage: get_uncompressed_layer_digests <pull_spec>" >&2
+    exit 2
+  fi
+
+  tmp_dir="$(mktemp -d)"
+  oci_dir="${tmp_dir}/image-under-test-$(uuidgen)"
+
+  if ! retry skopeo copy "docker://${pull_spec}" "oci:${oci_dir}"; then
+    echo "get_uncompressed_layer_digests: Error running skopeo copy" >&2
+    rm -rf "${tmp_dir}"
+    exit 1
+  fi
+
+  index_json="${oci_dir}/index.json"
+  if [[ ! -f "${index_json}" ]]; then
+    echo "get_uncompressed_layer_digests: index.json not found at ${index_json}" >&2
+    rm -rf "${tmp_dir}"
+    exit 1
+  fi
+
+  image_index_digest=$(jq -r '.manifests[0].digest' "${index_json}")
+  if [[ -z "${image_index_digest}" || "${image_index_digest}" == "null" ]]; then
+    echo "get_uncompressed_layer_digests: Failed to parse image index digest from ${index_json}" >&2
+    rm -rf "${tmp_dir}"
+    exit 1
+  fi
+
+  image_index_file="${oci_dir}/blobs/sha256/$(echo "${image_index_digest}" | cut -d':' -f2)"
+  if [[ ! -f "${image_index_file}" ]]; then
+    echo "get_uncompressed_layer_digests: Image index blob not found: ${image_index_file}" >&2
+    rm -rf "${tmp_dir}"
+    exit 1
+  fi
+
+  image_manifest_digest=$(jq -r '.config.digest' "${image_index_file}")
+  if [[ -z "${image_manifest_digest}" || "${image_manifest_digest}" == "null" ]]; then
+    echo "get_uncompressed_layer_digests: Failed to parse image manifest digest from ${image_index_file}" >&2
+    rm -rf "${tmp_dir}"
+    exit 1
+  fi
+
+  image_manifest_file="${oci_dir}/blobs/sha256/$(echo "${image_manifest_digest}" | cut -d':' -f2)"
+  if [[ ! -f "${image_manifest_file}" ]]; then
+    echo "get_uncompressed_layer_digests: Image manifest blob not found: ${image_manifest_file}" >&2
+    rm -rf "${tmp_dir}"
+    exit 1
+  fi
+
+  if ! jq -r '.rootfs.diff_ids[]' "${image_manifest_file}"; then
+    echo "get_uncompressed_layer_digests: Failed to parse diff_ids from manifest ${image_manifest_file}" >&2
+    rm -rf "${tmp_dir}"
+    exit 1
+  fi
+
+  rm -rf "${tmp_dir}"
+}

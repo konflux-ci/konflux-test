@@ -71,6 +71,42 @@ setup() {
         elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/fbc-fragment@isolated" ]]; then
             echo '{"schemaVersion": 2,"mediaType": "application/vnd.oci.image.manifest.v1+json","config": {"mediaType": "application/vnd.oci.image.config.v1+json","digest": "isolated","size": 14208},"annotations": {"org.opencontainers.image.base.name": "registry.redhat.io/openshift4/ose-operator-registry:v4.15"}}'
 
+        elif [[ $1 == "copy" && $2 == docker://registry.fedoraproject.org/fedora-minimal@sha256:e565f9eaa4dd2026c2e94d972fae8e4008f5df182519158e739ccf0214b19e7f ]]; then            
+            # Extract the oci output dir: oci:./image-under-test-UUID
+            output_dir="${3#oci:}"
+            
+            mkdir -p "${output_dir}/blobs/sha256"
+
+            # index.json
+            cat > "${output_dir}/index.json" <<EOF
+{"schemaVersion":2,"manifests":[{"mediaType":"application/vnd.oci.image.manifest.v1+json","digest":"sha256:dfda741a47851931ae3cade52f8cb5ecb77c00f5b5c95c02d59184d8364a4ef2","size":406}]}
+EOF
+
+            # manifest blob
+            cat > "${output_dir}/blobs/sha256/dfda741a47851931ae3cade52f8cb5ecb77c00f5b5c95c02d59184d8364a4ef2" <<EOF
+{"schemaVersion":2,"mediaType":"application/vnd.oci.image.manifest.v1+json","config":{"mediaType":"application/vnd.oci.image.config.v1+json","digest":"sha256:ae9d4215ca7ef264f30c90c30f8f2edecec11d8185ab054cbb0d00c96db57167","size":440},"layers":[{"mediaType":"application/vnd.oci.image.layer.v1.tar+gzip","digest":"sha256:43b36f43b4e054a7838cf4288fc9aa8abcbb8c70ba11deccfa47ae32ef098603","size":54752205}]}
+EOF
+
+            # config blob
+            cat > "${output_dir}/blobs/sha256/ae9d4215ca7ef264f30c90c30f8f2edecec11d8185ab054cbb0d00c96db57167" <<EOF
+{"created":"2020-10-08T06:49:10Z","architecture":"amd64","os":"linux","config":{"Env":["DISTTAG=f32container","FGC=f32","container=oci"],"Cmd":["/bin/bash"],"Labels":{"license":"MIT","name":"fedora","vendor":"Fedora Project","version":"32"}},"rootfs":{"type":"layers","diff_ids":["sha256:5eb2a76183d65aea617844663a13a9edee328b1d32e1818a206273bb37c68534"]},"history":[{"created":"2020-10-08T06:49:10Z","comment":"Created by Image Factory"}]}
+EOF
+
+            return 0
+
+        elif [[ $1 == "copy" && $2 == docker://registry.fedoraproject.org/fedora-minimal@sha256:46d9dd1088e30a5ae8cf0f3907ce97c11f59d189fc2067d96264568945a2923e ]]; then            
+            # Extract the oci output dir: oci:./image-under-test-UUID
+            output_dir="${3#oci:}"
+            
+            mkdir -p "${output_dir}/blobs/sha256"
+
+            # index.json
+            cat > "${output_dir}/index.json" <<EOF
+{"schemaVersion":2,"manifests":[{"mediaType":"application/vnd.oci.image.manifest.v1+json","digest":"sha256:2eb7c02f794d119db9e46482be96fbffa3f2ca8d1902418375ef49bb459e4486","size":406}]}
+EOF
+
+            return 0
+
         # Some skopeo commands fail
         else
             echo 'Unrecognized call to mock skopeo'
@@ -1553,4 +1589,20 @@ EOF
     run get_image_published_and_certified_status "registry.access.redhat.com" "rhel7/rsyslog" "sha256:doesnotmatch" "${layerDigestList[@]}"
     EXPECTED_RESPONSE='{"certified":"true","published":"true"}'
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get uncompressed layer digests: success" {
+    pull_spec="registry.fedoraproject.org/fedora-minimal@sha256:e565f9eaa4dd2026c2e94d972fae8e4008f5df182519158e739ccf0214b19e7f"
+
+    run get_uncompressed_layer_digests "${pull_spec}"
+    EXPECTED_RESPONSE="sha256:5eb2a76183d65aea617844663a13a9edee328b1d32e1818a206273bb37c68534"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get uncompressed layer digests: failure" {
+    pull_spec="registry.fedoraproject.org/fedora-minimal@sha256:46d9dd1088e30a5ae8cf0f3907ce97c11f59d189fc2067d96264568945a2923e"
+
+    run get_uncompressed_layer_digests "${pull_spec}"
+    [[ "$output" == *"get_uncompressed_layer_digests: Image index blob not found"* ]]
+    [ "$status" -eq 1 ]
 }
