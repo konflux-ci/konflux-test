@@ -106,6 +106,18 @@ spec:
               . /utils.sh
               trap 'handle_error $(results.TEST_OUTPUT.path)' EXIT
               
+              # Ensure /usr/local/bin is in PATH (cosign is already in the container)
+              export PATH="/usr/local/bin:$PATH"
+              
+              # Debug: Verify cosign is available
+              echo "Checking cosign availability..."
+              which cosign || echo "cosign not found in PATH"
+              ls -la /usr/local/bin/cosign || echo "cosign binary not found"
+              echo "PATH: $PATH"
+              
+              # Test cosign works
+              cosign version
+              
               echo "Running bats unit tests for bash functions"
               ls
               result="SUCCESS"

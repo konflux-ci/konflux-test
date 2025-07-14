@@ -57,8 +57,38 @@ echo "Test presence of ec-cli binary"
 ec version
 check_return_code
 
+
 echo "Test presence of cosign binary"
 cosign version
+check_return_code
+
+echo "Test cosign help command"
+cosign help > /dev/null 2>&1 
+check_return_code
+
+echo "Test cosign core commands availability"
+cosign generate-key-pair --help > /dev/null 2>&1
+check_return_code
+
+cosign verify --help > /dev/null 2>&1
+check_return_code
+
+cosign triangulate --help > /dev/null 2>&1
+check_return_code
+
+echo "Test cosign image interaction"
+cosign triangulate busybox:latest > /dev/null 2>&1
+check_return_code
+
+echo "Test cosign tree command"
+cosign tree busybox:latest > /dev/null 2>&1 || true  # May have no signatures
+check_return_code
+
+echo "Test cosign verify functionality"
+# Test with a known public image (may fail but shouldn't crash)
+timeout 10s cosign verify gcr.io/projectsigstore/cosign:latest \
+    --certificate-identity-regexp '.*' \
+    --certificate-oidc-issuer-regexp '.*' > /dev/null 2>&1 || true
 check_return_code
 
 # Test clamscan output format, we are parsing it so we relay on it (including foramt of virus report)

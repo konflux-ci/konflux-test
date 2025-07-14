@@ -83,6 +83,13 @@ jobs:
       - name: Install required packages
         run: sudo apt-get install -y jq
 
+      - name: Install cosign
+        run: |
+          # Install cosign
+          curl -O -L "https://github.com/sigstore/cosign/releases/latest/download/cosign-linux-amd64"
+          sudo mv cosign-linux-amd64 /usr/local/bin/cosign
+          sudo chmod +x /usr/local/bin/cosign
+
       - name: Check out code
         uses: actions/checkout@v4
 
