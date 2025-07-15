@@ -3,6 +3,7 @@
 setup() {
     source test/utils.sh
     OPM_RENDER_CACHE=$(mktemp -d)
+    REPLACE_MIRROR_TEST_TMP=$(mktemp -d)
 
     RETRY_COUNT=0
     DEBUG=0
@@ -157,10 +158,51 @@ EOF
         fi
         echo -n "${expected_string}"
     }
+
+    # Create a fake catalog.json file for replace_mirror_pullspec_with_source test
+    cat > "${REPLACE_MIRROR_TEST_TMP}/catalog.json" <<EOF
+{
+    "schema": "olm.bundle",
+    "name": "gatekeeper-operator.v3.11.1",
+    "image": "example.com/gatekeeper/gatekeeper-operator-bundle:v3.11.1",
+    "relatedImages": [
+        {
+            "name": "gatekeeper",
+            "image": "example.com/openpolicyagent/gatekeeper:v3.11.1"
+        },
+        {
+            "name": "operator",
+            "image": "example.com/gatekeeper/gatekeeper-operator:v3.11.1"
+        },
+        {
+            "name": "operator-sha",
+            "image": "example.com/gatekeeper/gatekeeper-operator:@sha256:60635156d6b4e54529195af3bdd07329dcbe6239757db86e536dbe561aa77247"
+        }
+    ]
+}
+EOF
+
+    # Create a fake IDMS file for replace_mirror_pullspec_with_source test
+    cat > "${REPLACE_MIRROR_TEST_TMP}/idms.yaml" <<EOF
+---
+apiVersion: operator.openshift.io/v1alpha1
+kind: ImageDigestMirrorSet
+spec:
+  imageDigestMirrors:
+  - mirrors:
+    - example.com/gatekeeper/gatekeeper-operator-bundle
+    source: quay.io/gatekeeper/gatekeeper-operator-bundle
+  - mirrors:
+    - example.com/openpolicyagent/gatekeeper
+    source: quay.io/openpolicyagent/gatekeeper
+  - mirrors:
+    - example.com/gatekeeper/gatekeeper-operator
+    source: quay.io/gatekeeper/gatekeeper-operator
+EOF
 }
 
 teardown() {
-    rm -rf $OPM_RENDER_CACHE
+    rm -rf $OPM_RENDER_CACHE $REPLACE_MIRROR_TEST_TMP
 }
 
 @test "Result: missing result" {
@@ -1605,4 +1647,115 @@ EOF
     run get_uncompressed_layer_digests "${pull_spec}"
     [[ "$output" == *"get_uncompressed_layer_digests: Image index blob not found"* ]]
     [ "$status" -eq 1 ]
+}
+
+
+@test "replace_mirror_pullspec_with_source: successful replacement" {
+    run replace_mirror_pullspec_with_source "${REPLACE_MIRROR_TEST_TMP}/idms.yaml" "${REPLACE_MIRROR_TEST_TMP}/catalog.json"
+
+    # Verify that the function executed successfully
+    [ "$status" -eq 0 ]
+
+    # Verify that the output contains the success message
+    [[ "$output" == *"Replacement process completed"* ]]
+
+    # Verify that the file content was changed correctly
+    expected_content='{
+    "schema": "olm.bundle",
+    "name": "gatekeeper-operator.v3.11.1",
+    "image": "quay.io/gatekeeper/gatekeeper-operator-bundle:v3.11.1",
+    "relatedImages": [
+        {
+            "name": "gatekeeper",
+            "image": "quay.io/openpolicyagent/gatekeeper:v3.11.1"
+        },
+        {
+            "name": "operator",
+            "image": "quay.io/gatekeeper/gatekeeper-operator:v3.11.1"
+        },
+        {
+            "name": "operator-sha",
+            "image": "quay.io/gatekeeper/gatekeeper-operator:@sha256:60635156d6b4e54529195af3bdd07329dcbe6239757db86e536dbe561aa77247"
+        }
+    ]
+}'
+    # Compare the file contents after removing whitespace
+    diff <(echo "$expected_content" | jq -c .) <(jq -c . "${REPLACE_MIRROR_TEST_TMP}/catalog.json")
+}
+
+@test "replace_mirror_pullspec_with_source: idms file not found" {
+    run replace_mirror_pullspec_with_source "${REPLACE_MIRROR_TEST_TMP}/nonexistent-idms.yaml" "${REPLACE_MIRROR_TEST_TMP}/catalog.json"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"Skipping replacement"* ]]
+
+    # Verify that the catalog.json file was not changed
+    original_content=$(cat <<EOF
+{
+    "schema": "olm.bundle",
+    "name": "gatekeeper-operator.v3.11.1",
+    "image": "example.com/gatekeeper/gatekeeper-operator-bundle:v3.11.1",
+    "relatedImages": [
+        {
+            "name": "gatekeeper",
+            "image": "example.com/openpolicyagent/gatekeeper:v3.11.1"
+        },
+        {
+            "name": "operator",
+            "image": "example.com/gatekeeper/gatekeeper-operator:v3.11.1"
+        },
+        {
+            "name": "operator-sha",
+            "image": "example.com/gatekeeper/gatekeeper-operator:@sha256:60635156d6b4e54529195af3bdd07329dcbe6239757db86e536dbe561aa77247"
+        }
+    ]
+}
+EOF
+)
+    diff <(echo "$original_content" | jq -c .) <(jq -c . "${REPLACE_MIRROR_TEST_TMP}/catalog.json")
+}
+
+@test "replace_mirror_pullspec_with_source: catalog file not found" {
+    run replace_mirror_pullspec_with_source "${REPLACE_MIRROR_TEST_TMP}/idms.yaml" "${REPLACE_MIRROR_TEST_TMP}/nonexistent-catalog.json"
+    [ "$status" -eq 1 ]
+    [[ "$output" == *"Catalog file not found"* ]]
+}
+
+@test "replace_mirror_pullspec_with_source: invalid arguments" {
+    run replace_mirror_pullspec_with_source "${REPLACE_MIRROR_TEST_TMP}/idms.yaml"
+    [ "$status" -eq 1 ]
+    [[ "$output" == *"Usage:"* ]]
+}
+
+@test "replace_mirror_pullspec_with_source: sed command fails" {
+    # Mock the sed command to make it fail
+    sed() {
+        echo "Sed failed" >&2
+        return 1
+    }
+    export -f sed
+
+    run replace_mirror_pullspec_with_source "${REPLACE_MIRROR_TEST_TMP}/idms.yaml" "${REPLACE_MIRROR_TEST_TMP}/catalog.json"
+    [ "$status" -eq 1 ]
+    [[ "$output" == *"ERROR: Replacement failed"* ]]
+
+    # Unset the mock
+    unset -f sed
+}
+
+@test "replace_mirror_pullspec_with_source: no matching mirrors to replace" {
+    # Create a catalog with no matching mirrors
+    cat > "${REPLACE_MIRROR_TEST_TMP}/catalog_no_match.json" <<EOF
+{
+    "schema": "olm.bundle",
+    "name": "some-other-operator",
+    "image": "some.registry/some/operator:1.0.0"
+}
+EOF
+    original_content=$(cat "${REPLACE_MIRROR_TEST_TMP}/catalog_no_match.json")
+
+    run replace_mirror_pullspec_with_source "${REPLACE_MIRROR_TEST_TMP}/idms.yaml" "${REPLACE_MIRROR_TEST_TMP}/catalog_no_match.json"
+    [ "$status" -eq 0 ]
+
+    # Verify that the file remained unchanged
+    diff <(echo "$original_content" | jq -c .) <(jq -c . "${REPLACE_MIRROR_TEST_TMP}/catalog_no_match.json")
 }

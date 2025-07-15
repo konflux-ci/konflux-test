@@ -1575,3 +1575,82 @@ get_uncompressed_layer_digests() {
 
   rm -rf "${tmp_dir}"
 }
+
+
+# This function will be used by tasks in build-definitions
+# It replaces the image pullspec mirror found in catalog.json by source defined in imageDigestMirrorSet file
+# It tries to find mirrors in catalog file and replace it by source in case of match
+# It accepts two argument path to imageDigestMirrorSet YAML file and path to catalog.json file
+replace_mirror_pullspec_with_source() {
+  local idms_file="$1"
+  local catalog_file="$2"
+
+  # Validate input arguments
+  if [[ $# -ne 2 ]]; then
+      echo "replace_mirror_pullspec_with_source: Usage: replace_mirror_pullspec_with_source <path_to_idms_yaml_file> <path_to_catalog_json_file>" >&2
+      exit 1
+  fi
+
+  # Check file existence
+  if [[ ! -f "$catalog_file" ]]; then
+      echo "replace_mirror_pullspec_with_source: Catalog file not found at: ${catalog_file}" >&2
+      exit 1
+  fi
+
+  # Create temporary files
+  idms_map_tmp_file="$(mktemp)"
+  input_catalog_file="$(mktemp)"
+  trap 'rm -f "$idms_map_tmp_file" "$input_catalog_file"' EXIT
+
+  # Process mirror mapping
+  if [[ -f "${idms_file}" ]]; then
+    echo "replace_mirror_pullspec_with_source: Processing ImageDigestMirrorSet from ${idms_file}..."
+    mirror_set_yaml=$(cat "${idms_file}")
+    process_image_digest_mirror_set "${mirror_set_yaml}" > "$idms_map_tmp_file"
+
+    if ! jq -e . "$idms_map_tmp_file" > /dev/null 2>&1; then
+      echo "replace_mirror_pullspec_with_source: The 'process_image_digest_mirror_set' function did not generate valid JSON." >&2
+      cat "$idms_map_tmp_file" >&2
+      exit 1
+    fi
+    echo "replace_mirror_pullspec_with_source: ImageDigestMirrorSet was processed successfully."
+  else
+    echo "replace_mirror_pullspec_with_source: ImageDigestMirrorSet file not found at: ${idms_file}."
+    echo "replace_mirror_pullspec_with_source: Skipping replacement."
+    exit 0
+  fi
+
+  idms_mapping_json=$(cat "$idms_map_tmp_file")
+  echo "replace_mirror_pullspec_with_source: Starting direct replacement process"
+
+  # Create a working copy of the catalog
+  cp "$catalog_file" "$input_catalog_file"
+
+  # Loop over sources and their mirrors from IDMS
+  while IFS=$'\t' read -r source_repository mirror_repository; do
+    # Skip empty lines that might result from jq processing
+    if [[ -z "$source_repository" || -z "$mirror_repository" ]]; then
+      continue
+    fi
+
+    # Sed is run for each mirror-source pair on the entire file.
+    #
+    # Pattern explained:
+    # s|...|...|g          - Substitute command with '|' as delimiter.
+    # ${mirror_repository} - Matches the literal mirror repository string.
+    # \([:@][^"']*\)       - This is the capture group (\1):
+    #   [:@]              - Matches the separator: a colon ':' for a tag or an '@' for a digest.
+    #   [^"']* - Matches everything after the separator until a quote or other specified character is found.
+    # ${source_repository}\1 - The replacement: the new source repository followed by the captured tag/digest.
+    if ! sed -i -E "s|${mirror_repository}([:@][^\"', ]*)|${source_repository}\1|g" "$input_catalog_file"; then
+      echo "replace_mirror_pullspec_with_source: ERROR: Replacement failed for mirror '${mirror_repository}'." >&2
+      exit 1
+    fi
+  done < <(echo "$idms_mapping_json" | jq -r 'to_entries[] | .key as $source | .value[] | "\($source)\t\(.)"')
+
+  # Replace the original file with the file we actually modified.
+  mv "$input_catalog_file" "$catalog_file"
+  chmod +r "$catalog_file"
+
+  echo "replace_mirror_pullspec_with_source: Replacement process completed. ${catalog_file} has been updated."
+}
