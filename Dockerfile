@@ -10,7 +10,7 @@ RUN tar -xzf /cachi2/output/deps/generic/check-payload.tar.gz &&  cd check-paylo
     chmod +x /opt/app-root/src/check-payload-binary 
 # Container image that runs your code
 FROM docker.io/snyk/snyk:linux@sha256:f254d35b0acd88a4523b9799526d64bc35c564e47656ba11a0e6003b9484023f as snyk
-FROM quay.io/conforma/cli:snapshot@sha256:8e4b8e0d31ab68262ce821b3745f80b60f06223e39a1258afba7d8d60f10a4b6 AS conforma
+FROM quay.io/conforma/cli:snapshot@sha256:4fe216e5d72c8bd44e966fb7a80a65fa07d1e12c4634af826e614f5f13adae8a AS conforma
 FROM registry.redhat.io/rhtas/cosign-rhel9@sha256:cb53dcc3bc912dd7f12147f33af1b435eae5ff4ab83b85c0277b4004b20a0248 as cosign-bin
 FROM quay.io/konflux-ci/buildah-task:latest@sha256:c8d667a4efa2f05e73e2ac36b55928633d78857589165bd919d2628812d7ffcb AS buildah-task-image
 FROM registry.redhat.io/openshift4/ose-tools-rhel9@sha256:580050a91bcd43fc6096cc6e4e420ee7fcd07e0867cb997ebd68224d668ba87f as oc-bin
