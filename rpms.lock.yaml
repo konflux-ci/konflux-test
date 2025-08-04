@@ -760,13 +760,13 @@ arches:
     name: libfido2
     evr: 1.13.0-2.el9
     sourcerpm: libfido2-1.13.0-2.el9.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/l/libicu-67.1-9.el9.x86_64.rpm
+  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/l/libicu-67.1-10.el9_6.x86_64.rpm
     repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
-    size: 10023600
-    checksum: sha256:d6a263811f4752dfaeb28c7e0f37f8300ed2355e66c5ad994f7ae2a4a4ac6fdd
+    size: 10037375
+    checksum: sha256:1ea6ee313827c1f5d1a73ea84c2f72b3f6567bf821a019efbd6caee00e3d5543
     name: libicu
-    evr: 67.1-9.el9
-    sourcerpm: icu-67.1-9.el9.src.rpm
+    evr: 67.1-10.el9_6
+    sourcerpm: icu-67.1-10.el9_6.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/l/libnl3-3.11.0-1.el9.x86_64.rpm
     repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
     size: 376137
@@ -844,84 +844,84 @@ arches:
     name: shadow-utils-subid
     evr: 2:4.9-12.el9
     sourcerpm: shadow-utils-4.9-12.el9.src.rpm
-  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/x86_64/Packages/b/boost1.78-atomic-1.78.0-1.el9.x86_64.rpm
+  - url: https://ix-denver.mm.fcix.net/epel/9/Everything/x86_64/Packages/b/boost1.78-atomic-1.78.0-1.el9.x86_64.rpm
     repoid: epel
     size: 14900
     checksum: sha256:2f125176700c2923f55dc66d53a2e09312202aef9fde63fac40b6aebfc016c4b
     name: boost1.78-atomic
     evr: 1.78.0-1.el9
     sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
-  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/x86_64/Packages/b/boost1.78-filesystem-1.78.0-1.el9.x86_64.rpm
+  - url: https://ix-denver.mm.fcix.net/epel/9/Everything/x86_64/Packages/b/boost1.78-filesystem-1.78.0-1.el9.x86_64.rpm
     repoid: epel
     size: 61579
     checksum: sha256:c4e62a0c8149f14a792aa816ed8360ad3ac6e576da38cf329a6bbcb6ac4c67ac
     name: boost1.78-filesystem
     evr: 1.78.0-1.el9
     sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
-  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/x86_64/Packages/b/boost1.78-program-options-1.78.0-1.el9.x86_64.rpm
+  - url: https://ix-denver.mm.fcix.net/epel/9/Everything/x86_64/Packages/b/boost1.78-program-options-1.78.0-1.el9.x86_64.rpm
     repoid: epel
     size: 106462
     checksum: sha256:a545fe18f516dae3c6280d663fe0a58c011de2c6a53fc5319b894c945207f387
     name: boost1.78-program-options
     evr: 1.78.0-1.el9
     sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
-  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/x86_64/Packages/b/boost1.78-system-1.78.0-1.el9.x86_64.rpm
+  - url: https://ix-denver.mm.fcix.net/epel/9/Everything/x86_64/Packages/b/boost1.78-system-1.78.0-1.el9.x86_64.rpm
     repoid: epel
     size: 11135
     checksum: sha256:e31ffb8df3f283abc5ce448ac266b47108246e903b7e36f2c87b40e93ad015b9
     name: boost1.78-system
     evr: 1.78.0-1.el9
     sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
-  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/x86_64/Packages/c/clamav-1.0.9-1.el9.x86_64.rpm
+  - url: https://ix-denver.mm.fcix.net/epel/9/Everything/x86_64/Packages/c/clamav-1.0.9-1.el9.x86_64.rpm
     repoid: epel
     size: 323939
     checksum: sha256:334fa85b99db731379f34c0dd1734af359ea2227402948baba5c33137ba645ea
     name: clamav
     evr: 1.0.9-1.el9
     sourcerpm: clamav-1.0.9-1.el9.src.rpm
-  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/x86_64/Packages/c/clamav-filesystem-1.0.9-1.el9.noarch.rpm
+  - url: https://ix-denver.mm.fcix.net/epel/9/Everything/x86_64/Packages/c/clamav-filesystem-1.0.9-1.el9.noarch.rpm
     repoid: epel
     size: 17592
     checksum: sha256:74c10e9767c9b3832c850eb680aeaf474dbb1b18bbd75045273a14c930aa4895
     name: clamav-filesystem
     evr: 1.0.9-1.el9
     sourcerpm: clamav-1.0.9-1.el9.src.rpm
-  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/x86_64/Packages/c/clamav-freshclam-1.0.9-1.el9.x86_64.rpm
+  - url: https://ix-denver.mm.fcix.net/epel/9/Everything/x86_64/Packages/c/clamav-freshclam-1.0.9-1.el9.x86_64.rpm
     repoid: epel
     size: 96727
     checksum: sha256:3322bf2168ee20dc65b3304ce72c2d56aa2e8ecf24f7837b2997d2a951d70dea
     name: clamav-freshclam
     evr: 1.0.9-1.el9
     sourcerpm: clamav-1.0.9-1.el9.src.rpm
-  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/x86_64/Packages/c/clamav-lib-1.0.9-1.el9.x86_64.rpm
+  - url: https://ix-denver.mm.fcix.net/epel/9/Everything/x86_64/Packages/c/clamav-lib-1.0.9-1.el9.x86_64.rpm
     repoid: epel
     size: 2745363
     checksum: sha256:04c14fe463f12422571dd5fa004a94b855738a58963f9c934e84eb49c5373394
     name: clamav-lib
     evr: 1.0.9-1.el9
     sourcerpm: clamav-1.0.9-1.el9.src.rpm
-  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/x86_64/Packages/c/clamd-1.0.9-1.el9.x86_64.rpm
+  - url: https://ix-denver.mm.fcix.net/epel/9/Everything/x86_64/Packages/c/clamd-1.0.9-1.el9.x86_64.rpm
     repoid: epel
     size: 93232
     checksum: sha256:375b96cd8a30beac123e910219022f224b4b3df7cfd968dd1c9cb496bbf1e00a
     name: clamd
     evr: 1.0.9-1.el9
     sourcerpm: clamav-1.0.9-1.el9.src.rpm
-  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/x86_64/Packages/c/csdiff-3.5.5-1.el9.x86_64.rpm
+  - url: https://ix-denver.mm.fcix.net/epel/9/Everything/x86_64/Packages/c/csdiff-3.5.5-1.el9.x86_64.rpm
     repoid: epel
     size: 942079
     checksum: sha256:247a369d86a20badd16ccb63204a4a3711676910e2a19ed8de1e41f0e222c394
     name: csdiff
     evr: 3.5.5-1.el9
     sourcerpm: csdiff-3.5.5-1.el9.src.rpm
-  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/x86_64/Packages/c/csmock-plugin-shellcheck-core-3.8.2-1.el9.noarch.rpm
+  - url: https://ix-denver.mm.fcix.net/epel/9/Everything/x86_64/Packages/c/csmock-plugin-shellcheck-core-3.8.2-1.el9.noarch.rpm
     repoid: epel
     size: 22601
     checksum: sha256:f18cbfd91bfe826d1e8783e9c2a93d470e5f380b2bccd8bf385651dd1815989c
     name: csmock-plugin-shellcheck-core
     evr: 3.8.2-1.el9
     sourcerpm: csmock-3.8.2-1.el9.src.rpm
-  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/x86_64/Packages/s/ShellCheck-0.10.0-3.el9.x86_64.rpm
+  - url: https://ix-denver.mm.fcix.net/epel/9/Everything/x86_64/Packages/s/ShellCheck-0.10.0-3.el9.x86_64.rpm
     repoid: epel
     size: 2761018
     checksum: sha256:a10bba0d29731a43100ef0d6070279a3a2633e621c439788113a0b04ec90f41a
