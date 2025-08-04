@@ -14,7 +14,7 @@ FROM quay.io/conforma/cli:snapshot@sha256:4e7deeaa993658aa8da0451479edd7cb5e1ce8
 FROM registry.redhat.io/rhtas/cosign-rhel9@sha256:cb53dcc3bc912dd7f12147f33af1b435eae5ff4ab83b85c0277b4004b20a0248 as cosign-bin
 FROM quay.io/konflux-ci/buildah-task:latest@sha256:c8d667a4efa2f05e73e2ac36b55928633d78857589165bd919d2628812d7ffcb AS buildah-task-image
 FROM registry.redhat.io/openshift4/ose-tools-rhel9@sha256:580050a91bcd43fc6096cc6e4e420ee7fcd07e0867cb997ebd68224d668ba87f as oc-bin
-FROM registry.access.redhat.com/ubi9/ubi:9.6-1752625787
+FROM registry.access.redhat.com/ubi9/ubi:9.6-1753978585
 
 # Note that the version of OPA used by pr-checks must be updated manually to reflect conftest updates
 # To find the OPA version associated with conftest run the following with the relevant version of conftest:
