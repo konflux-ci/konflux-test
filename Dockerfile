@@ -1,5 +1,5 @@
 # Build step for check-payload tool
-FROM registry.access.redhat.com/ubi9/go-toolset:9.6-1753853351 as check-payload-build
+FROM registry.access.redhat.com/ubi9/go-toolset:9.6-1754467841 as check-payload-build
 
 #check-payload
 WORKDIR /opt/app-root/src
