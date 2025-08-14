@@ -872,41 +872,41 @@ arches:
     name: boost1.78-system
     evr: 1.78.0-1.el9
     sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
-  - url: https://ix-denver.mm.fcix.net/epel/9/Everything/x86_64/Packages/c/clamav-1.0.9-1.el9.x86_64.rpm
+  - url: https://ix-denver.mm.fcix.net/epel/9/Everything/x86_64/Packages/c/clamav-1.4.3-1.el9.x86_64.rpm
     repoid: epel
     size: 323939
     checksum: sha256:334fa85b99db731379f34c0dd1734af359ea2227402948baba5c33137ba645ea
     name: clamav
-    evr: 1.0.9-1.el9
-    sourcerpm: clamav-1.0.9-1.el9.src.rpm
-  - url: https://ix-denver.mm.fcix.net/epel/9/Everything/x86_64/Packages/c/clamav-filesystem-1.0.9-1.el9.noarch.rpm
+    evr: 1.4.3-1.el9
+    sourcerpm: clamav-1.4.3-1.el9.src.rpm
+  - url: https://ix-denver.mm.fcix.net/epel/9/Everything/x86_64/Packages/c/clamav-filesystem-1.4.3-1.el9.noarch.rpm
     repoid: epel
     size: 17592
     checksum: sha256:74c10e9767c9b3832c850eb680aeaf474dbb1b18bbd75045273a14c930aa4895
     name: clamav-filesystem
-    evr: 1.0.9-1.el9
-    sourcerpm: clamav-1.0.9-1.el9.src.rpm
-  - url: https://ix-denver.mm.fcix.net/epel/9/Everything/x86_64/Packages/c/clamav-freshclam-1.0.9-1.el9.x86_64.rpm
+    evr: 1.4.3-1.el9
+    sourcerpm: clamav-1.4.3-1.el9.src.rpm
+  - url: https://ix-denver.mm.fcix.net/epel/9/Everything/x86_64/Packages/c/clamav-freshclam-1.4.3-1.el9.x86_64.rpm
     repoid: epel
     size: 96727
     checksum: sha256:3322bf2168ee20dc65b3304ce72c2d56aa2e8ecf24f7837b2997d2a951d70dea
     name: clamav-freshclam
-    evr: 1.0.9-1.el9
-    sourcerpm: clamav-1.0.9-1.el9.src.rpm
-  - url: https://ix-denver.mm.fcix.net/epel/9/Everything/x86_64/Packages/c/clamav-lib-1.0.9-1.el9.x86_64.rpm
+    evr: 1.4.3-1.el9
+    sourcerpm: clamav-1.4.3-1.el9.src.rpm
+  - url: https://ix-denver.mm.fcix.net/epel/9/Everything/x86_64/Packages/c/clamav-lib-1.4.3-1.el9.x86_64.rpm
     repoid: epel
     size: 2745363
     checksum: sha256:04c14fe463f12422571dd5fa004a94b855738a58963f9c934e84eb49c5373394
     name: clamav-lib
-    evr: 1.0.9-1.el9
-    sourcerpm: clamav-1.0.9-1.el9.src.rpm
-  - url: https://ix-denver.mm.fcix.net/epel/9/Everything/x86_64/Packages/c/clamd-1.0.9-1.el9.x86_64.rpm
+    evr: 1.4.3-1.el9
+    sourcerpm: clamav-1.4.3-1.el9.src.rpm
+  - url: https://ix-denver.mm.fcix.net/epel/9/Everything/x86_64/Packages/c/clamd-1.4.3-1.el9.x86_64.rpm
     repoid: epel
     size: 93232
     checksum: sha256:375b96cd8a30beac123e910219022f224b4b3df7cfd968dd1c9cb496bbf1e00a
     name: clamd
-    evr: 1.0.9-1.el9
-    sourcerpm: clamav-1.0.9-1.el9.src.rpm
+    evr: 1.4.3-1.el9
+    sourcerpm: clamav-1.4.3-1.el9.src.rpm
   - url: https://ix-denver.mm.fcix.net/epel/9/Everything/x86_64/Packages/c/csdiff-3.5.5-1.el9.x86_64.rpm
     repoid: epel
     size: 942079
