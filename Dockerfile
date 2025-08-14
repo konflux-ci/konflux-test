@@ -3,9 +3,9 @@ FROM registry.access.redhat.com/ubi9/go-toolset:9.6-1754467841 as check-payload-
 
 #check-payload
 WORKDIR /opt/app-root/src
-ARG CHECK_PAYLOAD_VERSION=0.3.6
+ARG CHECK_PAYLOAD_VERSION=0.3.10
 
-RUN tar -xzf /cachi2/output/deps/generic/check-payload.tar.gz &&  cd check-payload-${CHECK_PAYLOAD_VERSION} && \
+RUN tar -xzf /cachi2/output/deps/generic/check-payload-${CHECK_PAYLOAD_VERSION}.tar.gz &&  cd check-payload-${CHECK_PAYLOAD_VERSION} && \
     CGO_ENABLED=0 go build -ldflags="-X main.Commit=${CHECK_PAYLOAD_VERSION}" -o /opt/app-root/src/check-payload-binary && \
     chmod +x /opt/app-root/src/check-payload-binary 
 # Container image that runs your code
