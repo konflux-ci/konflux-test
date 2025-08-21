@@ -983,7 +983,9 @@ get_highest_bundle_version() {
 }
 
 # This function will be used by tasks in tekton-integration-catalog
-# Given the output of 'opm render $bundle_image' command, this function returns the supported architectures for the bundle
+# Given the output of 'opm render $bundle_image' command, this function returns the supported architectures for the bundle.
+# If the architecture labels are not defined in the bundle CSV, the function defaults to returning "amd64".
+# Source: https://spaces.redhat.com/spaces/CFC/pages/124105424/Delivery#Delivery-BundleImages(OperatorMetadata)
 get_bundle_arches() {
   local RENDER_OUT_BUNDLE="$1"
   local arches
@@ -1003,9 +1005,9 @@ get_bundle_arches() {
     | scan("^operatorframework.io/arch.\\K.*")
   ')
 
+  # Default to amd64 if no architectures are found
   if [[ -z "$arches" ]]; then
-    echo "get_bundle_arches: Error: No architectures found for bundle image." >&2
-    exit 1
+    arches="amd64"
   fi
 
   echo "$arches"
