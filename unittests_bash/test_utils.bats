@@ -899,8 +899,8 @@ EOF
 EOF
 )
     run get_bundle_arches "${RENDER_OUT_BUNDLE}"
-    EXPECTED_RESPONSE="get_bundle_arches: Error: No architectures found for bundle image."
-    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+    EXPECTED_RESPONSE="amd64"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
 
 @test "Group bundle images by package: two packages" {
