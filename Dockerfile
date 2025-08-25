@@ -25,6 +25,9 @@ ARG PATH_TO_ART=/cachi2/output/deps/generic
 
 ENV POLICY_PATH="/project"
 
+# Detect architecture for multi-arch support
+ARG TARGETARCH
+ARG TARGETOS
 
 # Build dependency offline to streamline build
 #rpm -Uvh epel-release-latest-9.noarch.rpm && \
@@ -44,11 +47,21 @@ RUN dnf install -y --nogpgcheck jq \
     ShellCheck \
     csmock-plugin-shellcheck-core \
     libicu && \
-    mkdir sbom-utility && tar -xf ${PATH_TO_ART}/sbom-utility.tar.gz -C sbom-utility && \
-    cp ${PATH_TO_ART}/linux-amd64-opm /usr/bin/opm && chmod +x /usr/bin/opm && \
-    cp ${PATH_TO_ART}/umoci.amd64 /usr/bin/umoci && chmod +x /usr/bin/umoci && \
-    cp ${PATH_TO_ART}/opa_linux_amd64_static /usr/bin/opa && chmod +x /usr/bin/opa && \
-    tar -xzf ${PATH_TO_ART}/conftest_0.45.0_Linux_x86_64.tar.gz -C /usr/bin/ && \
+    # Use architecture-specific binaries and sbom-utility
+    if [ "$TARGETARCH" = "amd64" ]; then \
+        mkdir sbom-utility && tar -xf ${PATH_TO_ART}/sbom-utility.tar.gz -C sbom-utility && \
+        cp ${PATH_TO_ART}/linux-amd64-opm /usr/bin/opm && \
+        cp ${PATH_TO_ART}/umoci.linux.amd64 /usr/bin/umoci && \
+        cp ${PATH_TO_ART}/opa_linux_amd64_static /usr/bin/opa && \
+        tar -xzf ${PATH_TO_ART}/conftest_0.45.0_Linux_x86_64.tar.gz -C /usr/bin/; \
+    elif [ "$TARGETARCH" = "arm64" ]; then \
+        mkdir sbom-utility && tar -xf ${PATH_TO_ART}/sbom-utility-arm64.tar.gz -C sbom-utility && \
+        cp ${PATH_TO_ART}/linux-arm64-opm /usr/bin/opm && \
+        cp ${PATH_TO_ART}/umoci.linux.arm64 /usr/bin/umoci && \
+        cp ${PATH_TO_ART}/opa_linux_arm64_static /usr/bin/opa && \
+        tar -xzf ${PATH_TO_ART}/conftest_0.45.0_Linux_arm64.tar.gz -C /usr/bin/; \
+    fi && \
+    chmod +x /usr/bin/opm /usr/bin/umoci /usr/bin/opa && \
     tar -xf ${PATH_TO_ART}/v1.8.2.tar.gz && \
     cd "bats-core-$BATS_VERSION" && \
     ./install.sh /usr && \
@@ -57,7 +70,15 @@ RUN dnf install -y --nogpgcheck jq \
     dnf clean all
 
 #yq install, oneline because its pip
-RUN pip install --no-cache-dir ${PATH_TO_ART}/PyYAML-6.0.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl ${PATH_TO_ART}/argcomplete-3.6.2-py3-none-any.whl ${PATH_TO_ART}/tomlkit-0.13.3-py3-none-any.whl ${PATH_TO_ART}/xmltodict-0.14.2-py2.py3-none-any.whl ${PATH_TO_ART}/yq-3.4.3-py3-none-any.whl
+# Use architecture-agnostic Python wheels when possible, fallback to x86_64 for ARM64
+RUN if [ "$TARGETARCH" = "amd64" ]; then \
+        pip install --no-cache-dir ${PATH_TO_ART}/PyYAML-6.0.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl ${PATH_TO_ART}/argcomplete-3.6.2-py3-none-any.whl ${PATH_TO_ART}/tomlkit-0.13.3-py3-none-any.whl ${PATH_TO_ART}/xmltodict-0.14.2-py2.py3-none-any.whl ${PATH_TO_ART}/yq-3.4.3-py3-none-any.whl; \
+    elif [ "$TARGETARCH" = "arm64" ]; then \
+        # For ARM64, install yq and other packages using pip with architecture-agnostic wheels
+        pip install --no-cache-dir ${PATH_TO_ART}/argcomplete-3.6.2-py3-none-any.whl ${PATH_TO_ART}/tomlkit-0.13.3-py3-none-any.whl ${PATH_TO_ART}/xmltodict-0.14.2-py2.py3-none-any.whl ${PATH_TO_ART}/yq-3.4.3-py3-none-any.whl && \
+        # Install PyYAML using dnf for ARM64 compatibility
+        dnf install -y python3-pyyaml; \
+    fi
 
 ENV PATH="${PATH}:/sbom-utility"
 
