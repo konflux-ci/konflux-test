@@ -137,13 +137,13 @@ arches:
     name: golang-src
     evr: 1.24.6-1.el9_6
     sourcerpm: golang-1.24.6-1.el9_6.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/k/kernel-headers-5.14.0-570.35.1.el9_6.x86_64.rpm
+  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/k/kernel-headers-5.14.0-570.37.1.el9_6.x86_64.rpm
     repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-appstream-rpms
-    size: 3705741
-    checksum: sha256:0e183ddf666087ee3f3eceb99840cc7b6cbc1237cc3cdf78b5c7e9533741ac1a
+    size: 3706529
+    checksum: sha256:cdf3b0f400321b66101af9ed94a830a1b4f5e82c8c47d6c5342b4f81c605b245
     name: kernel-headers
-    evr: 5.14.0-570.35.1.el9_6
-    sourcerpm: kernel-5.14.0-570.35.1.el9_6.src.rpm
+    evr: 5.14.0-570.37.1.el9_6
+    sourcerpm: kernel-5.14.0-570.37.1.el9_6.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/l/libmpc-1.2.1-4.el9.x86_64.rpm
     repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-appstream-rpms
     size: 66075
@@ -711,34 +711,6 @@ arches:
     name: fuse-common
     evr: 3.10.2-9.el9
     sourcerpm: fuse3-3.10.2-9.el9.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/g/glibc-2.34-168.el9_6.23.x86_64.rpm
-    repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
-    size: 2052524
-    checksum: sha256:47a7eaa890012f8de224fa8e1f553030200f38ef7c5aab9b236d34cc4f0e1deb
-    name: glibc
-    evr: 2.34-168.el9_6.23
-    sourcerpm: glibc-2.34-168.el9_6.23.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/g/glibc-common-2.34-168.el9_6.23.x86_64.rpm
-    repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
-    size: 310131
-    checksum: sha256:9e6bfff5d0b0533b1037be4fc6bc6b9cd7dd73c55adecfa3edcda02190f1e7da
-    name: glibc-common
-    evr: 2.34-168.el9_6.23
-    sourcerpm: glibc-2.34-168.el9_6.23.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/g/glibc-langpack-en-2.34-168.el9_6.23.x86_64.rpm
-    repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
-    size: 672229
-    checksum: sha256:1c8fd029085d95ef17fb60675ec638024078bede2fb28656835131c7f42c214d
-    name: glibc-langpack-en
-    evr: 2.34-168.el9_6.23
-    sourcerpm: glibc-2.34-168.el9_6.23.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/g/glibc-minimal-langpack-2.34-168.el9_6.23.x86_64.rpm
-    repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
-    size: 18705
-    checksum: sha256:77f381d7fac07303eca760d0d1e51bf417d8b2ad61d5b121d85d25e546cfbff3
-    name: glibc-minimal-langpack
-    evr: 2.34-168.el9_6.23
-    sourcerpm: glibc-2.34-168.el9_6.23.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/g/groff-base-1.22.4-10.el9.x86_64.rpm
     repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
     size: 1133828
@@ -821,20 +793,6 @@ arches:
     size: 416227
     checksum: sha256:4f1dbaed64ecaf650d47613b86ea787d92b7fad23e8a75e8b86cc436ee949f49
     name: ncurses
-    evr: 6.2-10.20210508.el9_6.2
-    sourcerpm: ncurses-6.2-10.20210508.el9_6.2.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/n/ncurses-base-6.2-10.20210508.el9_6.2.noarch.rpm
-    repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
-    size: 97903
-    checksum: sha256:13491d7ce61e0c5ef82451936c68acf5d04dc437a624e0f74b89904bc0fbe330
-    name: ncurses-base
-    evr: 6.2-10.20210508.el9_6.2
-    sourcerpm: ncurses-6.2-10.20210508.el9_6.2.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/n/ncurses-libs-6.2-10.20210508.el9_6.2.x86_64.rpm
-    repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
-    size: 336762
-    checksum: sha256:519ec674b3ff4efb7ce31f1f87584f5409d341b6dde543fcba7dac89dfc05e1b
-    name: ncurses-libs
     evr: 6.2-10.20210508.el9_6.2
     sourcerpm: ncurses-6.2-10.20210508.el9_6.2.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/o/openssh-8.7p1-45.el9.x86_64.rpm
