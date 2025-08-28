@@ -9,7 +9,7 @@ RUN tar -xzf /cachi2/output/deps/generic/check-payload-${CHECK_PAYLOAD_VERSION}.
     CGO_ENABLED=0 go build -ldflags="-X main.Commit=${CHECK_PAYLOAD_VERSION}" -o /opt/app-root/src/check-payload-binary && \
     chmod +x /opt/app-root/src/check-payload-binary 
 # Container image that runs your code
-FROM docker.io/snyk/snyk:linux@sha256:3589b2be33980043326a0f3590486db0d3b4f3b2c5e27959e14fcded70f71b0a as snyk
+FROM docker.io/snyk/snyk:linux@sha256:451d2ed0da103be52203f9308bee710e802ad419bff923ea30ff3b4531eba692 as snyk
 FROM quay.io/conforma/cli:snapshot@sha256:652ec2ee38dba94e2d36ba0eea57b0f6d5730f690a67b4a2e2dae64f8c708907 AS conforma
 FROM registry.redhat.io/rhtas/cosign-rhel9@sha256:cb53dcc3bc912dd7f12147f33af1b435eae5ff4ab83b85c0277b4004b20a0248 as cosign-bin
 FROM quay.io/konflux-ci/buildah-task:latest@sha256:cb58912cc9aecdb4c64e353ac44d0586574e89ba6cec2f2b191b4eeb98c6f81e AS buildah-task-image
