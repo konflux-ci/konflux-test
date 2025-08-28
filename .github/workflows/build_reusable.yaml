@@ -4,7 +4,7 @@ on:
       archs:
         description: "Build image for defined architectures. Must be comma-separated list of architectures."
         required: false
-        default: "amd64,ppc64le"
+        default: "amd64,arm64,ppc64le"
         type: string
       tags:
         description: "Tags to be used for the image. Must be space separated list of tags."

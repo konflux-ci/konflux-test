@@ -1,3 +1,4 @@
 packages: [jq, python3-file-magic, python3-pip, skopeo, python3, clamav, clamd, csdiff, git, golang, ShellCheck, csmock-plugin-shellcheck-core, libicu, clamav-update]
 contentOrigin:
   repofiles: ["./ubi.repo", "./epel-testing.repo", "./epel.repo"]
+arches: [x86_64, aarch64]
