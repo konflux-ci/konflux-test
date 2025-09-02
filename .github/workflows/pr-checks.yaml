@@ -49,7 +49,7 @@ jobs:
       - name: Install dependency packages
         run: |
          sudo apt-get install jq
-         sudo curl -L -o /usr/bin/opa https://openpolicyagent.org/downloads/v0.56.0/opa_linux_amd64_static
+         sudo curl -L -o /usr/bin/opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64_static
          sudo chmod 755 /usr/bin/opa
 
       - name: Run unittests for policies
