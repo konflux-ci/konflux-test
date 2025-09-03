@@ -1,6 +1,8 @@
 package optional_checks
 
-violation_maintainer_required[{"msg": msg, "details":{"name": name, "description": description, "url": url}}] {
+import future.keywords.if
+
+violation_maintainer_required := [{"msg": msg, "details":{"name": name, "description": description, "url": url}}] if {
   not input.Labels["maintainer"]
 
   name := "maintainer_label_required"
@@ -9,7 +11,7 @@ violation_maintainer_required[{"msg": msg, "details":{"name": name, "description
   url := "https://source.redhat.com/groups/public/container-build-system/container_build_system_wiki/guide_to_layered_image_build_service_osbs#jive_content_id_Labels"
 }
 
-violation_summary_required[{"msg": msg, "details":{"name": name, "description": description, "url": url}}] {
+violation_summary_required := [{"msg": msg, "details":{"name": name, "description": description, "url": url}}] if {
   not input.Labels["summary"]
 
   name := "summary_label_required"

@@ -1,6 +1,8 @@
 package required_checks
 
-violation_install_deprecated[{"msg": msg, "details":{"name": name, "description": description, "url": url}}] {
+import future.keywords.if
+
+violation_install_deprecated := [{"msg": msg, "details":{"name": name, "description": description, "url": url}}] if {
   input.Labels["INSTALL"]
 
   name := "install_label_deprecated"
@@ -9,7 +11,7 @@ violation_install_deprecated[{"msg": msg, "details":{"name": name, "description"
   url := "https://source.redhat.com/groups/public/container-build-system/container_build_system_wiki/guide_to_layered_image_build_service_osbs#jive_content_id_Labels"
 }
 
-violation_architecture_deprecated[{"msg": msg, "details":{"name": name, "description": description, "url": url}}] {
+violation_architecture_deprecated := [{"msg": msg, "details":{"name": name, "description": description, "url": url}}] if {
   input.Labels["Architecture"]
 
   name := "architecture_label_deprecated"
@@ -18,7 +20,7 @@ violation_architecture_deprecated[{"msg": msg, "details":{"name": name, "descrip
   url := "https://source.redhat.com/groups/public/container-build-system/container_build_system_wiki/guide_to_layered_image_build_service_osbs#jive_content_id_Labels"
 }
 
-violation_name_deprecated[{"msg": msg, "details":{"name": name, "description": description, "url": url}}] {
+violation_name_deprecated := [{"msg": msg, "details":{"name": name, "description": description, "url": url}}] if {
   input.Labels["Name"]
 
   name := "name_label_deprecated"
@@ -27,7 +29,7 @@ violation_name_deprecated[{"msg": msg, "details":{"name": name, "description": d
   url := "https://source.redhat.com/groups/public/container-build-system/container_build_system_wiki/guide_to_layered_image_build_service_osbs#jive_content_id_Labels"
 }
 
-violation_release_deprecated[{"msg": msg, "details":{"name": name, "description": description, "url": url}}] {
+violation_release_deprecated := [{"msg": msg, "details":{"name": name, "description": description, "url": url}}] if {
   input.Labels["Release"]
 
   name := "release_label_deprecated"
@@ -36,7 +38,7 @@ violation_release_deprecated[{"msg": msg, "details":{"name": name, "description"
   url := "https://source.redhat.com/groups/public/container-build-system/container_build_system_wiki/guide_to_layered_image_build_service_osbs#jive_content_id_Labels"
 }
 
-violation_uninstall_deprecated[{"msg": msg, "details":{"name": name, "description": description, "url": url}}] {
+violation_uninstall_deprecated := [{"msg": msg, "details":{"name": name, "description": description, "url": url}}] if {
   input.Labels["UNINSTALL"]
 
   name := "uninstall_label_deprecated"
@@ -45,7 +47,7 @@ violation_uninstall_deprecated[{"msg": msg, "details":{"name": name, "descriptio
   url := "https://source.redhat.com/groups/public/container-build-system/container_build_system_wiki/guide_to_layered_image_build_service_osbs#jive_content_id_Labels"
 }
 
-violation_version_deprecated[{"msg": msg, "details":{"name": name, "description": description, "url": url}}] {
+violation_version_deprecated := [{"msg": msg, "details":{"name": name, "description": description, "url": url}}] if {
   input.Labels["Version"]
 
   name := "version_label_deprecated"
@@ -54,7 +56,7 @@ violation_version_deprecated[{"msg": msg, "details":{"name": name, "description"
   url := "https://source.redhat.com/groups/public/container-build-system/container_build_system_wiki/guide_to_layered_image_build_service_osbs#jive_content_id_Labels"
 }
 
-violation_bzcomponent_deprecated[{"msg": msg, "details":{"name": name, "description": description, "url": url}}] {
+violation_bzcomponent_deprecated := [{"msg": msg, "details":{"name": name, "description": description, "url": url}}] if {
   input.Labels["BZComponent"]
 
   name := "bzcomponent_label_deprecated"
@@ -63,7 +65,7 @@ violation_bzcomponent_deprecated[{"msg": msg, "details":{"name": name, "descript
   url := "https://source.redhat.com/groups/public/container-build-system/container_build_system_wiki/guide_to_layered_image_build_service_osbs#jive_content_id_Labels"
 }
 
-violation_run_deprecated[{"msg": msg, "details":{"name": name, "description": description, "url": url}}] {
+violation_run_deprecated := [{"msg": msg, "details":{"name": name, "description": description, "url": url}}] if {
   input.Labels["RUN"]
 
   name := "run_label_deprecated"

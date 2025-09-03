@@ -1,7 +1,9 @@
 package required_checks
 
+import future.keywords.if
+
 # function to get mapping {rpm: set of vulnerabilities names}; duplicated vulnerabilities are removed
-get_patched_vulnerabilities(input_data, severity) := vulnerabilities {
+get_patched_vulnerabilities(input_data, severity) := vulnerabilities if {
   vulnerabilities := [{"name": rpm.Name, "version": rpm.Version, "vulnerabilities": vuln} |
     rpm := input_data.data[_].Features[_]
     vuln := {v.Name | v:=rpm.Vulnerabilities[_]; v.Severity == severity; v.FixedBy != ""; contains(v.Link,"RHSA")}
@@ -10,28 +12,28 @@ get_patched_vulnerabilities(input_data, severity) := vulnerabilities {
 }
 
 # function to get mapping {rpm: set of vulnerabilities names}; duplicated vulnerabilities are removed
-get_unpatched_vulnerabilities(input_data, severity) := vulnerabilities {
+get_unpatched_vulnerabilities(input_data, severity) := vulnerabilities if {
   vulnerabilities := [{"name": rpm.Name, "version": rpm.Version, "vulnerabilities": vuln} |
     rpm := input_data.data[_].Features[_]
-    vuln := {v.Name | v:=rpm.Vulnerabilities[_]; v.Severity == severity; any([v.FixedBy == "", contains(v.Link,"RHSA") == false ])}
+    vuln := {v.Name | v:=rpm.Vulnerabilities[_]; v.Severity == severity; v.FixedBy == ""; not contains(v.Link,"RHSA")}
     count(vuln) > 0
   ]
 }
 
 
 # function returns count of all vulnerabilities
-count_vulnerabilities(vulnerabilities) := cnt {
+count_vulnerabilities(vulnerabilities) := cnt if {
   cnt := sum([count(v.vulnerabilities) | v:=vulnerabilities[_]])
 }
 
 # function generates description with RPMs and their vulnerabilities
-generate_description(vulnerabilities) := dsc {
+generate_description(vulnerabilities) := dsc if {
   dsc := sprintf("Vulnerabilities found: %s", [concat(", ",
                    [sprintf("%s-%s (%s)", [v.name, v.version, concat(", ", v.vulnerabilities)]) | v := vulnerabilities[_]]
                  )])
 }
 
-warn_critical_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] {
+warn_critical_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] if {
   rpms_with_critical_vulnerabilities := get_patched_vulnerabilities(input, "Critical")
   not count(rpms_with_critical_vulnerabilities) == 0
 
@@ -42,7 +44,7 @@ warn_critical_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, 
   url := "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
 }
 
-warn_unpatched_critical_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] {
+warn_unpatched_critical_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] if {
   rpms_with_unpatched_critical_vulnerabilities := get_unpatched_vulnerabilities(input, "Critical")
   not count(rpms_with_unpatched_critical_vulnerabilities) == 0
 
@@ -53,7 +55,7 @@ warn_unpatched_critical_vulnerabilities[{"msg": msg, "vulnerabilities_number": v
   url := "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
 }
 
-warn_high_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] {
+warn_high_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] if {
   rpms_with_high_vulnerabilities := get_patched_vulnerabilities(input, "High")
   not count(rpms_with_high_vulnerabilities) == 0
 
@@ -64,7 +66,7 @@ warn_high_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "det
   url := "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
 }
 
-warn_unpatched_high_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] {
+warn_unpatched_high_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] if {
   rpms_with_unpatched_high_vulnerabilities := get_unpatched_vulnerabilities(input, "High")
   not count(rpms_with_unpatched_high_vulnerabilities) == 0
 
@@ -75,7 +77,7 @@ warn_unpatched_high_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns
   url := "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
 }
 
-warn_medium_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] {
+warn_medium_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] if {
   rpms_with_medium_vulnerabilities := get_patched_vulnerabilities(input, "Medium")
   not count(rpms_with_medium_vulnerabilities) == 0
 
@@ -86,7 +88,7 @@ warn_medium_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "d
   url := "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
 }
 
-warn_unpatched_medium_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] {
+warn_unpatched_medium_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] if {
   rpms_with_unpatched_medium_vulnerabilities := get_unpatched_vulnerabilities(input, "Medium")
   not count(rpms_with_unpatched_medium_vulnerabilities) == 0
 
@@ -97,7 +99,7 @@ warn_unpatched_medium_vulnerabilities[{"msg": msg, "vulnerabilities_number": vul
   url := "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
 }
 
-warn_low_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] {
+warn_low_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] if {
   rpms_with_low_vulnerabilities := get_patched_vulnerabilities(input, "Low")
   rpms_with_negligible_vulnerabilities := get_patched_vulnerabilities(input, "Negligible")
   rpms_with_low_neg_vulnerabilities = array.concat(rpms_with_low_vulnerabilities, rpms_with_negligible_vulnerabilities)
@@ -110,7 +112,7 @@ warn_low_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "deta
   url := "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
 }
 
-warn_unpatched_low_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] {
+warn_unpatched_low_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] if {
   rpms_with_unpatched_low_vulnerabilities := get_unpatched_vulnerabilities(input, "Low")
   rpms_with_unpatched_negligible_vulnerabilities := get_unpatched_vulnerabilities(input, "Negligible")
   rpms_with_unpatched_low_neg_vulnerabilities = array.concat(rpms_with_unpatched_low_vulnerabilities, rpms_with_unpatched_negligible_vulnerabilities)
@@ -123,7 +125,7 @@ warn_unpatched_low_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_
   url := "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
 }
 
-warn_unknown_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] {
+warn_unknown_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] if {
   rpms_with_unknown_vulnerabilities := get_patched_vulnerabilities(input, "Unknown")
   not count(rpms_with_unknown_vulnerabilities) == 0
 
@@ -134,7 +136,7 @@ warn_unknown_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "
   url := "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
 }
 
-warn_unpatched_unknown_vulnerabilities[{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] {
+warn_unpatched_unknown_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vulns_num, "details":{"name": name, "description": description, "url": url}}] if {
   rpms_with_unpatched_unknown_vulnerabilities := get_unpatched_vulnerabilities(input, "Unknown")
   not count(rpms_with_unpatched_unknown_vulnerabilities) == 0
 
