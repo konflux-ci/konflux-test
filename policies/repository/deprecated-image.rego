@@ -1,6 +1,8 @@
 package required_checks
 
-violation_image_repository_deprecated[{"msg": msg, "details":{"name": name, "description": description, "url": url}}] {
+import future.keywords.if
+
+violation_image_repository_deprecated := [{"msg": msg, "details":{"name": name, "description": description, "url": url}}] if {
   input.release_categories[_] == "Deprecated"
 
   name := "image_repository_deprecated"

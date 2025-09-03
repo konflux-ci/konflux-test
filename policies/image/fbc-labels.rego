@@ -1,6 +1,8 @@
 package fbc_checks
 
-violation_fbc_dc_required[{"msg": msg, "details":{"name": name, "description": description, "url": url}}] {
+import future.keywords.if
+
+violation_fbc_dc_required := [{"msg": msg, "details":{"name": name, "description": description, "url": url}}] if {
   not input.Labels["operators.operatorframework.io.index.configs.v1"]
 
   name := "operators_operatorframework_io_index_configs_v1_label_required"
