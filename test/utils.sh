@@ -541,7 +541,8 @@ render_opm() {
 
 # This helper function can be used to render and extract information from a FBC
 # fragment and its matching index image (i.e according to the tag for the fragment's
-# base image). 
+# base image). If the index image is provided with a tag or digest it will use that
+# instead of deriving the matching index image.
 # It will identify all packages in the FBC fragment and then apply a function on each
 # of those packages in both the FBC fragment as well as the reference index.
 # This function will return a list of content that is present in the FBC fragment but not
@@ -602,13 +603,31 @@ extract_differential_fbc_metadata() {
   package_names=$(extract_unique_package_names_from_catalog "$render_out_fbc")
 
   # Run opm render on the matching index image
-  local render_out_index tagged_index
-  if ! tagged_index=$(get_target_fbc_catalog_image -i "$FBC_FRAGMENT" -b "$INDEX_IMAGE"); then
-    echo "extract_differential_fbc_metadata: could not get a matching catalog image" >&2
+  local render_out_index index_url
+
+  # Check if INDEX_IMAGE has a digest or tag using parse_image_url
+  local parsed_index
+  if ! parsed_index=$(parse_image_url "$INDEX_IMAGE"); then
+    echo "extract_differential_fbc_metadata: could not parse INDEX_IMAGE" >&2
     exit 1
   fi
-  if ! render_out_index=$(render_opm -t "$tagged_index"); then
-    echo "extract_differential_fbc_metadata: could not render index image $tagged_index" >&2
+
+  local index_digest index_tag
+  index_digest=$(echo "$parsed_index" | jq -jr '.digest')
+  index_tag=$(echo "$parsed_index" | jq -jr '.tag')
+
+  if [[ -n "$index_digest" || -n "$index_tag" ]]; then
+    # Use INDEX_IMAGE if a tag or digest was provided
+    index_url="$INDEX_IMAGE"
+  else
+    # If INDEX_IMAGE doesn't have a digest or tag call get_target_fbc_catalog_image
+    if ! index_url=$(get_target_fbc_catalog_image -i "$FBC_FRAGMENT" -b "$INDEX_IMAGE"); then
+      echo "extract_differential_fbc_metadata: could not get a matching catalog image" >&2
+      exit 1
+    fi
+  fi
+  if ! render_out_index=$(render_opm -t "$index_url"); then
+    echo "extract_differential_fbc_metadata: could not render index image $index_url" >&2
     exit 1
   fi
 
