@@ -128,6 +128,9 @@ EOF
         elif [[ $1 == "render" && $2 == "registry.redhat.io/redhat/redhat-operator-index:v4.15" ]]; then
             echo '{"schema": "olm.package", "name": "rhbk-operator"}{"schema": "olm.bundle", "package": "rhbk-operator", "image": "registry.redhat.io/rhbk/keycloak-operator-bundle@random-image", "properties":[], "relatedImages": [{"name": "foo-baz", "image": "registry.redhat.io/foo/baz@sha256:my-sha"}]}{"schema": "olm.package", "name": "not-rhbk-operator"}{"schema": "olm.bundle", "package": "not-rhbk-operator", "image": "registry.redhat.io/not-rhbk/operator-bundle@not-my-other-sha", "properties":[], "relatedImages": [{"name": "foo-baz", "image": "registry.redhat.io/foo/bar@sha256:my-bar-sha"}]}'
             return 0
+        elif [[ $1 == "render" && $2 == "registry.redhat.io/redhat/redhat-operator-index:v4.15@randomsha256" ]]; then
+            echo '{"schema": "olm.package", "name": "rhbk-operator"}{"schema": "olm.bundle", "package": "rhbk-operator", "image": "registry.redhat.io/rhbk/keycloak-operator-bundle@random-image", "properties":[], "relatedImages": [{"name": "foo-baz", "image": "registry.redhat.io/foo/baz@sha256:my-sha"}]}{"schema": "olm.package", "name": "not-rhbk-operator"}{"schema": "olm.bundle", "package": "not-rhbk-operator", "image": "registry.redhat.io/not-rhbk/operator-bundle@not-my-other-sha", "properties":[], "relatedImages": [{"name": "foo-baz", "image": "registry.redhat.io/foo/bar@sha256:my-bar-sha"}]}'
+            return 0
         elif [[ $1 == "render" && $2 == "registry.io/random-index:v4.15" ]]; then
             echo '{"schema": "olm.package", "name": "rhbk-operator"}{"schema": "olm.bundle", "package": "rhbk-operator", "image": "registry.redhat.io/rhbk/keycloak-operator-bundle@random-image", "properties":[], "relatedImages": [{"name": "foo-bar", "image": "registry.redhat.io/foo/bar@sha256:my-bar-sha"}, {"name": "foo-baz", "image": "registry.redhat.io/foo/baz@sha256:my-sha"}]}{"schema": "olm.package", "name": "not-rhbk-operator"}{"schema": "olm.bundle", "package": "not-rhbk-operator", "image": "registry.redhat.io/not-rhbk/operator-bundle@my-other-sha", "properties":[]}'
             return 0
@@ -135,7 +138,7 @@ EOF
             echo '{"schema": "olm.package", "name": "rhbk-operator"}{"schema": "olm.bundle", "package": "rhbk-operator", "image": "registry.redhat.io/rhbk/keycloak-operator-bundle@random-image", "properties":[]}{"schema": "olm.package", "name": "not-rhbk-operator"}{"schema": "olm.bundle", "package": "not-rhbk-operator", "image": "registry.redhat.io/not-rhbk/operator-bundle@my-other-sha", "properties":[]}'
             return 0
         elif [[ $1 == "render" && $2 == "registry.io/random-index-2:v4.20" ]]; then
-            echo '{"schema": "olm.package", "name": "rhbk-operator"}{"schema": "olm.bundle", "package": "rhbk-operator", "image": "registry.redhat.io/rhbk/keycloak-operator-bundle@random-image", "properties":[]}{"schema": "olm.package", "name": "not-rhbk-operator"}{"schema": "olm.bundle", "package": "not-rhbk-operator", "image": "registry.redhat.io/not-rhbk/operator-bundle@my-other-sha", "properties":[]}'
+            echo '{"schema": "olm.package", "name": "rhbk-operator"}{"schema": "olm.bundle", "package": "rhbk-operator", "image": "registry.redhat.io/rhbk/keycloak-operator-bundle@my-sha", "properties":[], "relatedImages": [{"name": "foo-bar", "image": "registry.redhat.io/foo/bar@sha256:my-bar-sha"}, {"name": "foo-baz", "image": "registry.redhat.io/foo/baz@sha256:my-sha"}]}'
             return 0
         elif [[ $1 == "render" && $2 == "registry.redhat.io/redhat/redhat-operator-index:v4.12" ]]; then
             echo 'Invalid index'
@@ -467,6 +470,35 @@ teardown() {
     EXPECTED_RESPONSE='get_image_manifests: The image manifest could not be inspected'
 }
 
+@test "Get Image Index Manifests Array: missing IMAGE_URL" {
+    run get_image_manifests_array -i ""
+    [ "$status" -eq 2 ]
+}
+
+@test "Get Image Index Manifests Array: success" {
+    run get_image_manifests_array -i registry/image:tag@valid-url
+    declare -A output="( $(get_image_manifests_array -i registry/image:tag@valid-url) )"
+    declare -A expected
+    expected["amd64"]="valid-manifest-amd64"
+    expected["arm64"]="valid-manifest-arm64"
+    declare -i match_count=0
+    for key in "${!output[@]}"; do
+        if [[ ${output[$key]} == ${expected[$key]} ]]; then
+            match_count+=1
+        fi
+    done
+    echo "matches: ${match_count}"
+    [[ "${match_count}" -eq 2 && "$status" -eq 0 ]]
+}
+
+@test "Get Image Index Manifests Array: registry/image-manifest:tag@invalid" {
+    # This will pass the --raw inspection but will fail when the raw isn't used. It just checks the
+    # error case of the skopeo command not working. This check would not be likely to fail in use.
+    run get_image_manifests_array -i registry/image-manifest:tag@invalid
+    EXPECTED_RESPONSE='get_image_manifests: The image manifest could not be inspected'
+    [[ "${EXPECTED_RESPONSE}" = "${output}" ]]
+}
+
 @test "Get Unreleased Bundle: missing FBC_FRAGMENT" {
     run get_unreleased_bundles
     EXPECTED_RESPONSE="get_unreleased_bundles: missing keyword parameter (-i FBC_FRAGMENT)"
@@ -547,7 +579,7 @@ teardown() {
 }
 
 @test "Get Unreleased FBC related images: registry/fbc-fragment:tag@isolated and custom index" {
-    run get_unreleased_fbc_related_images -i registry/fbc-fragment:tag@isolated -b registry.io/random-index:v4.20
+    run get_unreleased_fbc_related_images -i registry/fbc-fragment:tag@isolated -b registry.io/random-index-2:v4.20
     EXPECTED_RESPONSE="[]"
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
