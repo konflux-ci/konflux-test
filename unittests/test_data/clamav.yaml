@@ -1,5 +1,7 @@
 clamav_output:
   output: |
+    /tmp/giant-file.a: Heuristics.Limits.Exceeded.MaxFileSize FOUND
+    /tmp/giant.db: Heuristics.Limits.Exceeded.MaxFileSize FOUND
     /tmp/test/eicar.txt: Win.Test.EICAR_HDB-1 FOUND
     /work/content/usr/lib/firmware/ath11k/IPQ5018/hw1.0/m3_fw.b00.xz: Heuristics.Broken.Executable FOUND
     A random debug output

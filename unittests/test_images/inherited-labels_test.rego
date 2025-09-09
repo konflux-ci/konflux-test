@@ -1,8 +1,9 @@
 package optional_checks
 
+import future.keywords.if
+
 import data.good_image as image
 import data.good_image as base_image
-import future.keywords.if
 
 test_violation_summary_label_inherited if {
     result := violation_summary_label_inherited with input as image with data.Labels as base_image.Labels
