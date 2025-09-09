@@ -1,7 +1,8 @@
 package fbc_checks
 
-import data.good_image as image
 import future.keywords.if
+
+import data.good_image as image
 
 test_violation_fbc_dc_required if {
     result := violation_fbc_dc_required with input as image

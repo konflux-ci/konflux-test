@@ -1,7 +1,8 @@
 package required_checks
 
-import data.bad_image as image
 import future.keywords.if
+
+import data.bad_image as image
 
 test_violation_name_required if {
     result := violation_name_required with input as image

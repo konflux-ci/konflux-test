@@ -1,7 +1,8 @@
 package required_checks
 
-import data.bad_image as image
 import future.keywords.if
+
+import data.bad_image as image
 
 test_violation_install_deprecated if {
     result := violation_install_deprecated with input as image

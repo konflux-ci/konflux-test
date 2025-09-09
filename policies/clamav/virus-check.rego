@@ -3,7 +3,7 @@ package required_checks
 import future.keywords.in
 import future.keywords.if
 
-violation_infected_files := [{"msg": msg, "details": {"filename": filename, "virname": virname, "description": description}}] if {
+violation_infected_files := [{"msg": msg, "details": {"filename": filename, "virname": virname, "description": description}} |
 	hit := _report.hits[_]
 
 	filename := hit.filename
@@ -12,9 +12,9 @@ violation_infected_files := [{"msg": msg, "details": {"filename": filename, "vir
 	description := "A malware has been found."
 
 	not hit.is_heuristic # we don't want heursitics checks to cause false positive failures
-}
+]
 
-warn_heuristic_malware_files := [{"msg": msg, "details": {"filename": filename, "virname": virname, "description": description}}] if {
+warn_heuristic_malware_files := [{"msg": msg, "details": {"filename": filename, "virname": virname, "description": description}} |
 	hit := _report.hits[_]
 
 	filename := hit.filename
@@ -23,7 +23,7 @@ warn_heuristic_malware_files := [{"msg": msg, "details": {"filename": filename, 
 	description := "The heuristic check detected a potential malware. (Heuristic checks have higher possibility of false positive results.)"
 
 	hit.is_heuristic # we want to only warn for heuristic checks
-}
+]
 
 _report := d if {
 	marker := "----------- SCAN SUMMARY -----------"

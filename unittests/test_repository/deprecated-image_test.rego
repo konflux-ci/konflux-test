@@ -1,7 +1,8 @@
 package required_checks
 
-import data.repository as repository
 import future.keywords.if
+
+import data.repository as repository
 
 test_violation_image_repository_deprecated if {
     result := violation_image_repository_deprecated with input as repository

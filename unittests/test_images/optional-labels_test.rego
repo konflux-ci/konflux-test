@@ -1,7 +1,8 @@
 package optional_checks
 
-import data.bad_image as image
 import future.keywords.if
+
+import data.bad_image as image
 
 test_violation_maintainer_required if {
     result := violation_maintainer_required with input as image

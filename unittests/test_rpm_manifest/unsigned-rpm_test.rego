@@ -1,7 +1,8 @@
 package required_checks
 
-import data.rpm_manifest as rpm_manifest
 import future.keywords.if
+
+import data.rpm_manifest as rpm_manifest
 
 test_violation_image_unsigned_rpms if {
     result := violation_image_unsigned_rpms with input as rpm_manifest
