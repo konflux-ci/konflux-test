@@ -130,13 +130,13 @@ arches:
     name: golang-src
     evr: 1.24.6-1.el9_6
     sourcerpm: golang-1.24.6-1.el9_6.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/appstream/os/Packages/k/kernel-headers-5.14.0-570.41.1.el9_6.aarch64.rpm
+  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/appstream/os/Packages/k/kernel-headers-5.14.0-570.42.2.el9_6.aarch64.rpm
     repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-appstream-rpms
-    size: 3674165
-    checksum: sha256:c1746612074058c0ca24c2eb88c1a33823c5ac3f93616a0ad1c03a3014db733c
+    size: 3454725
+    checksum: sha256:1b9a0cc587627e0773b835f0a9cbffa82f80a2083184e8adc64adeaca70cb945
     name: kernel-headers
-    evr: 5.14.0-570.41.1.el9_6
-    sourcerpm: kernel-5.14.0-570.41.1.el9_6.src.rpm
+    evr: 5.14.0-570.42.2.el9_6
+    sourcerpm: kernel-5.14.0-570.42.2.el9_6.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/appstream/os/Packages/l/libasan-11.5.0-5.el9_5.aarch64.rpm
     repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-appstream-rpms
     size: 413819
