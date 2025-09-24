@@ -9,7 +9,7 @@ RUN tar -xzf /cachi2/output/deps/generic/check-payload-${CHECK_PAYLOAD_VERSION}.
     CGO_ENABLED=0 go build -ldflags="-X main.Commit=${CHECK_PAYLOAD_VERSION}" -o /opt/app-root/src/check-payload-binary && \
     chmod +x /opt/app-root/src/check-payload-binary
 
-FROM quay.io/konflux-ci/buildah-task:latest@sha256:cb58912cc9aecdb4c64e353ac44d0586574e89ba6cec2f2b191b4eeb98c6f81e AS buildah-task-image
+FROM quay.io/konflux-ci/buildah-task:latest@sha256:27400eaf836985bcc35182d62d727629f061538f61603c05b85d5d99bfa7da2d AS buildah-task-image
 FROM registry.redhat.io/openshift4/ose-tools-rhel9@sha256:5c847038a684ddafc1680ad1f9ff335358a9f308b22aa6c5aeafd52f9ac5aa66 as oc-bin
 FROM registry.access.redhat.com/ubi9/ubi:9.6-1758184894
 
