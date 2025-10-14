@@ -130,13 +130,13 @@ arches:
     name: golang-src
     evr: 1.24.6-1.el9_6
     sourcerpm: golang-1.24.6-1.el9_6.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/appstream/os/Packages/k/kernel-headers-5.14.0-570.51.1.el9_6.aarch64.rpm
+  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/appstream/os/Packages/k/kernel-headers-5.14.0-570.52.1.el9_6.aarch64.rpm
     repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-appstream-rpms
-    size: 3689457
-    checksum: sha256:bc13b2eb304764ac2a5a093bc9f8d0715056281c2e4d545ca482b790441e2f1f
+    size: 3693037
+    checksum: sha256:c403e93994e4a7cbe9269a310c466fdb50e9636692798361e41c33202eb45d1c
     name: kernel-headers
-    evr: 5.14.0-570.51.1.el9_6
-    sourcerpm: kernel-5.14.0-570.51.1.el9_6.src.rpm
+    evr: 5.14.0-570.52.1.el9_6
+    sourcerpm: kernel-5.14.0-570.52.1.el9_6.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/appstream/os/Packages/l/libasan-11.5.0-5.el9_5.aarch64.rpm
     repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-appstream-rpms
     size: 413819
@@ -921,13 +921,13 @@ arches:
     name: csdiff
     evr: 3.5.5-1.el9
     sourcerpm: csdiff-3.5.5-1.el9.src.rpm
-  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/aarch64/Packages/c/csmock-plugin-shellcheck-core-3.8.2-1.el9.noarch.rpm
+  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/aarch64/Packages/c/csmock-plugin-shellcheck-core-3.8.3-1.el9.noarch.rpm
     repoid: epel
-    size: 22601
-    checksum: sha256:f18cbfd91bfe826d1e8783e9c2a93d470e5f380b2bccd8bf385651dd1815989c
+    size: 22824
+    checksum: sha256:ab9b46fcf498b3d30307f16dba05d72c2fb912026562ffa25f14bda0ebf6237e
     name: csmock-plugin-shellcheck-core
-    evr: 3.8.2-1.el9
-    sourcerpm: csmock-3.8.2-1.el9.src.rpm
+    evr: 3.8.3-1.el9
+    sourcerpm: csmock-3.8.3-1.el9.src.rpm
   - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/aarch64/Packages/s/ShellCheck-0.10.0-3.el9.aarch64.rpm
     repoid: epel
     size: 3602973
@@ -1072,13 +1072,13 @@ arches:
     name: golang-src
     evr: 1.24.6-1.el9_6
     sourcerpm: golang-1.24.6-1.el9_6.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/k/kernel-headers-5.14.0-570.51.1.el9_6.x86_64.rpm
+  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/k/kernel-headers-5.14.0-570.52.1.el9_6.x86_64.rpm
     repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-appstream-rpms
-    size: 3727833
-    checksum: sha256:72a5485f6ca94f8b6ce4296a1af9a7eac54819a8242f0d0d72b097461d0e034e
+    size: 3731389
+    checksum: sha256:d409ea6bfbba5c3e1722e5e0290c2698d21ca2a3c384c877e62a34f43f299f27
     name: kernel-headers
-    evr: 5.14.0-570.51.1.el9_6
-    sourcerpm: kernel-5.14.0-570.51.1.el9_6.src.rpm
+    evr: 5.14.0-570.52.1.el9_6
+    sourcerpm: kernel-5.14.0-570.52.1.el9_6.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/l/libmpc-1.2.1-4.el9.x86_64.rpm
     repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-appstream-rpms
     size: 66075
@@ -1849,13 +1849,13 @@ arches:
     name: csdiff
     evr: 3.5.5-1.el9
     sourcerpm: csdiff-3.5.5-1.el9.src.rpm
-  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/x86_64/Packages/c/csmock-plugin-shellcheck-core-3.8.2-1.el9.noarch.rpm
+  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/x86_64/Packages/c/csmock-plugin-shellcheck-core-3.8.3-1.el9.noarch.rpm
     repoid: epel
-    size: 22601
-    checksum: sha256:f18cbfd91bfe826d1e8783e9c2a93d470e5f380b2bccd8bf385651dd1815989c
+    size: 22824
+    checksum: sha256:ab9b46fcf498b3d30307f16dba05d72c2fb912026562ffa25f14bda0ebf6237e
     name: csmock-plugin-shellcheck-core
-    evr: 3.8.2-1.el9
-    sourcerpm: csmock-3.8.2-1.el9.src.rpm
+    evr: 3.8.3-1.el9
+    sourcerpm: csmock-3.8.3-1.el9.src.rpm
   - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/x86_64/Packages/s/ShellCheck-0.10.0-3.el9.x86_64.rpm
     repoid: epel
     size: 2761018
