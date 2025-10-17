@@ -776,7 +776,14 @@ get_image_labels() {
   local image_labels
   # Ensure that we don't have a tag and digest for skopeo
   image=$(get_image_registry_repository_digest "$image")
-  if ! image_labels=$(retry skopeo inspect --no-tags docker://"${image}"); then
+
+  # Fetch first arch using --raw as skopeo may fail
+  # when the image does not have build for arch same as base system.
+  first_arch=$(skopeo inspect --raw "docker://${image}" | jq -r '.manifests[].platform.architecture' | head -n 1)
+  echo "get_image_labels: First architecture found: ${first_arch}"
+
+
+  if ! image_labels=$(retry skopeo inspect  --override-arch="${first_arch}" --no-tags docker://"${image}"); then
     echo "get_image_labels: failed to inspect the image" >&2
     exit 1
   fi
