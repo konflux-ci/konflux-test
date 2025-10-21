@@ -52,7 +52,8 @@ RUN dnf install -y --nogpgcheck jq \
         cp ${PATH_TO_ART}/snyk-linux /usr/local/bin/snyk && \
         cp ${PATH_TO_ART}/ec_linux_amd64 /usr/local/bin/ec && \
         cp ${PATH_TO_ART}/cosign-linux-amd64 /usr/local/bin/cosign && \
-        tar -xzf ${PATH_TO_ART}/conftest_0.45.0_Linux_x86_64.tar.gz -C /usr/bin/; \
+        tar -xzf ${PATH_TO_ART}/conftest_0.45.0_Linux_x86_64.tar.gz -C /usr/bin/ && \
+        python3 -c "import zipfile; zipfile.ZipFile('${PATH_TO_ART}/codeql-linux64.zip').extractall('/usr/local/bin/')"; \
     elif [ "$TARGETARCH" = "arm64" ]; then \
         mkdir sbom-utility && tar -xf ${PATH_TO_ART}/sbom-utility-arm64.tar.gz -C sbom-utility && \
         cp ${PATH_TO_ART}/linux-arm64-opm /usr/bin/opm && \
@@ -61,9 +62,10 @@ RUN dnf install -y --nogpgcheck jq \
         cp ${PATH_TO_ART}/snyk-linux-arm64 /usr/local/bin/snyk && \
         cp ${PATH_TO_ART}/ec_linux_arm64 /usr/local/bin/ec && \
         cp ${PATH_TO_ART}/cosign-linux-arm64 /usr/local/bin/cosign && \
-        tar -xzf ${PATH_TO_ART}/conftest_0.45.0_Linux_arm64.tar.gz -C /usr/bin/; \
+        tar -xzf ${PATH_TO_ART}/conftest_0.45.0_Linux_arm64.tar.gz -C /usr/bin/ && \
+        python3 -c "import zipfile; zipfile.ZipFile('${PATH_TO_ART}/codeql-linux64.zip').extractall('/usr/local/bin/')"; \
     fi && \
-    chmod +x /usr/bin/opm /usr/bin/umoci /usr/bin/opa /usr/local/bin/snyk /usr/local/bin/ec /usr/local/bin/cosign && \
+    chmod +x /usr/bin/opm /usr/bin/umoci /usr/bin/opa /usr/local/bin/snyk /usr/local/bin/ec /usr/local/bin/cosign /usr/local/bin/codeql/codeql && \
     tar -xf ${PATH_TO_ART}/v1.8.2.tar.gz && \
     cd "bats-core-$BATS_VERSION" && \
     ./install.sh /usr && \
