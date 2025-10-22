@@ -80,3 +80,6 @@ artifacts:
   - download_url: "https://github.com/sigstore/cosign/releases/download/v2.5.3/cosign-linux-arm64"
     checksum: "sha256:bffabe4cf183122b7de3111257a863c99e7dc6cf1093bfd7bf961de1795589b8"
     filename: "cosign-linux-arm64"
+  - download_url: "https://github.com/github/codeql-cli-binaries/releases/download/v2.23.2/codeql-linux64.zip"
+    checksum: "sha256:df3fd812cbaea14262da63dec4220a10163febdabc5472676339861a2aac0d4f"
+    filename: "codeql-linux64.zip"
