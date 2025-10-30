@@ -46,7 +46,16 @@ RUN dnf install -y --nogpgcheck jq \
     # Use architecture-specific binaries and sbom-utility
     if [ "$TARGETARCH" = "amd64" ]; then \
         mkdir sbom-utility && tar -xf ${PATH_TO_ART}/sbom-utility.tar.gz -C sbom-utility && \
-        cp ${PATH_TO_ART}/linux-amd64-opm /usr/bin/opm && \
+        # Copy v1.40.0 as opm to maintain backwards compatibility with existing tasks
+        # We need multiple versions of opm to support binaryless FBC fragments
+        cp ${PATH_TO_ART}/linux-amd64-opm-v1.40.0 /usr/bin/opm && \
+        cp ${PATH_TO_ART}/linux-amd64-opm-v1.26.4 /usr/bin/opm-v1.26.4 && \
+        cp ${PATH_TO_ART}/linux-amd64-opm-v1.28.0 /usr/bin/opm-v1.28.0 && \
+        cp ${PATH_TO_ART}/linux-amd64-opm-v1.40.0 /usr/bin/opm-v1.40.0 && \
+        cp ${PATH_TO_ART}/linux-amd64-opm-v1.44.0 /usr/bin/opm-v1.44.0 && \
+        cp ${PATH_TO_ART}/linux-amd64-opm-v1.48.0 /usr/bin/opm-v1.48.0 && \
+        cp ${PATH_TO_ART}/linux-amd64-opm-v1.50.0 /usr/bin/opm-v1.50.0 && \
+        cp ${PATH_TO_ART}/linux-amd64-opm-v1.57.0 /usr/bin/opm-v1.57.0 && \
         cp ${PATH_TO_ART}/umoci.linux.amd64 /usr/bin/umoci && \
         cp ${PATH_TO_ART}/opa_linux_amd64_static /usr/bin/opa && \
         cp ${PATH_TO_ART}/snyk-linux /usr/local/bin/snyk && \
@@ -56,7 +65,16 @@ RUN dnf install -y --nogpgcheck jq \
         python3 -c "import zipfile; zipfile.ZipFile('${PATH_TO_ART}/codeql-linux64.zip').extractall('/usr/local/bin/')"; \
     elif [ "$TARGETARCH" = "arm64" ]; then \
         mkdir sbom-utility && tar -xf ${PATH_TO_ART}/sbom-utility-arm64.tar.gz -C sbom-utility && \
-        cp ${PATH_TO_ART}/linux-arm64-opm /usr/bin/opm && \
+        # Copy v1.40.0 as opm to maintain backwards compatibility with existing tasks
+        # We need multiple versions of opm to support binaryless FBC fragments
+        cp ${PATH_TO_ART}/linux-arm64-opm-v1.40.0 /usr/bin/opm && \
+        cp ${PATH_TO_ART}/linux-arm64-opm-v1.26.4 /usr/bin/opm-v1.26.4 && \
+        cp ${PATH_TO_ART}/linux-arm64-opm-v1.28.0 /usr/bin/opm-v1.28.0 && \
+        cp ${PATH_TO_ART}/linux-arm64-opm-v1.40.0 /usr/bin/opm-v1.40.0 && \
+        cp ${PATH_TO_ART}/linux-arm64-opm-v1.44.0 /usr/bin/opm-v1.44.0 && \
+        cp ${PATH_TO_ART}/linux-arm64-opm-v1.48.0 /usr/bin/opm-v1.48.0 && \
+        cp ${PATH_TO_ART}/linux-arm64-opm-v1.50.0 /usr/bin/opm-v1.50.0 && \
+        cp ${PATH_TO_ART}/linux-arm64-opm-v1.57.0 /usr/bin/opm-v1.57.0 && \
         cp ${PATH_TO_ART}/umoci.linux.arm64 /usr/bin/umoci && \
         cp ${PATH_TO_ART}/opa_linux_arm64_static /usr/bin/opa && \
         cp ${PATH_TO_ART}/snyk-linux-arm64 /usr/local/bin/snyk && \
@@ -65,7 +83,7 @@ RUN dnf install -y --nogpgcheck jq \
         tar -xzf ${PATH_TO_ART}/conftest_0.45.0_Linux_arm64.tar.gz -C /usr/bin/ && \
         python3 -c "import zipfile; zipfile.ZipFile('${PATH_TO_ART}/codeql-linux64.zip').extractall('/usr/local/bin/')"; \
     fi && \
-    chmod +x /usr/bin/opm /usr/bin/umoci /usr/bin/opa /usr/local/bin/snyk /usr/local/bin/ec /usr/local/bin/cosign /usr/local/bin/codeql/codeql && \
+    chmod +x /usr/bin/opm /usr/bin/opm-v1.26.4 /usr/bin/opm-v1.28.0 /usr/bin/opm-v1.40.0 /usr/bin/opm-v1.44.0 /usr/bin/opm-v1.48.0 /usr/bin/opm-v1.50.0 /usr/bin/opm-v1.57.0 /usr/bin/umoci /usr/bin/opa /usr/local/bin/snyk /usr/local/bin/ec /usr/local/bin/cosign /usr/local/bin/codeql/codeql && \
     tar -xf ${PATH_TO_ART}/v1.8.2.tar.gz && \
     cd "bats-core-$BATS_VERSION" && \
     ./install.sh /usr && \
