@@ -40,9 +40,11 @@ setup() {
         elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/image@valid-manifest-arm64" ]]; then
             echo '{"schemaVersion": 2,"mediaType": "application/vnd.oci.image.manifest.v1+json","config": {"mediaType": "application/vnd.oci.image.config.v1+json","digest": "valid-manifest-arm64","size": 14208},"annotations": {"org.opencontainers.image.base.name": "registry.redhat.io/openshift4/ose-operator-registry:v4.12"}}'
 
-        # registry/image-manifest@valid-labels
-        elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "docker://registry/image-manifest@valid-labels" ]]; then
-            echo '{"Name": "valid-labels", "Architecture": "amd64", "Labels": {"architecture":"arm64", "name": "my-image"}, "Digest": "valid-labels", "Os": "linux"}'
+        elif [[ $1 == "inspect" && $2 == "--raw" && $3 == "docker://registry/image-manifest@valid-labels" ]]; then
+            # Return a manifest list so 'first_arch' gets populated (e.g., to 'amd64')
+            echo '{"manifests":[{"platform":{"architecture":"amd64"}},{"platform":{"architecture":"arm64"}}]}'
+        elif [[ $1 == "inspect" && $2 == --override-arch=* && $3 == "--no-tags" && $4 == "docker://registry/image-manifest@valid-labels" ]]; then
+            echo '{"Name": "valid-labels", "Architecture": "amd64", "Labels": {"architecture":"amd64", "name": "my-image"}, "Digest": "valid-labels", "Os": "linux"}'
 
         # registry/image-manifest@valid
         elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/image-manifest@valid" || $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/image-manifest@invalid" ]]; then
@@ -563,7 +565,12 @@ teardown() {
 
 @test "Get Image Labels: registry/image-manifest:tag@valid-labels" {
     run get_image_labels registry/image-manifest:tag@valid-labels
-    EXPECTED_RESPONSE=$(echo "architecture=arm64 name=my-image" | tr ' ' '\n')
+    EXPECTED_RESPONSE=$(cat <<EOF
+get_image_labels: First architecture found: amd64
+architecture=amd64
+name=my-image
+EOF
+)
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
 
@@ -575,8 +582,15 @@ teardown() {
 
 @test "Get Image Labels: registry/image-manifest:tag@invalid" {
     run get_image_labels registry/image-manifest:tag@invalid
-    EXPECTED_RESPONSE='get_image_labels: failed to inspect the image'
-    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+
+    local EXPECTED_LINE_1="get_image_labels: First architecture found:"
+    local EXPECTED_LINE_2="get_image_labels: failed to inspect the image"
+    local EXPECTED_ERROR_LINE="jq: parse error" # Check for the error
+
+    [[ "$status" -eq 1 \
+        && "${output}" == *"${EXPECTED_LINE_1}"* \
+        && "${output}" == *"${EXPECTED_LINE_2}"* \
+        && "${output}" == *"${EXPECTED_ERROR_LINE}"* ]]
 }
 
 @test "Get relatedImages from operator bundle: valid-operator-bundle-1" {
@@ -1251,10 +1265,10 @@ EOF
     RETRY_COUNT=1
     RETRY_INTERVAL=1
     retry_output=$(get_retry_expected_output)
-    run get_image_labels -i registry/image:tag@invalid-url
-    EXPECTED_RESPONSE=$(echo -e -n "${retry_output}"get_image_labels: failed to inspect the image"")
-    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+    run get_image_labels  registry/image:tag@invalid-url
+    EXPECTED_RESPONSE=$(echo -e -n "get_image_labels: First architecture found: \n${retry_output}get_image_labels: failed to inspect the image")
 
+    [[ "${output}" == *"${EXPECTED_RESPONSE}"* && "$status" -eq 1 ]]
 }
 
 @test "Retry Get Image Index Manifests: registry/image:tag@invalid-url" {
