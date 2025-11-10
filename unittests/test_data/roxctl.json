@@ -1,0 +1,3937 @@
+  {  
+    "roxctl": {
+    "id": "sha256:cb36824be532647673441e8ad62b0171d29d73f505f355294cb11214e07cf85b",
+    "name": {
+      "registry": "quay.io",
+      "remote": "jsztuka/simple-fbc",
+      "tag": "8b74591",
+      "fullName": "quay.io/jsztuka/simple-fbc:8b74591"
+    },
+    "names": [
+      {
+        "registry": "quay.io",
+        "remote": "jsztuka/simple-fbc",
+        "tag": "8b74591",
+        "fullName": "quay.io/jsztuka/simple-fbc:8b74591"
+      }
+    ],
+    "metadata": {
+      "v1": {
+        "digest": "sha256:b04817302a1b9ec6158790b52a4fd2d44b99601740f03f5f9d0a242fa08c5843",
+        "created": "2023-11-08T12:30:39.371393132Z",
+        "layers": [
+          {
+            "instruction": "RUN",
+            "created": "0001-01-01T00:00:00Z"
+          },
+          {
+            "instruction": "RUN",
+            "created": "0001-01-01T00:00:00Z"
+          },
+          {
+            "instruction": "RUN",
+            "created": "0001-01-01T00:00:00Z"
+          },
+          {
+            "instruction": "RUN",
+            "created": "0001-01-01T00:00:00Z"
+          },
+          {
+            "instruction": "RUN",
+            "created": "0001-01-01T00:00:00Z"
+          },
+          {
+            "instruction": "RUN",
+            "created": "0001-01-01T00:00:00Z"
+          },
+          {
+            "instruction": "RUN",
+            "created": "0001-01-01T00:00:00Z"
+          },
+          {
+            "instruction": "RUN",
+            "created": "0001-01-01T00:00:00Z"
+          },
+          {
+            "instruction": "RUN",
+            "created": "0001-01-01T00:00:00Z"
+          },
+          {
+            "instruction": "RUN",
+            "created": "0001-01-01T00:00:00Z"
+          },
+          {
+            "instruction": "COPY",
+            "value": "/ko-app/grpc-health-probe /bin/grpc_health_probe # buildkit",
+            "created": "2023-11-06T11:54:14.390130661Z"
+          },
+          {
+            "instruction": "COPY",
+            "value": "nsswitch.conf /etc/nsswitch.conf # buildkit",
+            "created": "2023-11-06T11:54:14.447790579Z"
+          },
+          {
+            "instruction": "COPY",
+            "value": "opm /bin/opm # buildkit",
+            "created": "2023-11-06T11:54:14.599349412Z"
+          },
+          {
+            "instruction": "USER",
+            "value": "1001",
+            "created": "2023-11-06T11:54:14.599349412Z",
+            "empty": true
+          },
+          {
+            "instruction": "ENTRYPOINT",
+            "value": "[\"/bin/opm\"]",
+            "created": "2023-11-06T11:54:14.599349412Z",
+            "empty": true
+          },
+          {
+            "instruction": "ENTRYPOINT",
+            "value": "[\"/bin/opm\"]",
+            "created": "2023-11-08T12:30:35.205239477Z",
+            "empty": true
+          },
+          {
+            "instruction": "CMD",
+            "value": "[\"serve\", \"/configs\", \"--cache-dir=/tmp/cache\"]",
+            "created": "2023-11-08T12:30:35.224600669Z",
+            "empty": true
+          },
+          {
+            "instruction": "ADD",
+            "value": "dir:25023bbcd1b049108b25ca7b9a678bf850c169b9d21faa24a8fbbf9d5435366f in /configs",
+            "created": "2023-11-08T12:30:35.340134850Z",
+            "empty": true
+          },
+          {
+            "instruction": "RUN",
+            "value": "[\"/bin/opm\", \"serve\", \"/configs\", \"--cache-dir=/tmp/cache\", \"--cache-only\"]",
+            "created": "2023-11-08T12:30:35.631518819Z",
+            "empty": true
+          },
+          {
+            "instruction": "LABEL",
+            "value": "operators.operatorframework.io.index.configs.v1=/configs",
+            "created": "2023-11-08T12:30:35.650679135Z",
+            "empty": true
+          },
+          {
+            "instruction": "LABEL",
+            "value": "\"build-date\"=\"2023-11-08T12:30:35\" \"architecture\"=\"x86_64\" \"vcs-type\"=\"git\" \"vcs-ref\"=\"8b745911579af0ea137a167f868664377ac58801\"",
+            "created": "2023-11-08T12:30:36.000197069Z"
+          },
+          {
+            "instruction": "RUN",
+            "value": "/bin/sh",
+            "created": "2023-11-08T12:30:40.000333487Z"
+          }
+        ],
+        "user": "1001",
+        "command": [
+          "serve",
+          "/configs",
+          "--cache-dir=/tmp/cache"
+        ],
+        "entrypoint": [
+          "/bin/opm"
+        ],
+        "labels": {
+          "architecture": "x86_64",
+          "build-date": "2023-11-08T12:30:35",
+          "io.buildah.version": "1.31.0",
+          "operators.operatorframework.io.index.configs.v1": "/configs",
+          "vcs-ref": "8b745911579af0ea137a167f868664377ac58801",
+          "vcs-type": "git"
+        }
+      },
+      "v2": {
+        "digest": "sha256:cb36824be532647673441e8ad62b0171d29d73f505f355294cb11214e07cf85b"
+      },
+      "layerShas": [
+        "sha256:63b450eae87c42ba59c0fa815ad0e5b8cb6fb76a039cc341dbff6e744fa77a77",
+        "sha256:960043b8858c3c30f1d79dcc49adb2804fd35c2510729e67685b298b2ca746b7",
+        "sha256:b4ca4c215f483111b64ec6919f1659ff475d7080a649d6acd78a6ade562a4a63",
+        "sha256:eebb06941f3e57b2e40a0e9cbd798dacef9b04d89ebaa8896be5f17c976f8666",
+        "sha256:02cd68c0cbf64abe9738767877756b33f50fff5d88583fdc74b66beffa77694b",
+        "sha256:d3c894b5b2b0fa857549aeb6cbc38b038b5b2828736be37b6d9fff0b886f12fd",
+        "sha256:b40161cd83fc5d470d6abe50e87aa288481b6b89137012881d74187cfbf9f502",
+        "sha256:46ba3f23f1d3fb1440deeb279716e4377e79e61736ec2227270349b9618a0fdd",
+        "sha256:4fa131a1b726b2d6468d461e7d8867a2157d5671f712461d8abd126155fdf9ce",
+        "sha256:4a2d7bc46f5813ebe5b1c2cd5fd135ad788a32488888ed2681830e6f2610b592",
+        "sha256:8cfba9c3cf5efe874f1ea05b5010ccbc806fb736b4470316a6cabb1db0840565",
+        "sha256:51ad4dc8c80e414f878a1c784fe08da5285a6e08a689f7981f98bb3a2335cec4",
+        "sha256:fe3205a8882d7cfc2cdb6269345ac8b0d9b58f9cc802fa6c4154f51e726601fa",
+        "sha256:7e8927009b67bb37856baab14430817cdb34ed3fb1bc9a4b1f849ccadc8644e5",
+        "sha256:cd6cfff071a73e1c4c3309cbb49a13c1f0f9af05f4dc407b3825e7a2ff0fc037"
+      ],
+      "dataSource": {
+        "id": "53060442-bc4a-59af-92e7-c560bd9ad0cd",
+        "name": "Autogenerated https://quay.io/openshift/ci for cluster my-cluster from openshift-config/pull-secret"
+      }
+    },
+    "scan": {
+      "scanTime": "2025-10-07T12:56:50.518242581Z",
+      "components": [
+        {
+          "name": "k8s.io/kubectl",
+          "version": "v0.27.7",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/pkg/errors",
+          "version": "v0.9.1",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/opencontainers/image-spec",
+          "version": "v1.1.0-rc2.0.20221005185240-3a7f492d3f1b",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/joelanford/ignore",
+          "version": "v0.0.0-20210607151042-0d25dc18b62d",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/sirupsen/logrus",
+          "version": "v1.9.2",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "k8s.io/component-base",
+          "version": "v0.27.7",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "google.golang.org/grpc",
+          "version": "v1.45.0",
+          "vulns": [
+            {
+              "cve": "CVE-2023-44487",
+              "cvss": 7.5,
+              "summary": "gRPC-Go HTTP/2 Rapid Reset vulnerability",
+              "link": "https://osv.dev/vulnerability/GHSA-m425-mq94-257g",
+              "fixedBy": "1.56.3",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "exploitabilityScore": 3.9,
+                "impactScore": 3.6,
+                "attackVector": "ATTACK_NETWORK",
+                "availability": "IMPACT_HIGH",
+                "score": 7.5,
+                "severity": "HIGH"
+              },
+              "publishedOn": "2023-10-25T21:17:37Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "IMPORTANT_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-m425-mq94-257g",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.5,
+                    "severity": "HIGH"
+                  }
+                },
+                {
+                  "source": "SOURCE_NVD",
+                  "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-44487",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.5,
+                    "severity": "HIGH"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.94444,
+                "epssPercentile": 0.9999
+              }
+            },
+            {
+              "cve": "GO-2023-2153",
+              "summary": "Denial of service from HTTP/2 Rapid Reset in google.golang.org/grpc",
+              "link": "https://github.com/grpc/grpc-go/pull/6703",
+              "fixedBy": "1.56.3",
+              "publishedOn": "2023-11-01T22:39:27Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            }
+          ],
+          "layerIndex": 10,
+          "source": "GO",
+          "location": "bin/grpc_health_probe",
+          "topCvss": 7.5,
+          "riskScore": 1.192,
+          "fixedBy": "1.56.3"
+        },
+        {
+          "name": "github.com/go-openapi/jsonpointer",
+          "version": "v0.19.6",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/spf13/cobra",
+          "version": "v1.7.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/josharian/intern",
+          "version": "v1.0.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/go-git/go-billy/v5",
+          "version": "v5.1.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "base-files",
+          "version": "11.1+deb11u8",
+          "layerIndex": 0,
+          "location": "var/lib/dpkg/status.d/base-files"
+        },
+        {
+          "name": "github.com/json-iterator/go",
+          "version": "v1.1.12",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "sigs.k8s.io/structured-merge-diff/v4",
+          "version": "v4.2.3",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "google.golang.org/protobuf",
+          "version": "v1.30.0",
+          "vulns": [
+            {
+              "cve": "CVE-2024-24786",
+              "cvss": 7.5,
+              "summary": "Golang protojson.Unmarshal function infinite loop when unmarshaling certain forms of invalid JSON",
+              "link": "https://osv.dev/vulnerability/GHSA-8r3f-844c-mc37",
+              "fixedBy": "1.33.0",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "exploitabilityScore": 3.9,
+                "impactScore": 3.6,
+                "attackVector": "ATTACK_NETWORK",
+                "availability": "IMPACT_HIGH",
+                "score": 7.5,
+                "severity": "HIGH"
+              },
+              "publishedOn": "2024-03-06T00:31:27Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "IMPORTANT_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-8r3f-844c-mc37",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.5,
+                    "severity": "HIGH"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.00231,
+                "epssPercentile": 0.45926
+              }
+            },
+            {
+              "cve": "GO-2024-2611",
+              "summary": "Infinite loop in JSON unmarshaling in google.golang.org/protobuf",
+              "link": "https://go.dev/cl/569356",
+              "fixedBy": "1.33.0",
+              "publishedOn": "2024-03-05T20:24:05Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            }
+          ],
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm",
+          "topCvss": 7.5,
+          "riskScore": 1.192,
+          "fixedBy": "1.33.0"
+        },
+        {
+          "name": "sigs.k8s.io/controller-runtime",
+          "version": "v0.15.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "go.etcd.io/bbolt",
+          "version": "v1.3.7",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/matttproud/golang_protobuf_extensions",
+          "version": "v1.0.4",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/spiffe/go-spiffe/v2",
+          "version": "v2.0.0",
+          "layerIndex": 10,
+          "source": "GO",
+          "location": "bin/grpc_health_probe"
+        },
+        {
+          "name": "sigs.k8s.io/yaml",
+          "version": "v1.3.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/pmezard/go-difflib",
+          "version": "v1.0.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/go-git/gcfg",
+          "version": "v1.5.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/gorilla/mux",
+          "version": "v1.8.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/operator-framework/api",
+          "version": "v0.19.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "go.opentelemetry.io/otel/metric",
+          "version": "v0.31.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "sigs.k8s.io/apiserver-network-proxy/konnectivity-client",
+          "version": "v0.1.2",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/jbenet/go-context",
+          "version": "v0.0.0-20150711004518-d14ea06fba99",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "tzdata",
+          "version": "2021a-1+deb11u10",
+          "layerIndex": 2,
+          "location": "var/lib/dpkg/status.d/tzdata"
+        },
+        {
+          "name": "go.opentelemetry.io/proto/otlp",
+          "version": "v0.19.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/docker/go-connections",
+          "version": "v0.4.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/cenkalti/backoff/v4",
+          "version": "v4.1.3",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/mitchellh/mapstructure",
+          "version": "v1.4.1",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "go.opentelemetry.io/otel/trace",
+          "version": "v1.10.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/google/gofuzz",
+          "version": "v1.2.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "golang.org/x/sys",
+          "version": "v0.13.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/stoewer/go-strcase",
+          "version": "v1.2.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "golang.org/x/text",
+          "version": "v0.13.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/docker/go-units",
+          "version": "v0.5.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "k8s.io/kube-openapi",
+          "version": "v0.0.0-20230501164219-8b0f38b5fd1f",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/munnerz/goautoneg",
+          "version": "v0.0.0-20191010083416-a7dc8b61c822",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/beorn7/perks",
+          "version": "v1.0.1",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "golang.org/x/crypto",
+          "version": "v0.0.0-20220408190544-5352b0902921",
+          "vulns": [
+            {
+              "cve": "CVE-2024-45337",
+              "cvss": 9.1,
+              "summary": "Misuse of ServerConfig.PublicKeyCallback may cause authorization bypass in golang.org/x/crypto",
+              "link": "https://osv.dev/vulnerability/GHSA-v778-237x-gjrc",
+              "fixedBy": "0.31.0",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+                "exploitabilityScore": 3.9,
+                "impactScore": 5.2,
+                "attackVector": "ATTACK_NETWORK",
+                "confidentiality": "IMPACT_HIGH",
+                "integrity": "IMPACT_HIGH",
+                "score": 9.1,
+                "severity": "CRITICAL"
+              },
+              "publishedOn": "2024-12-11T22:03:04Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "CRITICAL_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-v778-237x-gjrc",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 5.2,
+                    "attackVector": "ATTACK_NETWORK",
+                    "confidentiality": "IMPACT_HIGH",
+                    "integrity": "IMPACT_HIGH",
+                    "score": 9.1,
+                    "severity": "CRITICAL"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.46088,
+                "epssPercentile": 0.97551
+              }
+            },
+            {
+              "cve": "CVE-2024-UNPATCHED-CRIT",
+              "cvss": 9.0,
+              "summary": "Unpatched critical vulnerability for testing",
+              "link": "https://osv.dev/vulnerability/TEST-UNPATCHED",
+              "fixedBy": "",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+                "exploitabilityScore": 3.9,
+                "impactScore": 5.9,
+                "attackVector": "ATTACK_NETWORK",
+                "confidentiality": "IMPACT_HIGH",
+                "integrity": "IMPACT_HIGH",
+                "availability": "IMPACT_HIGH",
+                "score": 9.0,
+                "severity": "CRITICAL"
+              },
+              "publishedOn": "2024-01-01T00:00:00Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "CRITICAL_VULNERABILITY_SEVERITY"
+            },
+            {
+              "cve": "CVE-2024-UNPATCHED-HIGH",
+              "cvss": 8.0,
+              "summary": "Unpatched high severity vulnerability for testing",
+              "link": "https://osv.dev/vulnerability/TEST-UNPATCHED-HIGH",
+              "fixedBy": "",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+                "exploitabilityScore": 3.9,
+                "impactScore": 5.2,
+                "attackVector": "ATTACK_NETWORK",
+                "confidentiality": "IMPACT_HIGH",
+                "integrity": "IMPACT_HIGH",
+                "score": 8.0,
+                "severity": "HIGH"
+              },
+              "publishedOn": "2024-01-01T00:00:00Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "IMPORTANT_VULNERABILITY_SEVERITY"
+            },
+            {
+              "cve": "CVE-2024-UNPATCHED-MEDIUM",
+              "cvss": 6.0,
+              "summary": "Unpatched medium severity vulnerability for testing",
+              "link": "https://osv.dev/vulnerability/TEST-UNPATCHED-MEDIUM",
+              "fixedBy": "",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+                "exploitabilityScore": 3.9,
+                "impactScore": 2.5,
+                "attackVector": "ATTACK_NETWORK",
+                "confidentiality": "IMPACT_LOW",
+                "integrity": "IMPACT_LOW",
+                "availability": "IMPACT_LOW",
+                "score": 6.0,
+                "severity": "MEDIUM"
+              },
+              "publishedOn": "2024-01-01T00:00:00Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "MODERATE_VULNERABILITY_SEVERITY"
+            },
+            {
+              "cve": "CVE-2024-UNPATCHED-LOW",
+              "cvss": 3.0,
+              "summary": "Unpatched low severity vulnerability for testing",
+              "link": "https://osv.dev/vulnerability/TEST-UNPATCHED-LOW",
+              "fixedBy": "",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N",
+                "exploitabilityScore": 2.2,
+                "impactScore": 1.4,
+                "attackVector": "ATTACK_NETWORK",
+                "confidentiality": "IMPACT_LOW",
+                "score": 3.0,
+                "severity": "LOW"
+              },
+              "publishedOn": "2024-01-01T00:00:00Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "LOW_VULNERABILITY_SEVERITY"
+            },                        
+            {
+              "cve": "CVE-2025-22869",
+              "cvss": 7.5,
+              "summary": "golang.org/x/crypto Vulnerable to Denial of Service (DoS) via Slow or Incomplete Key Exchange",
+              "link": "https://osv.dev/vulnerability/GHSA-hcg3-q754-cr77",
+              "fixedBy": "0.35.0",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "exploitabilityScore": 3.9,
+                "impactScore": 3.6,
+                "attackVector": "ATTACK_NETWORK",
+                "availability": "IMPACT_HIGH",
+                "score": 7.5,
+                "severity": "HIGH"
+              },
+              "publishedOn": "2025-04-12T00:30:26Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "IMPORTANT_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-hcg3-q754-cr77",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.5,
+                    "severity": "HIGH"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.00242,
+                "epssPercentile": 0.47455
+              }
+            },
+            {
+              "cve": "GO-2025-3487",
+              "summary": "Potential denial of service in golang.org/x/crypto",
+              "link": "https://go.dev/cl/652135",
+              "fixedBy": "0.35.0",
+              "publishedOn": "2025-02-26T02:51:51Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2024-3321",
+              "summary": "Misuse of connection.serverAuthenticate may cause authorization bypass in golang.org/x/crypto",
+              "link": "https://github.com/golang/crypto/commit/b4f1988a35dee11ec3e05d6bf3e90b695fbd8909",
+              "fixedBy": "0.31.0",
+              "publishedOn": "2024-12-11T18:40:19Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-2402",
+              "summary": "Man-in-the-middle attacker can compromise integrity of secure channel in golang.org/x/crypto",
+              "link": "https://go.dev/issue/64784",
+              "fixedBy": "0.17.0",
+              "publishedOn": "2023-12-18T21:18:26Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            }
+          ],
+          "layerIndex": 10,
+          "source": "GO",
+          "location": "bin/grpc_health_probe",
+          "topCvss": 9.1,
+          "riskScore": 1.46275,
+          "fixedBy": "0.35.0"
+        },
+        {
+          "name": "gopkg.in/yaml.v3",
+          "version": "v3.0.1",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "golang.org/x/time",
+          "version": "v0.3.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "google.golang.org/genproto",
+          "version": "v0.0.0-20220407144326-9054f6ed7bac",
+          "layerIndex": 10,
+          "source": "GO",
+          "location": "bin/grpc_health_probe"
+        },
+        {
+          "name": "go.opentelemetry.io/otel",
+          "version": "v1.10.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/containerd/containerd",
+          "version": "v1.6.22",
+          "vulns": [
+            {
+              "cve": "CVE-2024-40635",
+              "cvss": 4.6,
+              "summary": "containerd has an integer overflow in User ID handling",
+              "link": "https://osv.dev/vulnerability/GHSA-265r-hfxg-fhmg",
+              "fixedBy": "1.6.38",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:C/C:L/I:L/A:N",
+                "exploitabilityScore": 1.5,
+                "impactScore": 2.7,
+                "privilegesRequired": "PRIVILEGE_HIGH",
+                "scope": "CHANGED",
+                "confidentiality": "IMPACT_LOW",
+                "integrity": "IMPACT_LOW",
+                "score": 4.6,
+                "severity": "MEDIUM"
+              },
+              "publishedOn": "2025-03-17T21:24:42Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "MODERATE_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-265r-hfxg-fhmg",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:C/C:L/I:L/A:N",
+                    "exploitabilityScore": 1.5,
+                    "impactScore": 2.7,
+                    "privilegesRequired": "PRIVILEGE_HIGH",
+                    "scope": "CHANGED",
+                    "confidentiality": "IMPACT_LOW",
+                    "integrity": "IMPACT_LOW",
+                    "score": 4.6,
+                    "severity": "MEDIUM"
+                  }
+                },
+                {
+                  "source": "SOURCE_NVD",
+                  "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-40635",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+                    "exploitabilityScore": 1.8,
+                    "impactScore": 5.9,
+                    "privilegesRequired": "PRIVILEGE_LOW",
+                    "confidentiality": "IMPACT_HIGH",
+                    "integrity": "IMPACT_HIGH",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.8,
+                    "severity": "HIGH"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.00008,
+                "epssPercentile": 0.00498
+              }
+            },
+            {
+              "cve": "GHSA-7ww5-4wqc-m92c",
+              "summary": "containerd allows RAPL to be accessible to a container",
+              "link": "https://github.com/containerd/containerd/security/advisories/GHSA-7ww5-4wqc-m92c",
+              "fixedBy": "1.6.26",
+              "publishedOn": "2023-12-19T21:17:06Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "MODERATE_VULNERABILITY_SEVERITY"
+            },
+            {
+              "cve": "GHSA-265r-hfxg-fhmg",
+              "summary": "containerd has an integer overflow in User ID handling in github.com/containerd/containerd",
+              "link": "https://github.com/containerd/containerd/security/advisories/GHSA-265r-hfxg-fhmg",
+              "fixedBy": "1.6.38",
+              "publishedOn": "2025-03-18T18:14:48Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GHSA-7ww5-4wqc-m92c",
+              "summary": "RAPL accessibility in github.com/containerd/containerd",
+              "link": "https://github.com/containerd/containerd/security/advisories/GHSA-7ww5-4wqc-m92c",
+              "fixedBy": "1.6.26",
+              "publishedOn": "2024-01-02T18:53:32Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            }
+          ],
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm",
+          "topCvss": 4.6,
+          "riskScore": 1.1815,
+          "fixedBy": "1.6.38"
+        },
+        {
+          "name": "github.com/klauspost/compress",
+          "version": "v1.13.6",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/otiai10/copy",
+          "version": "v1.2.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/golang/protobuf",
+          "version": "v1.5.3",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/docker/cli",
+          "version": "v20.10.12+incompatible",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/moby/spdystream",
+          "version": "v0.2.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/opencontainers/go-digest",
+          "version": "v1.0.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/moby/sys/mountinfo",
+          "version": "v0.6.2",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/google/cel-go",
+          "version": "v0.15.3",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "golang.org/x/net",
+          "version": "v0.0.0-20220407224826-aac1ed45d8e3",
+          "vulns": [
+            {
+              "cve": "CVE-2022-41721",
+              "cvss": 7.5,
+              "summary": "golang.org/x/net/http2/h2c vulnerable to request smuggling attack",
+              "link": "https://osv.dev/vulnerability/GHSA-fxg5-wq6x-vr4w",
+              "fixedBy": "0.1.1-0.20221104162952-702349b0e862",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "exploitabilityScore": 3.9,
+                "impactScore": 3.6,
+                "attackVector": "ATTACK_NETWORK",
+                "availability": "IMPACT_HIGH",
+                "score": 7.5,
+                "severity": "HIGH"
+              },
+              "publishedOn": "2023-01-14T00:30:23Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "IMPORTANT_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-fxg5-wq6x-vr4w",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.5,
+                    "severity": "HIGH"
+                  }
+                },
+                {
+                  "source": "SOURCE_NVD",
+                  "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-41721",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.5,
+                    "severity": "HIGH"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.00074,
+                "epssPercentile": 0.23026
+              }
+            },
+            {
+              "cve": "CVE-2023-39325",
+              "cvss": 7.5,
+              "summary": "HTTP/2 rapid reset can cause excessive work in net/http",
+              "link": "https://osv.dev/vulnerability/GHSA-4374-p667-p6c8",
+              "fixedBy": "0.17.0",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "exploitabilityScore": 3.9,
+                "impactScore": 3.6,
+                "attackVector": "ATTACK_NETWORK",
+                "availability": "IMPACT_HIGH",
+                "score": 7.5,
+                "severity": "HIGH"
+              },
+              "publishedOn": "2023-10-11T20:35:43Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "IMPORTANT_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-4374-p667-p6c8",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.5,
+                    "severity": "HIGH"
+                  }
+                },
+                {
+                  "source": "SOURCE_NVD",
+                  "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-39325",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.5,
+                    "severity": "HIGH"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.0015,
+                "epssPercentile": 0.36191
+              }
+            },
+            {
+              "cve": "CVE-2022-41723",
+              "cvss": 7.5,
+              "summary": "golang.org/x/net vulnerable to Uncontrolled Resource Consumption",
+              "link": "https://osv.dev/vulnerability/GHSA-vvpx-j8f3-3w6h",
+              "fixedBy": "0.7.0",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "exploitabilityScore": 3.9,
+                "impactScore": 3.6,
+                "attackVector": "ATTACK_NETWORK",
+                "availability": "IMPACT_HIGH",
+                "score": 7.5,
+                "severity": "HIGH"
+              },
+              "publishedOn": "2023-02-17T14:00:02Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "IMPORTANT_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-vvpx-j8f3-3w6h",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.5,
+                    "severity": "HIGH"
+                  }
+                },
+                {
+                  "source": "SOURCE_NVD",
+                  "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-41723",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.5,
+                    "severity": "HIGH"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.00229,
+                "epssPercentile": 0.45713
+              }
+            },
+            {
+              "cve": "CVE-2023-3978",
+              "cvss": 6.1,
+              "summary": "Improper rendering of text nodes in golang.org/x/net/html",
+              "link": "https://osv.dev/vulnerability/GHSA-2wrh-6pvc-2jm9",
+              "fixedBy": "0.13.0",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+                "exploitabilityScore": 2.8,
+                "impactScore": 2.7,
+                "attackVector": "ATTACK_NETWORK",
+                "userInteraction": "UI_REQUIRED",
+                "scope": "CHANGED",
+                "confidentiality": "IMPACT_LOW",
+                "integrity": "IMPACT_LOW",
+                "score": 6.1,
+                "severity": "MEDIUM"
+              },
+              "publishedOn": "2023-08-02T21:30:20Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "MODERATE_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-2wrh-6pvc-2jm9",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+                    "exploitabilityScore": 2.8,
+                    "impactScore": 2.7,
+                    "attackVector": "ATTACK_NETWORK",
+                    "userInteraction": "UI_REQUIRED",
+                    "scope": "CHANGED",
+                    "confidentiality": "IMPACT_LOW",
+                    "integrity": "IMPACT_LOW",
+                    "score": 6.1,
+                    "severity": "MEDIUM"
+                  }
+                },
+                {
+                  "source": "SOURCE_NVD",
+                  "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-3978",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+                    "exploitabilityScore": 2.8,
+                    "impactScore": 2.7,
+                    "attackVector": "ATTACK_NETWORK",
+                    "userInteraction": "UI_REQUIRED",
+                    "scope": "CHANGED",
+                    "confidentiality": "IMPACT_LOW",
+                    "integrity": "IMPACT_LOW",
+                    "score": 6.1,
+                    "severity": "MEDIUM"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.00095,
+                "epssPercentile": 0.27373
+              }
+            },
+            {
+              "cve": "CVE-2023-44487",
+              "cvss": 5.3,
+              "summary": "HTTP/2 Stream Cancellation Attack",
+              "link": "https://osv.dev/vulnerability/GHSA-qppj-fm5r-hxr3",
+              "fixedBy": "0.17.0",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+                "exploitabilityScore": 3.9,
+                "impactScore": 1.4,
+                "attackVector": "ATTACK_NETWORK",
+                "availability": "IMPACT_LOW",
+                "score": 5.3,
+                "severity": "MEDIUM"
+              },
+              "publishedOn": "2023-10-10T21:28:24Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "MODERATE_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-qppj-fm5r-hxr3",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 1.4,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_LOW",
+                    "score": 5.3,
+                    "severity": "MEDIUM"
+                  }
+                },
+                {
+                  "source": "SOURCE_NVD",
+                  "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-44487",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.5,
+                    "severity": "HIGH"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.94444,
+                "epssPercentile": 0.9999
+              }
+            },
+            {
+              "cve": "CVE-2023-45288",
+              "cvss": 5.3,
+              "summary": "net/http, x/net/http2: close connections when receiving too many headers",
+              "link": "https://osv.dev/vulnerability/GHSA-4v7x-pqxf-cx7m",
+              "fixedBy": "0.23.0",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+                "exploitabilityScore": 3.9,
+                "impactScore": 1.4,
+                "attackVector": "ATTACK_NETWORK",
+                "availability": "IMPACT_LOW",
+                "score": 5.3,
+                "severity": "MEDIUM"
+              },
+              "publishedOn": "2024-04-04T21:30:32Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "MODERATE_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-4v7x-pqxf-cx7m",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 1.4,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_LOW",
+                    "score": 5.3,
+                    "severity": "MEDIUM"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.66635,
+                "epssPercentile": 0.98478
+              }
+            },
+            {
+              "cve": "CVE-2022-41717",
+              "cvss": 5.3,
+              "summary": "golang.org/x/net/http2 vulnerable to possible excessive memory growth",
+              "link": "https://osv.dev/vulnerability/GHSA-xrjj-mj9h-534m",
+              "fixedBy": "0.4.0",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+                "exploitabilityScore": 3.9,
+                "impactScore": 1.4,
+                "attackVector": "ATTACK_NETWORK",
+                "availability": "IMPACT_LOW",
+                "score": 5.3,
+                "severity": "MEDIUM"
+              },
+              "publishedOn": "2022-12-08T21:30:19Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "MODERATE_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-xrjj-mj9h-534m",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 1.4,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_LOW",
+                    "score": 5.3,
+                    "severity": "MEDIUM"
+                  }
+                },
+                {
+                  "source": "SOURCE_NVD",
+                  "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-41717",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 1.4,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_LOW",
+                    "score": 5.3,
+                    "severity": "MEDIUM"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.00441,
+                "epssPercentile": 0.62363
+              }
+            },
+            {
+              "cve": "CVE-2025-22870",
+              "cvss": 4.4,
+              "summary": "HTTP Proxy bypass using IPv6 Zone IDs in golang.org/x/net",
+              "link": "https://osv.dev/vulnerability/GHSA-qxp5-gwg8-xv66",
+              "fixedBy": "0.36.0",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:L",
+                "exploitabilityScore": 1.8,
+                "impactScore": 2.5,
+                "privilegesRequired": "PRIVILEGE_LOW",
+                "confidentiality": "IMPACT_LOW",
+                "availability": "IMPACT_LOW",
+                "score": 4.4,
+                "severity": "MEDIUM"
+              },
+              "publishedOn": "2025-03-12T22:06:40Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "MODERATE_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-qxp5-gwg8-xv66",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:L",
+                    "exploitabilityScore": 1.8,
+                    "impactScore": 2.5,
+                    "privilegesRequired": "PRIVILEGE_LOW",
+                    "confidentiality": "IMPACT_LOW",
+                    "availability": "IMPACT_LOW",
+                    "score": 4.4,
+                    "severity": "MEDIUM"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.00018,
+                "epssPercentile": 0.03108
+              }
+            },
+            {
+              "cve": "CVE-2025-22872",
+              "summary": "golang.org/x/net vulnerable to Cross-site Scripting",
+              "link": "https://nvd.nist.gov/vuln/detail/CVE-2025-22872",
+              "fixedBy": "0.38.0",
+              "publishedOn": "2025-04-16T19:22:51Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "MODERATE_VULNERABILITY_SEVERITY",
+              "epss": {
+                "epssProbability": 0.00023,
+                "epssPercentile": 0.04891
+              }
+            },
+            {
+              "cve": "GO-2024-2687",
+              "summary": "HTTP/2 CONTINUATION flood in net/http",
+              "link": "https://go.dev/issue/65051",
+              "fixedBy": "0.23.0",
+              "publishedOn": "2024-04-03T21:12:01Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-2102",
+              "summary": "HTTP/2 rapid reset can cause excessive work in net/http",
+              "link": "https://go.dev/issue/63417",
+              "fixedBy": "0.17.0",
+              "publishedOn": "2023-10-11T16:49:53Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-1571",
+              "summary": "Denial of service via crafted HTTP/2 stream in net/http and golang.org/x/net",
+              "link": "https://go.dev/issue/57855",
+              "fixedBy": "0.7.0",
+              "publishedOn": "2023-02-16T22:31:36Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2025-3503",
+              "summary": "HTTP Proxy bypass using IPv6 Zone IDs in golang.org/x/net",
+              "link": "https://go.dev/cl/654697",
+              "fixedBy": "0.36.0",
+              "publishedOn": "2025-03-12T18:17:07Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2024-3333",
+              "summary": "Non-linear parsing of case-insensitive content in golang.org/x/net/html",
+              "link": "https://go.dev/cl/637536",
+              "fixedBy": "0.33.0",
+              "publishedOn": "2024-12-18T20:22:06Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-1988",
+              "summary": "Improper rendering of text nodes in golang.org/x/net/html",
+              "link": "https://go.dev/issue/61615",
+              "fixedBy": "0.13.0",
+              "publishedOn": "2023-08-02T15:06:27Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2022-1144",
+              "summary": "Excessive memory growth in net/http and golang.org/x/net/http2",
+              "link": "https://go.dev/issue/56350",
+              "fixedBy": "0.4.0",
+              "publishedOn": "2022-12-08T19:01:21Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-1495",
+              "summary": "Request smuggling due to improper request handling in golang.org/x/net/http2/h2c",
+              "link": "https://go.dev/issue/56352",
+              "fixedBy": "0.1.1-0.20221104162952-702349b0e862",
+              "publishedOn": "2023-01-13T22:39:40Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2025-3595",
+              "summary": "Incorrect Neutralization of Input During Web Page Generation in x/net in golang.org/x/net",
+              "link": "https://go.dev/cl/662715",
+              "fixedBy": "0.38.0",
+              "publishedOn": "2025-04-16T16:54:55Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            }
+          ],
+          "layerIndex": 10,
+          "source": "GO",
+          "location": "bin/grpc_health_probe",
+          "topCvss": 7.5,
+          "riskScore": 2.1205,
+          "fixedBy": "0.38.0"
+        },
+        {
+          "name": "github.com/morikuni/aec",
+          "version": "v1.0.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/russross/blackfriday/v2",
+          "version": "v2.1.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "k8s.io/apiextensions-apiserver",
+          "version": "v0.27.7",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/prometheus/procfs",
+          "version": "v0.9.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/cespare/xxhash/v2",
+          "version": "v2.2.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "k8s.io/utils",
+          "version": "v0.0.0-20230209194617-a36077c30491",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/docker/docker-credential-helpers",
+          "version": "v0.6.3",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/emicklei/go-restful/v3",
+          "version": "v3.10.2",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "gopkg.in/square/go-jose.v2",
+          "version": "v2.6.0",
+          "vulns": [
+            {
+              "cve": "CVE-2024-28180",
+              "cvss": 4.3,
+              "summary": "Go JOSE vulnerable to Improper Handling of Highly Compressed Data (Data Amplification)",
+              "link": "https://osv.dev/vulnerability/GHSA-c5q2-7r4c-mv6g",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:L",
+                "exploitabilityScore": 2.8,
+                "impactScore": 1.4,
+                "attackVector": "ATTACK_NETWORK",
+                "privilegesRequired": "PRIVILEGE_LOW",
+                "availability": "IMPACT_LOW",
+                "score": 4.3,
+                "severity": "MEDIUM"
+              },
+              "publishedOn": "2024-03-07T22:54:44Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "MODERATE_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-c5q2-7r4c-mv6g",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:L",
+                    "exploitabilityScore": 2.8,
+                    "impactScore": 1.4,
+                    "attackVector": "ATTACK_NETWORK",
+                    "privilegesRequired": "PRIVILEGE_LOW",
+                    "availability": "IMPACT_LOW",
+                    "score": 4.3,
+                    "severity": "MEDIUM"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.00247,
+                "epssPercentile": 0.47941
+              }
+            },
+            {
+              "cve": "GHSA-c5q2-7r4c-mv6g",
+              "summary": "Decompression bomb vulnerability in github.com/go-jose/go-jose",
+              "link": "https://github.com/go-jose/go-jose/security/advisories/GHSA-c5q2-7r4c-mv6g",
+              "publishedOn": "2024-03-15T18:16:11Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            }
+          ],
+          "layerIndex": 10,
+          "source": "GO",
+          "location": "bin/grpc_health_probe",
+          "topCvss": 4.3,
+          "riskScore": 1.09075
+        },
+        {
+          "name": "github.com/mailru/easyjson",
+          "version": "v0.7.7",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/go-openapi/jsonreference",
+          "version": "v0.20.1",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/adrg/xdg",
+          "version": "v0.4.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "golang.org/x/text",
+          "version": "v0.3.7",
+          "vulns": [
+            {
+              "cve": "CVE-2022-32149",
+              "cvss": 7.5,
+              "summary": "golang.org/x/text/language Denial of service via crafted Accept-Language header",
+              "link": "https://osv.dev/vulnerability/GHSA-69ch-w2m2-3vjp",
+              "fixedBy": "0.3.8",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "exploitabilityScore": 3.9,
+                "impactScore": 3.6,
+                "attackVector": "ATTACK_NETWORK",
+                "availability": "IMPACT_HIGH",
+                "score": 7.5,
+                "severity": "HIGH"
+              },
+              "publishedOn": "2022-10-14T19:00:40Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "IMPORTANT_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-69ch-w2m2-3vjp",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.5,
+                    "severity": "HIGH"
+                  }
+                },
+                {
+                  "source": "SOURCE_NVD",
+                  "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-32149",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.5,
+                    "severity": "HIGH"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.00046,
+                "epssPercentile": 0.13841
+              }
+            },
+            {
+              "cve": "GO-2022-1059",
+              "summary": "Denial of service via crafted Accept-Language header in golang.org/x/text/language",
+              "link": "https://go.dev/issue/56152",
+              "fixedBy": "0.3.8",
+              "publishedOn": "2022-10-11T18:16:24Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            }
+          ],
+          "layerIndex": 10,
+          "source": "GO",
+          "location": "bin/grpc_health_probe",
+          "topCvss": 7.5,
+          "riskScore": 1.192,
+          "fixedBy": "0.3.8"
+        },
+        {
+          "name": "github.com/spf13/pflag",
+          "version": "v1.0.5",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/grpc-ecosystem/grpc-health-probe",
+          "version": "(devel)",
+          "layerIndex": 10,
+          "source": "GO",
+          "location": "bin/grpc_health_probe"
+        },
+        {
+          "name": "netbase",
+          "version": "6.3",
+          "layerIndex": 1,
+          "location": "var/lib/dpkg/status.d/netbase"
+        },
+        {
+          "name": "github.com/moby/locker",
+          "version": "v1.0.1",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "k8s.io/client-go",
+          "version": "v0.27.7",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/mattn/go-sqlite3",
+          "version": "v1.14.16",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "google.golang.org/grpc",
+          "version": "v1.54.0",
+          "vulns": [
+            {
+              "cve": "CVE-2023-44487",
+              "cvss": 7.5,
+              "summary": "gRPC-Go HTTP/2 Rapid Reset vulnerability",
+              "link": "https://osv.dev/vulnerability/GHSA-m425-mq94-257g",
+              "fixedBy": "1.56.3",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "exploitabilityScore": 3.9,
+                "impactScore": 3.6,
+                "attackVector": "ATTACK_NETWORK",
+                "availability": "IMPACT_HIGH",
+                "score": 7.5,
+                "severity": "HIGH"
+              },
+              "publishedOn": "2023-10-25T21:17:37Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "IMPORTANT_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-m425-mq94-257g",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.5,
+                    "severity": "HIGH"
+                  }
+                },
+                {
+                  "source": "SOURCE_NVD",
+                  "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-44487",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.5,
+                    "severity": "HIGH"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.94444,
+                "epssPercentile": 0.9999
+              }
+            },
+            {
+              "cve": "GO-2023-2153",
+              "summary": "Denial of service from HTTP/2 Rapid Reset in google.golang.org/grpc",
+              "link": "https://github.com/grpc/grpc-go/pull/6703",
+              "fixedBy": "1.56.3",
+              "publishedOn": "2023-11-01T22:39:27Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            }
+          ],
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm",
+          "topCvss": 7.5,
+          "riskScore": 1.192,
+          "fixedBy": "1.56.3"
+        },
+        {
+          "name": "github.com/docker/distribution",
+          "version": "v0.0.0-20191216044856-a8371794149d",
+          "vulns": [
+            {
+              "cve": "CVE-2023-2253",
+              "cvss": 7.5,
+              "summary": "distribution catalog API endpoint can lead to OOM via malicious user input",
+              "link": "https://osv.dev/vulnerability/GHSA-hqxw-f8mx-cpmw",
+              "fixedBy": "2.8.2-beta.1",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "exploitabilityScore": 3.9,
+                "impactScore": 3.6,
+                "attackVector": "ATTACK_NETWORK",
+                "availability": "IMPACT_HIGH",
+                "score": 7.5,
+                "severity": "HIGH"
+              },
+              "publishedOn": "2023-05-11T20:37:54Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "IMPORTANT_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-hqxw-f8mx-cpmw",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.5,
+                    "severity": "HIGH"
+                  }
+                },
+                {
+                  "source": "SOURCE_NVD",
+                  "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-2253",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+                    "exploitabilityScore": 2.8,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "privilegesRequired": "PRIVILEGE_LOW",
+                    "availability": "IMPACT_HIGH",
+                    "score": 6.5,
+                    "severity": "MEDIUM"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.00093,
+                "epssPercentile": 0.27068
+              }
+            },
+            {
+              "cve": "CVE-2017-11468",
+              "cvss": 7.5,
+              "summary": "Docker Registry has Allocation of Resources Without Limits or Throttling",
+              "link": "https://osv.dev/vulnerability/GHSA-h62f-wm92-2cmw",
+              "fixedBy": "2.7.0-rc.0",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "exploitabilityScore": 3.9,
+                "impactScore": 3.6,
+                "attackVector": "ATTACK_NETWORK",
+                "availability": "IMPACT_HIGH",
+                "score": 7.5,
+                "severity": "HIGH"
+              },
+              "publishedOn": "2022-05-13T01:16:08Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "IMPORTANT_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-h62f-wm92-2cmw",
+                  "cvssv3": {
+                    "vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.5,
+                    "severity": "HIGH"
+                  }
+                },
+                {
+                  "source": "SOURCE_NVD",
+                  "url": "https://nvd.nist.gov/vuln/detail/CVE-2017-11468",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.5,
+                    "severity": "HIGH"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.00254,
+                "epssPercentile": 0.48702
+              }
+            },
+            {
+              "cve": "GHSA-qq97-vm5h-rrhg",
+              "cvss": 3,
+              "summary": "OCI Manifest Type Confusion Issue",
+              "link": "https://osv.dev/vulnerability/GHSA-qq97-vm5h-rrhg",
+              "fixedBy": "2.8.0",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:H/PR:L/UI:R/S:C/C:N/I:L/A:N",
+                "exploitabilityScore": 1.3,
+                "impactScore": 1.4,
+                "attackVector": "ATTACK_NETWORK",
+                "attackComplexity": "COMPLEXITY_HIGH",
+                "privilegesRequired": "PRIVILEGE_LOW",
+                "userInteraction": "UI_REQUIRED",
+                "scope": "CHANGED",
+                "integrity": "IMPACT_LOW",
+                "score": 3,
+                "severity": "LOW"
+              },
+              "publishedOn": "2022-02-08T18:53:56Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "LOW_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-qq97-vm5h-rrhg",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:H/PR:L/UI:R/S:C/C:N/I:L/A:N",
+                    "exploitabilityScore": 1.3,
+                    "impactScore": 1.4,
+                    "attackVector": "ATTACK_NETWORK",
+                    "attackComplexity": "COMPLEXITY_HIGH",
+                    "privilegesRequired": "PRIVILEGE_LOW",
+                    "userInteraction": "UI_REQUIRED",
+                    "scope": "CHANGED",
+                    "integrity": "IMPACT_LOW",
+                    "score": 3,
+                    "severity": "LOW"
+                  }
+                }
+              ]
+            },
+            {
+              "cve": "GO-2022-0379",
+              "summary": "Type confusion in github.com/docker/distribution",
+              "link": "https://github.com/distribution/distribution/commit/b59a6f827947f9e0e67df0cfb571046de4733586",
+              "fixedBy": "2.8.0+incompatible",
+              "publishedOn": "2022-07-29T20:00:03Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2021-0072",
+              "summary": "Uncontrolled resource allocation in github.com/docker/distribution",
+              "link": "https://github.com/distribution/distribution/pull/2340",
+              "fixedBy": "2.7.0-rc.0+incompatible",
+              "publishedOn": "2021-04-14T20:04:52Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            }
+          ],
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm",
+          "topCvss": 7.5,
+          "riskScore": 1.396,
+          "fixedBy": "2.8.2-beta.1"
+        },
+        {
+          "name": "github.com/mitchellh/go-wordwrap",
+          "version": "v1.0.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/h2non/go-is-svg",
+          "version": "v0.0.0-20160927212452-35e8c4b0612c",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/MakeNowJust/heredoc",
+          "version": "v1.0.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/prometheus/client_model",
+          "version": "v0.4.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp",
+          "version": "v0.35.1",
+          "vulns": [
+            {
+              "cve": "CVE-2023-45142",
+              "cvss": 7.5,
+              "summary": "OpenTelemetry-Go Contrib vulnerable to denial of service in otelhttp due to unbound cardinality metrics",
+              "link": "https://osv.dev/vulnerability/GHSA-rcjv-mgp8-qvmr",
+              "fixedBy": "0.44.0",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "exploitabilityScore": 3.9,
+                "impactScore": 3.6,
+                "attackVector": "ATTACK_NETWORK",
+                "availability": "IMPACT_HIGH",
+                "score": 7.5,
+                "severity": "HIGH"
+              },
+              "publishedOn": "2023-10-16T14:01:54Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "IMPORTANT_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-rcjv-mgp8-qvmr",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.5,
+                    "severity": "HIGH"
+                  }
+                },
+                {
+                  "source": "SOURCE_NVD",
+                  "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-45142",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.5,
+                    "severity": "HIGH"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.00959,
+                "epssPercentile": 0.75664
+              }
+            },
+            {
+              "cve": "GHSA-rcjv-mgp8-qvmr",
+              "summary": "Memory exhaustion in go.opentelemetry.io/contrib/instrumentation",
+              "link": "https://github.com/open-telemetry/opentelemetry-go-contrib/security/advisories/GHSA-rcjv-mgp8-qvmr",
+              "fixedBy": "0.44.0",
+              "publishedOn": "2023-10-16T19:30:55Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            }
+          ],
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm",
+          "topCvss": 7.5,
+          "riskScore": 1.192,
+          "fixedBy": "0.44.0"
+        },
+        {
+          "name": "github.com/docker/docker",
+          "version": "v20.10.24+incompatible",
+          "vulns": [
+            {
+              "cve": "CVE-2024-41110",
+              "cvss": 9.9,
+              "summary": "Authz zero length regression",
+              "link": "https://osv.dev/vulnerability/GHSA-v23v-6jw2-98fq",
+              "fixedBy": "23.0.15",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H",
+                "exploitabilityScore": 3.1,
+                "impactScore": 6,
+                "attackVector": "ATTACK_NETWORK",
+                "privilegesRequired": "PRIVILEGE_LOW",
+                "scope": "CHANGED",
+                "confidentiality": "IMPACT_HIGH",
+                "integrity": "IMPACT_HIGH",
+                "availability": "IMPACT_HIGH",
+                "score": 9.9,
+                "severity": "CRITICAL"
+              },
+              "publishedOn": "2024-07-30T10:18:57Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "CRITICAL_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-v23v-6jw2-98fq",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H",
+                    "exploitabilityScore": 3.1,
+                    "impactScore": 6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "privilegesRequired": "PRIVILEGE_LOW",
+                    "scope": "CHANGED",
+                    "confidentiality": "IMPACT_HIGH",
+                    "integrity": "IMPACT_HIGH",
+                    "availability": "IMPACT_HIGH",
+                    "score": 9.9,
+                    "severity": "CRITICAL"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.0204,
+                "epssPercentile": 0.83185
+              }
+            },
+            {
+              "cve": "CVE-2024-24557",
+              "cvss": 6.9,
+              "summary": "Classic builder cache poisoning",
+              "link": "https://osv.dev/vulnerability/GHSA-xw73-rw38-6vjc",
+              "fixedBy": "24.0.9",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:L/AC:H/PR:N/UI:R/S:C/C:L/I:H/A:L",
+                "exploitabilityScore": 1,
+                "impactScore": 5.3,
+                "attackComplexity": "COMPLEXITY_HIGH",
+                "userInteraction": "UI_REQUIRED",
+                "scope": "CHANGED",
+                "confidentiality": "IMPACT_LOW",
+                "integrity": "IMPACT_HIGH",
+                "availability": "IMPACT_LOW",
+                "score": 6.9,
+                "severity": "MEDIUM"
+              },
+              "publishedOn": "2024-02-01T20:51:19Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "MODERATE_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-xw73-rw38-6vjc",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:L/AC:H/PR:N/UI:R/S:C/C:L/I:H/A:L",
+                    "exploitabilityScore": 1,
+                    "impactScore": 5.3,
+                    "attackComplexity": "COMPLEXITY_HIGH",
+                    "userInteraction": "UI_REQUIRED",
+                    "scope": "CHANGED",
+                    "confidentiality": "IMPACT_LOW",
+                    "integrity": "IMPACT_HIGH",
+                    "availability": "IMPACT_LOW",
+                    "score": 6.9,
+                    "severity": "MEDIUM"
+                  }
+                },
+                {
+                  "source": "SOURCE_NVD",
+                  "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-24557",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+                    "exploitabilityScore": 1.8,
+                    "impactScore": 5.9,
+                    "userInteraction": "UI_REQUIRED",
+                    "confidentiality": "IMPACT_HIGH",
+                    "integrity": "IMPACT_HIGH",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.8,
+                    "severity": "HIGH"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.0007,
+                "epssPercentile": 0.21945
+              }
+            },
+            {
+              "cve": "GHSA-mq39-4gv4-mvpx",
+              "cvss": 5.9,
+              "summary": "Moby's external DNS requests from 'internal' networks could lead to data exfiltration",
+              "link": "https://osv.dev/vulnerability/GHSA-mq39-4gv4-mvpx",
+              "fixedBy": "23.0.11",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+                "exploitabilityScore": 2.2,
+                "impactScore": 3.6,
+                "attackVector": "ATTACK_NETWORK",
+                "attackComplexity": "COMPLEXITY_HIGH",
+                "confidentiality": "IMPACT_HIGH",
+                "score": 5.9,
+                "severity": "MEDIUM"
+              },
+              "publishedOn": "2024-03-20T17:59:52Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "MODERATE_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-mq39-4gv4-mvpx",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+                    "exploitabilityScore": 2.2,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "attackComplexity": "COMPLEXITY_HIGH",
+                    "confidentiality": "IMPACT_HIGH",
+                    "score": 5.9,
+                    "severity": "MEDIUM"
+                  }
+                }
+              ]
+            },
+            {
+              "cve": "GHSA-jq35-85cj-fj4p",
+              "summary": "/sys/devices/virtual/powercap accessible by default to containers",
+              "link": "https://github.com/moby/moby/security/advisories/GHSA-jq35-85cj-fj4p",
+              "fixedBy": "20.10.27",
+              "publishedOn": "2023-10-30T15:25:44Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "MODERATE_VULNERABILITY_SEVERITY"
+            },
+            {
+              "cve": "CVE-2025-54410",
+              "cvss": 3.3,
+              "summary": "Moby firewalld reload removes bridge network isolation",
+              "link": "https://osv.dev/vulnerability/GHSA-4vq8-7jfc-9cvp",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:L/AC:H/PR:L/UI:R/S:U/C:L/I:L/A:N",
+                "exploitabilityScore": 0.8,
+                "impactScore": 2.5,
+                "attackComplexity": "COMPLEXITY_HIGH",
+                "privilegesRequired": "PRIVILEGE_LOW",
+                "userInteraction": "UI_REQUIRED",
+                "confidentiality": "IMPACT_LOW",
+                "integrity": "IMPACT_LOW",
+                "score": 3.3,
+                "severity": "LOW"
+              },
+              "publishedOn": "2025-07-29T19:56:25Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "LOW_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-4vq8-7jfc-9cvp",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:L/AC:H/PR:L/UI:R/S:U/C:L/I:L/A:N",
+                    "exploitabilityScore": 0.8,
+                    "impactScore": 2.5,
+                    "attackComplexity": "COMPLEXITY_HIGH",
+                    "privilegesRequired": "PRIVILEGE_LOW",
+                    "userInteraction": "UI_REQUIRED",
+                    "confidentiality": "IMPACT_LOW",
+                    "integrity": "IMPACT_LOW",
+                    "score": 3.3,
+                    "severity": "LOW"
+                  }
+                },
+                {
+                  "source": "SOURCE_NVD",
+                  "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-54410",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:L/I:L/A:N",
+                    "exploitabilityScore": 2,
+                    "impactScore": 2.7,
+                    "privilegesRequired": "PRIVILEGE_LOW",
+                    "scope": "CHANGED",
+                    "confidentiality": "IMPACT_LOW",
+                    "integrity": "IMPACT_LOW",
+                    "score": 5.2,
+                    "severity": "MEDIUM"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.00006,
+                "epssPercentile": 0.00233
+              }
+            },
+            {
+              "cve": "GHSA-4vq8-7jfc-9cvp",
+              "summary": "Moby firewalld reload removes bridge network isolation in github.com/docker/docker",
+              "link": "https://github.com/moby/moby/security/advisories/GHSA-4vq8-7jfc-9cvp",
+              "fixedBy": "28.0.0+incompatible",
+              "publishedOn": "2025-08-11T17:24:51Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "CVE-2024-41110",
+              "summary": "Moby authz zero length regression in github.com/moby/moby",
+              "link": "https://nvd.nist.gov/vuln/detail/CVE-2024-41110",
+              "fixedBy": "25.0.6+incompatible",
+              "publishedOn": "2024-07-29T18:08:44Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "epss": {
+                "epssProbability": 0.0204,
+                "epssPercentile": 0.83185
+              }
+            },
+            {
+              "cve": "GHSA-xw73-rw38-6vjc",
+              "summary": "Classic builder cache poisoning in github.com/docker/docker",
+              "link": "https://github.com/moby/moby/security/advisories/GHSA-xw73-rw38-6vjc",
+              "fixedBy": "24.0.9+incompatible",
+              "publishedOn": "2024-06-28T15:28:53Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            }
+          ],
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm",
+          "topCvss": 9.9,
+          "riskScore": 1.555,
+          "fixedBy": "28.0.0+incompatible"
+        },
+        {
+          "name": "sigs.k8s.io/json",
+          "version": "v0.0.0-20221116044647-bc3834ca7abd",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/google/gnostic",
+          "version": "v0.5.7-v3refs",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/docker/go-metrics",
+          "version": "v0.0.1",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "golang.org/x/exp",
+          "version": "v0.0.0-20230315142452-642cacee5cc0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/go-logr/stdr",
+          "version": "v1.2.2",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "golang.org/x/term",
+          "version": "v0.13.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "google.golang.org/protobuf",
+          "version": "v1.28.0",
+          "vulns": [
+            {
+              "cve": "CVE-2024-24786",
+              "cvss": 7.5,
+              "summary": "Golang protojson.Unmarshal function infinite loop when unmarshaling certain forms of invalid JSON",
+              "link": "https://osv.dev/vulnerability/GHSA-8r3f-844c-mc37",
+              "fixedBy": "1.33.0",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "exploitabilityScore": 3.9,
+                "impactScore": 3.6,
+                "attackVector": "ATTACK_NETWORK",
+                "availability": "IMPACT_HIGH",
+                "score": 7.5,
+                "severity": "HIGH"
+              },
+              "publishedOn": "2024-03-06T00:31:27Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "IMPORTANT_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-8r3f-844c-mc37",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.5,
+                    "severity": "HIGH"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.00231,
+                "epssPercentile": 0.45926
+              }
+            },
+            {
+              "cve": "GO-2024-2611",
+              "summary": "Infinite loop in JSON unmarshaling in google.golang.org/protobuf",
+              "link": "https://go.dev/cl/569356",
+              "fixedBy": "1.33.0",
+              "publishedOn": "2024-03-05T20:24:05Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            }
+          ],
+          "layerIndex": 10,
+          "source": "GO",
+          "location": "bin/grpc_health_probe",
+          "topCvss": 7.5,
+          "riskScore": 1.192,
+          "fixedBy": "1.33.0"
+        },
+        {
+          "name": "github.com/ghodss/yaml",
+          "version": "v1.0.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/google/uuid",
+          "version": "v1.3.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/grpc-ecosystem/grpc-gateway/v2",
+          "version": "v2.7.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "k8s.io/api",
+          "version": "v0.27.7",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/prometheus/common",
+          "version": "v0.42.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/onsi/gomega",
+          "version": "v1.27.7",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/prometheus/client_golang",
+          "version": "v1.15.1",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/zeebo/errs",
+          "version": "v1.3.0",
+          "layerIndex": 10,
+          "source": "GO",
+          "location": "bin/grpc_health_probe"
+        },
+        {
+          "name": "github.com/containerd/continuity",
+          "version": "v0.3.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "go.opentelemetry.io/otel/sdk",
+          "version": "v1.10.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "golang.org/x/net",
+          "version": "v0.17.0",
+          "vulns": [
+            {
+              "cve": "CVE-2023-45288",
+              "cvss": 5.3,
+              "summary": "net/http, x/net/http2: close connections when receiving too many headers",
+              "link": "https://osv.dev/vulnerability/GHSA-4v7x-pqxf-cx7m",
+              "fixedBy": "0.23.0",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+                "exploitabilityScore": 3.9,
+                "impactScore": 1.4,
+                "attackVector": "ATTACK_NETWORK",
+                "availability": "IMPACT_LOW",
+                "score": 5.3,
+                "severity": "MEDIUM"
+              },
+              "publishedOn": "2024-04-04T21:30:32Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "MODERATE_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-4v7x-pqxf-cx7m",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 1.4,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_LOW",
+                    "score": 5.3,
+                    "severity": "MEDIUM"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.66635,
+                "epssPercentile": 0.98478
+              }
+            },
+            {
+              "cve": "CVE-2025-22870",
+              "cvss": 4.4,
+              "summary": "HTTP Proxy bypass using IPv6 Zone IDs in golang.org/x/net",
+              "link": "https://osv.dev/vulnerability/GHSA-qxp5-gwg8-xv66",
+              "fixedBy": "0.36.0",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:L",
+                "exploitabilityScore": 1.8,
+                "impactScore": 2.5,
+                "privilegesRequired": "PRIVILEGE_LOW",
+                "confidentiality": "IMPACT_LOW",
+                "availability": "IMPACT_LOW",
+                "score": 4.4,
+                "severity": "MEDIUM"
+              },
+              "publishedOn": "2025-03-12T22:06:40Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "MODERATE_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-qxp5-gwg8-xv66",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:L",
+                    "exploitabilityScore": 1.8,
+                    "impactScore": 2.5,
+                    "privilegesRequired": "PRIVILEGE_LOW",
+                    "confidentiality": "IMPACT_LOW",
+                    "availability": "IMPACT_LOW",
+                    "score": 4.4,
+                    "severity": "MEDIUM"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.00018,
+                "epssPercentile": 0.03108
+              }
+            },
+            {
+              "cve": "CVE-2025-22872",
+              "summary": "golang.org/x/net vulnerable to Cross-site Scripting",
+              "link": "https://nvd.nist.gov/vuln/detail/CVE-2025-22872",
+              "fixedBy": "0.38.0",
+              "publishedOn": "2025-04-16T19:22:51Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "MODERATE_VULNERABILITY_SEVERITY",
+              "epss": {
+                "epssProbability": 0.00023,
+                "epssPercentile": 0.04891
+              }
+            },
+            {
+              "cve": "GO-2024-2687",
+              "summary": "HTTP/2 CONTINUATION flood in net/http",
+              "link": "https://go.dev/issue/65051",
+              "fixedBy": "0.23.0",
+              "publishedOn": "2024-04-03T21:12:01Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2025-3595",
+              "summary": "Incorrect Neutralization of Input During Web Page Generation in x/net in golang.org/x/net",
+              "link": "https://go.dev/cl/662715",
+              "fixedBy": "0.38.0",
+              "publishedOn": "2025-04-16T16:54:55Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2025-3503",
+              "summary": "HTTP Proxy bypass using IPv6 Zone IDs in golang.org/x/net",
+              "link": "https://go.dev/cl/654697",
+              "fixedBy": "0.36.0",
+              "publishedOn": "2025-03-12T18:17:07Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2024-3333",
+              "summary": "Non-linear parsing of case-insensitive content in golang.org/x/net/html",
+              "link": "https://go.dev/cl/637536",
+              "fixedBy": "0.33.0",
+              "publishedOn": "2024-12-18T20:22:06Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            }
+          ],
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm",
+          "topCvss": 5.3,
+          "riskScore": 1.27225,
+          "fixedBy": "0.38.0"
+        },
+        {
+          "name": "github.com/moby/term",
+          "version": "v0.5.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "go.opentelemetry.io/otel/exporters/otlp/internal/retry",
+          "version": "v1.10.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/imdario/mergo",
+          "version": "v0.3.12",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/operator-framework/operator-registry",
+          "version": "(devel) (git, commit 5d951b8a4bb295b4501588de5e5e8f7e5ba9e26a, built at 2023-11-03T17:35:27Z)",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/gogo/protobuf",
+          "version": "v1.3.2",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/modern-go/concurrent",
+          "version": "v0.0.0-20180306012644-bacd9c7ef1dd",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/h2non/filetype",
+          "version": "v1.1.1",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/modern-go/reflect2",
+          "version": "v1.0.2",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/antlr/antlr4/runtime/Go/antlr/v4",
+          "version": "v4.0.0-20230305170008-8188dc5388df",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/stretchr/testify",
+          "version": "v1.8.3",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "gopkg.in/yaml.v2",
+          "version": "v2.4.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "stdlib",
+          "version": "1.17.9",
+          "vulns": [
+            {
+              "cve": "GO-2023-1752",
+              "summary": "Improper handling of JavaScript whitespace in html/template",
+              "link": "https://go.dev/issue/59721",
+              "fixedBy": "1.19.9",
+              "publishedOn": "2023-05-05T21:10:22Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-1702",
+              "summary": "Infinite loop in parsing in go/scanner",
+              "link": "https://go.dev/issue/59180",
+              "fixedBy": "1.19.8",
+              "publishedOn": "2023-04-05T21:05:07Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2022-1039",
+              "summary": "Memory exhaustion when compiling regular expressions in regexp/syntax",
+              "link": "https://go.dev/issue/55949",
+              "fixedBy": "1.18.7",
+              "publishedOn": "2022-10-06T16:42:07Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2022-1037",
+              "summary": "Unbounded memory consumption when reading headers in archive/tar",
+              "link": "https://go.dev/issue/54853",
+              "fixedBy": "1.18.7",
+              "publishedOn": "2022-10-06T16:26:05Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2025-3750",
+              "summary": "Inconsistent handling of O_CREATE|O_EXCL on Unix and Windows in os in syscall",
+              "link": "https://go.dev/cl/672396",
+              "fixedBy": "1.23.10",
+              "publishedOn": "2025-06-11T16:59:06Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2024-3106",
+              "summary": "Stack exhaustion in Decoder.Decode in encoding/gob",
+              "link": "https://go.dev/cl/611239",
+              "fixedBy": "1.22.7",
+              "publishedOn": "2024-09-06T19:15:23Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2024-2887",
+              "summary": "Unexpected behavior from Is methods for IPv4-mapped IPv6 addresses in net/netip",
+              "link": "https://go.dev/cl/590316",
+              "fixedBy": "1.21.11",
+              "publishedOn": "2024-06-04T22:48:55Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-2041",
+              "summary": "Improper handling of HTML-like comments in script contexts in html/template",
+              "link": "https://go.dev/issue/62196",
+              "fixedBy": "1.20.8",
+              "publishedOn": "2023-09-07T16:11:17Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2022-0532",
+              "summary": "Empty Cmd.Path can trigger unintended binary in os/exec on Windows",
+              "link": "https://go.dev/cl/403759",
+              "fixedBy": "1.17.11",
+              "publishedOn": "2022-07-26T21:41:20Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-1621",
+              "summary": "Incorrect calculation on P256 curves in crypto/internal/nistec",
+              "link": "https://go.dev/issue/58647",
+              "fixedBy": "1.19.7",
+              "publishedOn": "2023-03-08T19:30:53Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2022-0533",
+              "summary": "Path traversal via Clean on Windows in path/filepath",
+              "link": "https://go.dev/cl/401595",
+              "fixedBy": "1.17.11",
+              "publishedOn": "2022-07-28T17:25:07Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2022-1095",
+              "summary": "Unsanitized NUL in environment variables on Windows in syscall and os/exec",
+              "link": "https://go.dev/issue/56284",
+              "fixedBy": "1.18.8",
+              "publishedOn": "2022-11-01T23:55:57Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2022-0520",
+              "summary": "Exposure of client IP addresses in net/http",
+              "link": "https://go.dev/cl/412857",
+              "fixedBy": "1.17.12",
+              "publishedOn": "2022-07-28T17:23:05Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2022-0515",
+              "summary": "Stack exhaustion due to deeply nested types in go/parser",
+              "link": "https://go.dev/cl/417063",
+              "fixedBy": "1.17.12",
+              "publishedOn": "2022-07-20T17:01:45Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2025-3373",
+              "summary": "Usage of IPv6 zone IDs can bypass URI name constraints in crypto/x509",
+              "link": "https://go.dev/cl/643099",
+              "fixedBy": "1.22.11",
+              "publishedOn": "2025-01-28T00:47:30Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2024-2888",
+              "summary": "Mishandling of corrupt central directory record in archive/zip",
+              "link": "https://go.dev/cl/585397",
+              "fixedBy": "1.21.11",
+              "publishedOn": "2024-06-04T22:48:55Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-2382",
+              "summary": "Denial of service via chunk extensions in net/http",
+              "link": "https://go.dev/issue/64433",
+              "fixedBy": "1.20.12",
+              "publishedOn": "2023-12-06T16:22:36Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-2185",
+              "summary": "Insecure parsing of Windows paths with a \\??\\ prefix in path/filepath",
+              "link": "https://go.dev/issue/63713",
+              "fixedBy": "1.20.11",
+              "publishedOn": "2023-11-08T22:42:14Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-1704",
+              "summary": "Excessive memory allocation in net/http and net/textproto",
+              "link": "https://go.dev/issue/58975",
+              "fixedBy": "1.19.8",
+              "publishedOn": "2023-04-05T21:04:28Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2022-0522",
+              "summary": "Stack exhaustion on crafted paths in path/filepath",
+              "link": "https://go.dev/cl/417066",
+              "fixedBy": "1.17.12",
+              "publishedOn": "2022-07-20T17:02:29Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2025-3447",
+              "summary": "Timing sidechannel for P-256 on ppc64le in crypto/internal/nistec",
+              "link": "https://go.dev/cl/643735",
+              "fixedBy": "1.22.12",
+              "publishedOn": "2025-02-06T16:38:14Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2024-2610",
+              "summary": "Errors returned from JSON marshaling may break template escaping in html/template",
+              "link": "https://go.dev/issue/65697",
+              "fixedBy": "1.21.8",
+              "publishedOn": "2024-03-05T22:15:40Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2024-2598",
+              "summary": "Verify panics on certificates with an unknown public key algorithm in crypto/x509",
+              "link": "https://go.dev/issue/65390",
+              "fixedBy": "1.21.8",
+              "publishedOn": "2024-03-05T22:14:58Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-2043",
+              "summary": "Improper handling of special tags within script contexts in html/template",
+              "link": "https://go.dev/issue/62197",
+              "fixedBy": "1.20.8",
+              "publishedOn": "2023-09-07T16:11:59Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2022-0493",
+              "summary": "Incorrect privilege reporting in syscall and golang.org/x/sys/unix",
+              "link": "https://go.dev/cl/399539",
+              "fixedBy": "1.17.10",
+              "publishedOn": "2022-07-15T23:30:12Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2024-2599",
+              "summary": "Memory exhaustion in multipart form parsing in net/textproto and net/http",
+              "link": "https://go.dev/issue/65383",
+              "fixedBy": "1.21.8",
+              "publishedOn": "2024-03-05T22:15:00Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-2102",
+              "summary": "HTTP/2 rapid reset can cause excessive work in net/http",
+              "link": "https://go.dev/issue/63417",
+              "fixedBy": "1.20.10",
+              "publishedOn": "2023-10-11T16:49:53Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-1570",
+              "summary": "Panic on large handshake records in crypto/tls",
+              "link": "https://go.dev/issue/58001",
+              "fixedBy": "1.19.6",
+              "publishedOn": "2023-02-16T22:24:51Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2022-0527",
+              "summary": "Stack exhaustion in Glob on certain paths in io/fs",
+              "link": "https://go.dev/cl/417065",
+              "fixedBy": "1.17.12",
+              "publishedOn": "2022-07-20T20:52:22Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2025-3420",
+              "summary": "Sensitive headers incorrectly sent after cross-domain redirect in net/http",
+              "link": "https://go.dev/cl/643100",
+              "fixedBy": "1.22.11",
+              "publishedOn": "2025-01-28T00:47:30Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2022-1143",
+              "summary": "Restricted file access on Windows in os and net/http",
+              "link": "https://go.dev/issue/56694",
+              "fixedBy": "1.18.9",
+              "publishedOn": "2022-12-07T16:08:45Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2025-3956",
+              "summary": "Unexpected paths returned from LookPath in os/exec",
+              "link": "https://go.dev/cl/691775",
+              "fixedBy": "1.23.12",
+              "publishedOn": "2025-09-18T18:21:44Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-2375",
+              "summary": "Before Go 1.20, the RSA based key exchange methods in crypto/tls may exhibit a timing side channel",
+              "link": "https://go.dev/issue/20654",
+              "fixedBy": "1.20.0",
+              "publishedOn": "2023-12-05T16:16:44Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-1987",
+              "summary": "Large RSA keys can cause high CPU usage in crypto/tls",
+              "link": "https://go.dev/issue/61460",
+              "fixedBy": "1.19.12",
+              "publishedOn": "2023-08-02T17:25:58Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2022-1038",
+              "summary": "Incorrect sanitization of forwarded query parameters in net/http/httputil",
+              "link": "https://go.dev/issue/54663",
+              "fixedBy": "1.18.7",
+              "publishedOn": "2022-10-06T16:42:43Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2022-0477",
+              "summary": "Indefinite hang with large buffers on Windows in crypto/rand",
+              "link": "https://go.dev/cl/402257",
+              "fixedBy": "1.17.11",
+              "publishedOn": "2022-06-09T01:43:37Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2022-0969",
+              "summary": "Denial of service in net/http and golang.org/x/net/http2",
+              "link": "https://groups.google.com/g/golang-announce/c/x49AQzIVX-s",
+              "fixedBy": "1.18.6",
+              "publishedOn": "2022-09-12T20:23:06Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2022-0531",
+              "summary": "Session tickets lack random ticket_age_add in crypto/tls",
+              "link": "https://go.dev/cl/405994",
+              "fixedBy": "1.17.11",
+              "publishedOn": "2022-07-28T17:24:57Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2022-0526",
+              "summary": "Stack exhaustion when decoding certain messages in encoding/gob",
+              "link": "https://go.dev/cl/417064",
+              "fixedBy": "1.17.12",
+              "publishedOn": "2022-07-20T20:52:17Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2022-0524",
+              "summary": "Stack exhaustion when reading certain archives in compress/gzip",
+              "link": "https://go.dev/cl/417067",
+              "fixedBy": "1.17.12",
+              "publishedOn": "2022-07-20T20:52:11Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2025-3751",
+              "summary": "Sensitive headers not cleared on cross-origin redirect in net/http",
+              "link": "https://go.dev/cl/679257",
+              "fixedBy": "1.23.10",
+              "publishedOn": "2025-06-11T16:23:58Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-1878",
+              "summary": "Insufficient sanitization of Host header in net/http",
+              "link": "https://go.dev/issue/60374",
+              "fixedBy": "1.19.11",
+              "publishedOn": "2023-07-11T19:19:08Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-1703",
+              "summary": "Backticks not treated as string delimiters in html/template",
+              "link": "https://go.dev/issue/59234",
+              "fixedBy": "1.19.8",
+              "publishedOn": "2023-04-05T21:05:27Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-1571",
+              "summary": "Denial of service via crafted HTTP/2 stream in net/http and golang.org/x/net",
+              "link": "https://go.dev/issue/57855",
+              "fixedBy": "1.19.6",
+              "publishedOn": "2023-02-16T22:31:36Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2025-3849",
+              "summary": "Incorrect results returned from Rows.Scan in database/sql",
+              "link": "https://go.dev/cl/693735",
+              "fixedBy": "1.23.12",
+              "publishedOn": "2025-08-07T15:07:27Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2022-0523",
+              "summary": "Stack exhaustion when unmarshaling certain documents in encoding/xml",
+              "link": "https://go.dev/cl/417061",
+              "fixedBy": "1.17.12",
+              "publishedOn": "2022-07-20T20:52:06Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-1569",
+              "summary": "Excessive resource consumption in mime/multipart",
+              "link": "https://go.dev/issue/58006",
+              "fixedBy": "1.19.6",
+              "publishedOn": "2023-02-21T20:44:30Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2024-3105",
+              "summary": "Stack exhaustion in all Parse functions in go/parser",
+              "link": "https://go.dev/cl/611238",
+              "fixedBy": "1.22.7",
+              "publishedOn": "2024-09-06T19:15:23Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-1840",
+              "summary": "Unsafe behavior in setuid/setgid binaries in runtime",
+              "link": "https://go.dev/issue/60272",
+              "fixedBy": "1.19.10",
+              "publishedOn": "2023-06-08T20:16:06Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-1753",
+              "summary": "Improper handling of empty HTML attributes in html/template",
+              "link": "https://go.dev/issue/59722",
+              "fixedBy": "1.19.9",
+              "publishedOn": "2023-05-05T21:10:24Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-1705",
+              "summary": "Excessive resource consumption in net/http, net/textproto and mime/multipart",
+              "link": "https://go.dev/issue/59153",
+              "fixedBy": "1.19.8",
+              "publishedOn": "2023-04-05T21:04:39Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2025-3563",
+              "summary": "Request smuggling due to acceptance of invalid chunked data in net/http",
+              "link": "https://go.dev/cl/652998",
+              "fixedBy": "1.23.8",
+              "publishedOn": "2025-04-08T19:46:23Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2024-2687",
+              "summary": "HTTP/2 CONTINUATION flood in net/http",
+              "link": "https://go.dev/issue/65051",
+              "fixedBy": "1.21.9",
+              "publishedOn": "2024-04-03T21:12:01Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-1751",
+              "summary": "Improper sanitization of CSS values in html/template",
+              "link": "https://go.dev/issue/59720",
+              "fixedBy": "1.19.9",
+              "publishedOn": "2023-05-05T21:10:20Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2024-3107",
+              "summary": "Stack exhaustion in Parse in go/build/constraint",
+              "link": "https://go.dev/cl/611240",
+              "fixedBy": "1.22.7",
+              "publishedOn": "2024-09-06T19:15:23Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-2186",
+              "summary": "Incorrect detection of reserved device names on Windows in path/filepath",
+              "link": "https://go.dev/issue/63713",
+              "fixedBy": "1.20.11",
+              "publishedOn": "2023-11-08T22:42:19Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2022-0525",
+              "summary": "Improper sanitization of Transfer-Encoding headers in net/http",
+              "link": "https://go.dev/cl/409874",
+              "fixedBy": "1.17.12",
+              "publishedOn": "2022-07-25T17:34:18Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2022-0521",
+              "summary": "Stack exhaustion from deeply nested XML documents in encoding/xml",
+              "link": "https://go.dev/cl/417062",
+              "fixedBy": "1.17.12",
+              "publishedOn": "2022-07-20T17:02:04Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-1568",
+              "summary": "Path traversal on Windows in path/filepath",
+              "link": "https://go.dev/issue/57274",
+              "fixedBy": "1.19.6",
+              "publishedOn": "2023-02-16T19:49:19Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2022-1144",
+              "summary": "Excessive memory growth in net/http and golang.org/x/net/http2",
+              "link": "https://go.dev/issue/56350",
+              "fixedBy": "1.18.9",
+              "publishedOn": "2022-12-08T19:01:21Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2024-2963",
+              "summary": "Denial of service due to improper 100-continue handling in net/http",
+              "link": "https://go.dev/cl/591255",
+              "fixedBy": "1.21.12",
+              "publishedOn": "2024-07-02T20:11:00Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2024-2609",
+              "summary": "Comments in display names are incorrectly handled in net/mail",
+              "link": "https://go.dev/issue/65083",
+              "fixedBy": "1.21.8",
+              "publishedOn": "2024-03-05T22:15:04Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2024-2600",
+              "summary": "Incorrect forwarding of sensitive headers and cookies on HTTP redirect in net/http",
+              "link": "https://go.dev/issue/65065",
+              "fixedBy": "1.21.8",
+              "publishedOn": "2024-03-05T22:15:02Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2022-0537",
+              "summary": "Panic when decoding Float and Rat types in math/big",
+              "link": "https://go.dev/cl/417774",
+              "fixedBy": "1.17.13",
+              "publishedOn": "2022-08-01T22:21:06Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            }
+          ],
+          "layerIndex": 10,
+          "source": "GO",
+          "location": "bin/grpc_health_probe",
+          "topCvss": 0,
+          "fixedBy": "1.23.12"
+        },
+        {
+          "name": "github.com/go-logr/logr",
+          "version": "v1.2.4",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/go-openapi/swag",
+          "version": "v0.22.3",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/felixge/httpsnoop",
+          "version": "v1.0.3",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/golang/groupcache",
+          "version": "v0.0.0-20210331224755-41bb18bfe9da",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/go-git/go-git/v5",
+          "version": "v5.3.0",
+          "vulns": [
+            {
+              "cve": "CVE-2025-21613",
+              "cvss": 9.8,
+              "summary": "go-git has an Argument Injection via the URL field",
+              "link": "https://osv.dev/vulnerability/GHSA-v725-9546-7q7m",
+              "fixedBy": "5.13.0",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+                "exploitabilityScore": 3.9,
+                "impactScore": 5.9,
+                "attackVector": "ATTACK_NETWORK",
+                "confidentiality": "IMPACT_HIGH",
+                "integrity": "IMPACT_HIGH",
+                "availability": "IMPACT_HIGH",
+                "score": 9.8,
+                "severity": "CRITICAL"
+              },
+              "publishedOn": "2025-01-06T16:16:30Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "CRITICAL_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-v725-9546-7q7m",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 5.9,
+                    "attackVector": "ATTACK_NETWORK",
+                    "confidentiality": "IMPACT_HIGH",
+                    "integrity": "IMPACT_HIGH",
+                    "availability": "IMPACT_HIGH",
+                    "score": 9.8,
+                    "severity": "CRITICAL"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.00465,
+                "epssPercentile": 0.63447
+              }
+            },
+            {
+              "cve": "CVE-2023-49569",
+              "cvss": 9.8,
+              "summary": "Maliciously crafted Git server replies can lead to path traversal and RCE on go-git clients",
+              "link": "https://osv.dev/vulnerability/GHSA-449p-3h89-pw88",
+              "fixedBy": "5.11.0",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+                "exploitabilityScore": 3.9,
+                "impactScore": 5.9,
+                "attackVector": "ATTACK_NETWORK",
+                "confidentiality": "IMPACT_HIGH",
+                "integrity": "IMPACT_HIGH",
+                "availability": "IMPACT_HIGH",
+                "score": 9.8,
+                "severity": "CRITICAL"
+              },
+              "publishedOn": "2024-01-10T15:37:05Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "CRITICAL_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-449p-3h89-pw88",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 5.9,
+                    "attackVector": "ATTACK_NETWORK",
+                    "confidentiality": "IMPACT_HIGH",
+                    "integrity": "IMPACT_HIGH",
+                    "availability": "IMPACT_HIGH",
+                    "score": 9.8,
+                    "severity": "CRITICAL"
+                  }
+                },
+                {
+                  "source": "SOURCE_NVD",
+                  "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-49569",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 5.9,
+                    "attackVector": "ATTACK_NETWORK",
+                    "confidentiality": "IMPACT_HIGH",
+                    "integrity": "IMPACT_HIGH",
+                    "availability": "IMPACT_HIGH",
+                    "score": 9.8,
+                    "severity": "CRITICAL"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.04027,
+                "epssPercentile": 0.88002
+              }
+            },
+            {
+              "cve": "CVE-2025-21614",
+              "cvss": 7.5,
+              "summary": "go-git clients vulnerable to DoS via maliciously crafted Git server replies",
+              "link": "https://osv.dev/vulnerability/GHSA-r9px-m959-cxf4",
+              "fixedBy": "5.13.0",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "exploitabilityScore": 3.9,
+                "impactScore": 3.6,
+                "attackVector": "ATTACK_NETWORK",
+                "availability": "IMPACT_HIGH",
+                "score": 7.5,
+                "severity": "HIGH"
+              },
+              "publishedOn": "2025-01-06T16:20:28Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "IMPORTANT_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-r9px-m959-cxf4",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.5,
+                    "severity": "HIGH"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.00096,
+                "epssPercentile": 0.27525
+              }
+            },
+            {
+              "cve": "CVE-2023-49568",
+              "cvss": 7.5,
+              "summary": "Maliciously crafted Git server replies can cause DoS on go-git clients",
+              "link": "https://osv.dev/vulnerability/GHSA-mw99-9chc-xw7r",
+              "fixedBy": "5.11.0",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "exploitabilityScore": 3.9,
+                "impactScore": 3.6,
+                "attackVector": "ATTACK_NETWORK",
+                "availability": "IMPACT_HIGH",
+                "score": 7.5,
+                "severity": "HIGH"
+              },
+              "publishedOn": "2023-12-27T15:06:52Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "IMPORTANT_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-mw99-9chc-xw7r",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.5,
+                    "severity": "HIGH"
+                  }
+                },
+                {
+                  "source": "SOURCE_NVD",
+                  "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-49568",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.5,
+                    "severity": "HIGH"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.00153,
+                "epssPercentile": 0.36627
+              }
+            },
+            {
+              "cve": "CVE-2023-49569",
+              "cvss": 9.8,
+              "summary": "Path traversal and RCE in github.com/go-git/go-git/v5 and gopkg.in/src-d/go-git.v4",
+              "link": "https://nvd.nist.gov/vuln/detail/CVE-2023-49569",
+              "fixedBy": "5.11.0",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+                "exploitabilityScore": 3.9,
+                "impactScore": 5.9,
+                "attackVector": "ATTACK_NETWORK",
+                "confidentiality": "IMPACT_HIGH",
+                "integrity": "IMPACT_HIGH",
+                "availability": "IMPACT_HIGH",
+                "score": 9.8,
+                "severity": "CRITICAL"
+              },
+              "publishedOn": "2024-01-23T15:29:09Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "CRITICAL_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_NVD",
+                  "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-49569",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 5.9,
+                    "attackVector": "ATTACK_NETWORK",
+                    "confidentiality": "IMPACT_HIGH",
+                    "integrity": "IMPACT_HIGH",
+                    "availability": "IMPACT_HIGH",
+                    "score": 9.8,
+                    "severity": "CRITICAL"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.04027,
+                "epssPercentile": 0.88002
+              }
+            },
+            {
+              "cve": "CVE-2023-49568",
+              "cvss": 7.5,
+              "summary": "Denial of service in github.com/go-git/go-git/v5 and gopkg.in/src-d/go-git.v4",
+              "link": "https://nvd.nist.gov/vuln/detail/CVE-2023-49568",
+              "fixedBy": "5.11.0",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "exploitabilityScore": 3.9,
+                "impactScore": 3.6,
+                "attackVector": "ATTACK_NETWORK",
+                "availability": "IMPACT_HIGH",
+                "score": 7.5,
+                "severity": "HIGH"
+              },
+              "publishedOn": "2024-01-23T18:00:21Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "IMPORTANT_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_NVD",
+                  "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-49568",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.5,
+                    "severity": "HIGH"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.00153,
+                "epssPercentile": 0.36627
+              }
+            },
+            {
+              "cve": "GHSA-r9px-m959-cxf4",
+              "summary": "Clients vulnerable to DoS via maliciously crafted Git server replies in github.com/go-git/go-git",
+              "link": "https://github.com/go-git/go-git/security/advisories/GHSA-r9px-m959-cxf4",
+              "fixedBy": "5.13.0",
+              "publishedOn": "2025-01-07T16:03:20Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GHSA-v725-9546-7q7m",
+              "summary": "Argument Injection via the URL field in github.com/go-git/go-git",
+              "link": "https://github.com/go-git/go-git/security/advisories/GHSA-v725-9546-7q7m",
+              "fixedBy": "5.13.0",
+              "publishedOn": "2025-01-07T16:04:06Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            }
+          ],
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm",
+          "topCvss": 9.8,
+          "riskScore": 2.38825,
+          "fixedBy": "5.13.0"
+        },
+        {
+          "name": "golang.org/x/oauth2",
+          "version": "v0.5.0",
+          "vulns": [
+            {
+              "cve": "CVE-2025-22868",
+              "cvss": 7.5,
+              "summary": "golang.org/x/oauth2 Improper Validation of Syntactic Correctness of Input vulnerability",
+              "link": "https://osv.dev/vulnerability/GHSA-6v2p-p543-phr9",
+              "fixedBy": "0.27.0",
+              "scoreVersion": "V3",
+              "cvssV3": {
+                "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "exploitabilityScore": 3.9,
+                "impactScore": 3.6,
+                "attackVector": "ATTACK_NETWORK",
+                "availability": "IMPACT_HIGH",
+                "score": 7.5,
+                "severity": "HIGH"
+              },
+              "publishedOn": "2025-07-18T17:27:22Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY",
+              "severity": "IMPORTANT_VULNERABILITY_SEVERITY",
+              "cvssMetrics": [
+                {
+                  "source": "SOURCE_OSV",
+                  "url": "https://osv.dev/vulnerability/GHSA-6v2p-p543-phr9",
+                  "cvssv3": {
+                    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                    "exploitabilityScore": 3.9,
+                    "impactScore": 3.6,
+                    "attackVector": "ATTACK_NETWORK",
+                    "availability": "IMPACT_HIGH",
+                    "score": 7.5,
+                    "severity": "HIGH"
+                  }
+                }
+              ],
+              "epss": {
+                "epssProbability": 0.00074,
+                "epssPercentile": 0.23138
+              }
+            },
+            {
+              "cve": "GO-2025-3488",
+              "summary": "Unexpected memory consumption during token parsing in golang.org/x/oauth2",
+              "link": "https://go.dev/cl/652155",
+              "fixedBy": "0.27.0",
+              "publishedOn": "2025-02-26T02:51:51Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            }
+          ],
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm",
+          "topCvss": 7.5,
+          "riskScore": 1.192,
+          "fixedBy": "0.27.0"
+        },
+        {
+          "name": "github.com/golang-migrate/migrate/v4",
+          "version": "v4.16.1",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "golang.org/x/sync",
+          "version": "v0.2.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc",
+          "version": "v1.10.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/golang/protobuf",
+          "version": "v1.5.2",
+          "layerIndex": 10,
+          "source": "GO",
+          "location": "bin/grpc_health_probe"
+        },
+        {
+          "name": "go.opentelemetry.io/otel/exporters/otlp/otlptrace",
+          "version": "v1.10.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "k8s.io/klog/v2",
+          "version": "v2.90.1",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/asaskevich/govalidator",
+          "version": "v0.0.0-20190424111038-f61b66f89f4a",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/containerd/ttrpc",
+          "version": "v1.1.2",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "gopkg.in/inf.v0",
+          "version": "v0.9.1",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/google/go-cmp",
+          "version": "v0.5.9",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "k8s.io/apiserver",
+          "version": "v0.27.7",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "stdlib",
+          "version": "1.20.10",
+          "vulns": [
+            {
+              "cve": "GO-2025-3420",
+              "summary": "Sensitive headers incorrectly sent after cross-domain redirect in net/http",
+              "link": "https://go.dev/cl/643100",
+              "fixedBy": "1.22.11",
+              "publishedOn": "2025-01-28T00:47:30Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2025-3373",
+              "summary": "Usage of IPv6 zone IDs can bypass URI name constraints in crypto/x509",
+              "link": "https://go.dev/cl/643099",
+              "fixedBy": "1.22.11",
+              "publishedOn": "2025-01-28T00:47:30Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2025-3447",
+              "summary": "Timing sidechannel for P-256 on ppc64le in crypto/internal/nistec",
+              "link": "https://go.dev/cl/643735",
+              "fixedBy": "1.22.12",
+              "publishedOn": "2025-02-06T16:38:14Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2024-2610",
+              "summary": "Errors returned from JSON marshaling may break template escaping in html/template",
+              "link": "https://go.dev/issue/65697",
+              "fixedBy": "1.21.8",
+              "publishedOn": "2024-03-05T22:15:40Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2024-2609",
+              "summary": "Comments in display names are incorrectly handled in net/mail",
+              "link": "https://go.dev/issue/65083",
+              "fixedBy": "1.21.8",
+              "publishedOn": "2024-03-05T22:15:04Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2025-3563",
+              "summary": "Request smuggling due to acceptance of invalid chunked data in net/http",
+              "link": "https://go.dev/cl/652998",
+              "fixedBy": "1.23.8",
+              "publishedOn": "2025-04-08T19:46:23Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2024-2600",
+              "summary": "Incorrect forwarding of sensitive headers and cookies on HTTP redirect in net/http",
+              "link": "https://go.dev/issue/65065",
+              "fixedBy": "1.21.8",
+              "publishedOn": "2024-03-05T22:15:02Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2024-2599",
+              "summary": "Memory exhaustion in multipart form parsing in net/textproto and net/http",
+              "link": "https://go.dev/issue/65383",
+              "fixedBy": "1.21.8",
+              "publishedOn": "2024-03-05T22:15:00Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2025-3750",
+              "summary": "Inconsistent handling of O_CREATE|O_EXCL on Unix and Windows in os in syscall",
+              "link": "https://go.dev/cl/672396",
+              "fixedBy": "1.23.10",
+              "publishedOn": "2025-06-11T16:59:06Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2024-3105",
+              "summary": "Stack exhaustion in all Parse functions in go/parser",
+              "link": "https://go.dev/cl/611238",
+              "fixedBy": "1.22.7",
+              "publishedOn": "2024-09-06T19:15:23Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2024-3106",
+              "summary": "Stack exhaustion in Decoder.Decode in encoding/gob",
+              "link": "https://go.dev/cl/611239",
+              "fixedBy": "1.22.7",
+              "publishedOn": "2024-09-06T19:15:23Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2024-2888",
+              "summary": "Mishandling of corrupt central directory record in archive/zip",
+              "link": "https://go.dev/cl/585397",
+              "fixedBy": "1.21.11",
+              "publishedOn": "2024-06-04T22:48:55Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-2382",
+              "summary": "Denial of service via chunk extensions in net/http",
+              "link": "https://go.dev/issue/64433",
+              "fixedBy": "1.20.12",
+              "publishedOn": "2023-12-06T16:22:36Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2024-2598",
+              "summary": "Verify panics on certificates with an unknown public key algorithm in crypto/x509",
+              "link": "https://go.dev/issue/65390",
+              "fixedBy": "1.21.8",
+              "publishedOn": "2024-03-05T22:14:58Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2025-3956",
+              "summary": "Unexpected paths returned from LookPath in os/exec",
+              "link": "https://go.dev/cl/691775",
+              "fixedBy": "1.23.12",
+              "publishedOn": "2025-09-18T18:21:44Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2025-3751",
+              "summary": "Sensitive headers not cleared on cross-origin redirect in net/http",
+              "link": "https://go.dev/cl/679257",
+              "fixedBy": "1.23.10",
+              "publishedOn": "2025-06-11T16:23:58Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2024-3107",
+              "summary": "Stack exhaustion in Parse in go/build/constraint",
+              "link": "https://go.dev/cl/611240",
+              "fixedBy": "1.22.7",
+              "publishedOn": "2024-09-06T19:15:23Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2024-2963",
+              "summary": "Denial of service due to improper 100-continue handling in net/http",
+              "link": "https://go.dev/cl/591255",
+              "fixedBy": "1.21.12",
+              "publishedOn": "2024-07-02T20:11:00Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2024-2887",
+              "summary": "Unexpected behavior from Is methods for IPv4-mapped IPv6 addresses in net/netip",
+              "link": "https://go.dev/cl/590316",
+              "fixedBy": "1.21.11",
+              "publishedOn": "2024-06-04T22:48:55Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2024-2687",
+              "summary": "HTTP/2 CONTINUATION flood in net/http",
+              "link": "https://go.dev/issue/65051",
+              "fixedBy": "1.21.9",
+              "publishedOn": "2024-04-03T21:12:01Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-2186",
+              "summary": "Incorrect detection of reserved device names on Windows in path/filepath",
+              "link": "https://go.dev/issue/63713",
+              "fixedBy": "1.20.11",
+              "publishedOn": "2023-11-08T22:42:19Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2023-2185",
+              "summary": "Insecure parsing of Windows paths with a \\??\\ prefix in path/filepath",
+              "link": "https://go.dev/issue/63713",
+              "fixedBy": "1.20.11",
+              "publishedOn": "2023-11-08T22:42:14Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            },
+            {
+              "cve": "GO-2025-3849",
+              "summary": "Incorrect results returned from Rows.Scan in database/sql",
+              "link": "https://go.dev/cl/693735",
+              "fixedBy": "1.23.12",
+              "publishedOn": "2025-08-07T15:07:27Z",
+              "vulnerabilityType": "IMAGE_VULNERABILITY"
+            }
+          ],
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm",
+          "topCvss": 0,
+          "fixedBy": "1.23.12"
+        },
+        {
+          "name": "github.com/blang/semver/v4",
+          "version": "v4.0.0",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "github.com/davecgh/go-spew",
+          "version": "v1.1.1",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "golang.org/x/sys",
+          "version": "v0.0.0-20220408201424-a24fb2fb8a0f",
+          "layerIndex": 10,
+          "source": "GO",
+          "location": "bin/grpc_health_probe"
+        },
+        {
+          "name": "google.golang.org/genproto",
+          "version": "v0.0.0-20230525154841-bd750badd5c6",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "gopkg.in/warnings.v0",
+          "version": "v0.1.2",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        },
+        {
+          "name": "k8s.io/apimachinery",
+          "version": "v0.27.7",
+          "layerIndex": 12,
+          "source": "GO",
+          "location": "bin/opm"
+        }
+      ],
+      "operatingSystem": "debian:11",
+      "dataSource": {
+        "id": "a87471e6-9678-4e66-8348-91e302b6de07",
+        "name": "Scanner V4"
+      },
+      "hash": "1989353259164139016"
+    },
+    "components": 137,
+    "cves": 115,
+    "fixableCves": 112,
+    "lastUpdated": "2025-10-07T12:56:50.549162970Z",
+    "riskScore": 9,
+    "topCvss": 9.9,
+    "notes": [
+      "MISSING_SIGNATURE",
+      "MISSING_SIGNATURE_VERIFICATION_DATA"
+    ]
+  }
+}
