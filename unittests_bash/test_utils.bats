@@ -585,7 +585,7 @@ EOF
 
     local EXPECTED_LINE_1="get_image_labels: First architecture found:"
     local EXPECTED_LINE_2="get_image_labels: failed to inspect the image"
-    local EXPECTED_ERROR_LINE="jq: parse error" # Check for the error
+    local EXPECTED_ERROR_LINE="Invalid numeric literal at line 1, column 13"
 
     [[ "$status" -eq 1 \
         && "${output}" == *"${EXPECTED_LINE_1}"* \
