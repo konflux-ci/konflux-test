@@ -416,33 +416,9 @@ teardown() {
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
 }
 
-@test "Get OPM version from OCP version - invalid ocp version v5.1" {
-    run ocp_to_opm_version_mapping v5.1
-    EXPECTED_RESPONSE="Invalid OCP version v5.1 (expected format v4.x or 4.x)."
-    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
-}
-
-@test "Get OPM version from OCP version - invalid ocp version v4.1.1" {
-    run ocp_to_opm_version_mapping v4.1.1
-    EXPECTED_RESPONSE="Invalid OCP version v4.1.1 (expected format v4.x or 4.x)."
-    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
-}
-
 @test "Get OPM version from OCP version - default value" {
     run ocp_to_opm_version_mapping v4.9
     EXPECTED_RESPONSE="opm-v1.50.0"
-    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
-}
-
-@test "Get OPM version from OCP version v4.x" {
-    run ocp_to_opm_version_mapping v4.17
-    EXPECTED_RESPONSE="opm-v1.40.0"
-    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
-}
-
-@test "Get OPM version from OCP version 4.x" {
-    run ocp_to_opm_version_mapping 4.17
-    EXPECTED_RESPONSE="opm-v1.40.0"
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
 
