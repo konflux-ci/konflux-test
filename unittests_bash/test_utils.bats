@@ -410,6 +410,18 @@ teardown() {
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
 
+@test "Get OPM version from OCP version - missing parameter" {
+    run ocp_to_opm_version_mapping
+    EXPECTED_RESPONSE='Missing OCP_VERSION PARAMETER'
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
+}
+
+@test "Get OPM version from OCP version - default value" {
+    run ocp_to_opm_version_mapping v4.9
+    EXPECTED_RESPONSE="opm-v1.50.0"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
 @test "Get OCP version from fragment: registry/image-manifest@valid-oci" {
     run get_ocp_version_from_fbc_fragment registry/image-manifest@valid-oci
     EXPECTED_RESPONSE='get_ocp_version_from_fbc_fragment: No ocp version found; base image tag is empty.'
