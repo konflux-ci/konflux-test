@@ -364,6 +364,43 @@ get_base_image() {
   echo -n "$base_image"
 }
 
+ocp_to_opm_version_mapping() {
+  # OCP version e.g. v4.12
+  local OCP_VERSION="${1#v}"
+
+  if [ -z "$OCP_VERSION" ]; then
+    echo "Missing OCP_VERSION PARAMETER" >&2
+    exit 2
+  fi
+
+  # Validate format: must be v4.x or 4.x (no patch allowed)
+  if ! [[ "$OCP_VERSION" =~ ^4\.[0-9]+$ ]]; then
+    echo "Invalid OCP version $1 (expected format v4.x or 4.x)." >&2
+    exit 2
+  fi
+
+  case "$OCP_VERSION" in
+      # === BEGIN PINNED MAP ===
+      4.11) echo "opm-v1.26.4" ;;
+      4.12) echo "opm-v1.26.4" ;;
+      4.13) echo "opm-v1.26.4" ;;
+      4.14) echo "opm-v1.26.4" ;;
+      4.15) echo "opm-v1.26.4" ;;
+      4.16) echo "opm-v1.26.4" ;;
+      4.17) echo "opm-v1.40.0" ;;
+      4.18) echo "opm-v1.44.0" ;;
+      4.19) echo "opm-v1.48.0" ;;
+      4.20) echo "opm-v1.50.0" ;;
+      4.21) echo "opm-v1.50.0" ;;
+      # === END PINNED MAP ===
+      *)
+        # Default OPM version for higher minor versions
+        # This way we don't have to update the mapping with every OCP release
+        echo "opm-v1.50.0"
+        ;;
+    esac
+}
+
 # This function will be used by tekton tasks in build-definitions
 # It returns the ocp_version targeted by the FBC fragment
 get_ocp_version_from_fbc_fragment() {
