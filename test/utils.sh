@@ -1725,3 +1725,73 @@ replace_mirror_pullspec_with_source() {
 
   echo "replace_mirror_pullspec_with_source: Replacement process completed. ${catalog_file} has been updated."
 }
+
+# This function is intended to be used by build-definitions tasks.
+# The first arg accepts the output of get_image_registry_and_repository().
+# The second arg accepts the output of process_image_digest_mirror_set().
+# It returns a list of mirrors defined for REG_AND_REPO within the ImageDigestMirrorSet.
+# It will match <registry/namespace/repository> or <registry/namespace> or just <registry>.
+get_image_mirror_list() {
+  local REG_AND_REPO="$1"
+  local IMAGE_MIRROR_MAP="$2"
+
+  # Validate input parameters
+  if [[ -z "${REG_AND_REPO}" || -z "${IMAGE_MIRROR_MAP}" ]]; then
+    echo "get_image_mirror_list: Invalid input. Usage: get_image_mirror_list <REG_AND_REPO> <IMAGE_MIRROR_MAP>" >&2
+    exit 2
+  fi
+
+  # Parse registry, optional namespace(s), and repository
+  local parts_list=()
+  local namespace=""
+  IFS='/' read -r -a parts_list <<< "${REG_AND_REPO}"
+  local reg=${parts_list[0]}
+  local repo=${parts_list[-1]}
+  unset 'parts_list[0]'
+  unset 'parts_list[-1]'
+  parts_list=("${parts_list[@]}")
+  namespace=$(IFS=/ ; echo "${parts_list[*]}")
+
+  if [[ -z "${reg}" || -z "${repo}" ]]; then
+    echo "get_image_mirror_list: Unable to parse registry or repository from ${REG_AND_REPO}"
+    exit 1
+  fi
+
+  # Try matching entire REG_AND_REPO string
+  local mirrors=()
+  mapfile -t mirrors < <(echo "${IMAGE_MIRROR_MAP}" | jq -r --arg source "${REG_AND_REPO}" \
+    'to_entries | .[] | select(.key == $source) | .value[]'
+  )
+
+  # Try matching reg/namespace, if there is a namespace
+  if [[ ${#mirrors[@]} -eq 0 && -n "${namespace}" ]]; then
+    local reg_ns_mirrors=()
+    mapfile -t reg_ns_mirrors < <(echo "${IMAGE_MIRROR_MAP}" | jq -r --arg source "${reg}/${namespace}" \
+      'to_entries | .[] | select(.key == $source) | .value[]'
+    )
+    if [[ ${#reg_ns_mirrors[@]} -gt 0 ]]; then
+      for mirror in "${reg_ns_mirrors[@]}"; do
+        mirrors+=("${mirror}/${repo}")
+      done
+    fi
+  fi
+
+  # If still no mirrors found, try matching just the registry
+  if [[ ${#mirrors[@]} -eq 0 ]]; then
+    local reg_mirrors=()
+    mapfile -t reg_mirrors < <(echo "${IMAGE_MIRROR_MAP}" | jq -r --arg source "${reg}" \
+      'to_entries | .[] | select(.key == $source) | .value[]'
+    )
+    if [[ ${#reg_mirrors[@]} -gt 0 ]]; then
+      local nsrepo="${repo}"
+      if [[ -n "${namespace}" ]]; then
+        nsrepo="${namespace}/${repo}"
+      fi
+      for mirror in "${reg_mirrors[@]}"; do
+        mirrors+=("${mirror}/${nsrepo}")
+      done
+    fi
+  fi
+
+  printf "%s\n" "${mirrors[@]}" | sort -u
+}

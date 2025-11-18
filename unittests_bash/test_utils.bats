@@ -1812,3 +1812,67 @@ EOF
     # Verify that the file remained unchanged
     diff <(echo "$original_content" | jq -c .) <(jq -c . "${REPLACE_MIRROR_TEST_TMP}/catalog_no_match.json")
 }
+
+@test "get_image_mirror_list: match registry" {
+    mirror_map=$(cat <<EOF
+{
+  "registry.redhat.io": [
+    "quay.io"
+  ],
+  "registry.redhat.io/salami/soppressata-toolset": [
+    "quay.io/salami/soppressata-toolset"
+  ],
+  "registry.redhat.io/salami/nduja-rhel9": [
+    "quay.io/salami/nduja-rhel9",
+    "some.registry/salami/nduja-rhel9"
+  ]
+}
+EOF
+)
+    reg_and_repo="registry.redhat.io/salami/operator-bundle"
+    run get_image_mirror_list "${reg_and_repo}" "${mirror_map}"
+    [[ "quay.io/salami/operator-bundle" = "${output}" && "${status}" -eq 0 ]]
+}
+
+@test "get_image_mirror_list: match registry and namespace" {
+    mirror_map=$(cat <<EOF
+{
+  "registry.redhat.io/salami/preview": [
+    "quay.io/salami/preview"
+  ],
+  "registry.redhat.io/salami/soppressata-toolset": [
+    "quay.io/salami/soppressata-toolset"
+  ],
+  "registry.redhat.io/salami/nduja-rhel9": [
+    "quay.io/salami/nduja-rhel9",
+    "some.registry/salami/nduja-rhel9"
+  ]
+}
+EOF
+)
+    reg_and_repo="registry.redhat.io/salami/preview/operator-bundle"
+    run get_image_mirror_list "${reg_and_repo}" "${mirror_map}"
+    [[ "quay.io/salami/preview/operator-bundle" = "${output}" && "${status}" -eq 0 ]]
+}
+
+@test "get_image_mirror_list: match registry, namespace, and repo" {
+    mirror_map=$(cat <<EOF
+{
+  "registry.redhat.io/salami/nduja-rhel9": [
+    "quay.io/salami/nduja-rhel9"
+  ],
+  "registry.redhat.io/salami/soppressata-toolset": [
+    "quay.io/salami/soppressata-toolset"
+  ],
+  "registry.redhat.io/salami/operator-bundle": [
+    "quay.io/salami/operator-bundle",
+    "brew.registry.redhat.io/rh-osbs/salami-operator-bundle"
+  ]
+}
+EOF
+)
+    reg_and_repo="registry.redhat.io/salami/operator-bundle"
+    run get_image_mirror_list "${reg_and_repo}" "${mirror_map}"
+    EXPECTED_RESPONSE=$(echo 'brew.registry.redhat.io/rh-osbs/salami-operator-bundle*quay.io/salami/operator-bundle'| tr '*' '\n')
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "${status}" -eq 0 ]]
+}
