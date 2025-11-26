@@ -61,6 +61,7 @@ RUN dnf install -y --nogpgcheck jq \
         cp ${PATH_TO_ART}/snyk-linux /usr/local/bin/snyk && \
         cp ${PATH_TO_ART}/ec_linux_amd64 /usr/local/bin/ec && \
         cp ${PATH_TO_ART}/cosign-linux-amd64 /usr/local/bin/cosign && \
+        cp ${PATH_TO_ART}/yq_linux_amd64 /usr/local/bin/yq && chmod +x /usr/local/bin/yq && \
         tar -xzf ${PATH_TO_ART}/conftest_0.45.0_Linux_x86_64.tar.gz -C /usr/bin/ && \
         python3 -c "import zipfile; zipfile.ZipFile('${PATH_TO_ART}/codeql-linux64.zip').extractall('/usr/local/bin/')"; \
     elif [ "$TARGETARCH" = "arm64" ]; then \
@@ -80,6 +81,7 @@ RUN dnf install -y --nogpgcheck jq \
         cp ${PATH_TO_ART}/snyk-linux-arm64 /usr/local/bin/snyk && \
         cp ${PATH_TO_ART}/ec_linux_arm64 /usr/local/bin/ec && \
         cp ${PATH_TO_ART}/cosign-linux-arm64 /usr/local/bin/cosign && \
+        cp ${PATH_TO_ART}/yq_linux_arm64 /usr/local/bin/yq && chmod +x /usr/local/bin/yq && \
         tar -xzf ${PATH_TO_ART}/conftest_0.45.0_Linux_arm64.tar.gz -C /usr/bin/ && \
         python3 -c "import zipfile; zipfile.ZipFile('${PATH_TO_ART}/codeql-linux64.zip').extractall('/usr/local/bin/')"; \
     fi && \
@@ -90,15 +92,6 @@ RUN dnf install -y --nogpgcheck jq \
     cd .. && rm -rf "bats-core-$BATS_VERSION" && \
     cd / && \
     dnf clean all
-
-#yq install, oneline because its pip
-# Use architecture-specific Python wheels for PyYAML, architecture-agnostic for others
-RUN if [ "$TARGETARCH" = "amd64" ]; then \
-        PYTHON_PYYAML_WHEEL="PyYAML-6.0.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"; \
-    elif [ "$TARGETARCH" = "arm64" ]; then \
-        PYTHON_PYYAML_WHEEL="PyYAML-6.0.2-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"; \
-    fi && \
-    pip install --no-cache-dir "${PATH_TO_ART}/${PYTHON_PYYAML_WHEEL}" "${PATH_TO_ART}/argcomplete-3.6.2-py3-none-any.whl" "${PATH_TO_ART}/tomlkit-0.13.3-py3-none-any.whl" "${PATH_TO_ART}/xmltodict-0.14.2-py2.py3-none-any.whl" "${PATH_TO_ART}/yq-3.4.3-py3-none-any.whl"
 
 ENV PATH="${PATH}:/sbom-utility"
 
