@@ -63,6 +63,27 @@ spec:
           value:
             - "test/conftest.sh"
             - "test/selftest.sh"
+    - name: hadolint
+      runAfter:
+        - test-metadata
+      taskRef:
+          resolver: git
+          params:
+            - name: url
+              value: https://github.com/konflux-ci/tekton-integration-catalog.git
+            - name: revision
+              value: main
+            - name: pathInRepo
+              value: tasks/linters/hadolint/0.1/hadolint.yaml
+      params:
+        - name: git-url
+          value: "$(tasks.test-metadata.results.git-url)"
+        - name: git-revision
+          value: "$(tasks.test-metadata.results.git-revision)"
+        - name: ignore-rules
+          value: DL3003,DL3013,DL3041,DL4006
+        - name: dockerfile-path
+          value: "./Dockerfile"
     - name: self-test
       runAfter:
         - test-metadata
