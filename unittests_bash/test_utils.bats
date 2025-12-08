@@ -167,13 +167,19 @@ EOF
     # Create a fake catalog.json file for replace_mirror_pullspec_with_source test
     cat > "${REPLACE_MIRROR_TEST_TMP}/catalog.json" <<EOF
 {
+    "schema": "olm.package",
+    "name": "gatekeeper-operator"
+}
+{
     "schema": "olm.bundle",
     "name": "gatekeeper-operator.v3.11.1",
+    "package": "gatekeeper-operator",
     "image": "example.com/gatekeeper/gatekeeper-operator-bundle:v3.11.1",
+    "properties": [],
     "relatedImages": [
         {
-            "name": "gatekeeper",
-            "image": "example.com/openpolicyagent/gatekeeper:v3.11.1"
+            "name": "operator-bundle",
+            "image": "example.com/gatekeeper/gatekeeper-operator-bundle:v3.11.1"
         },
         {
             "name": "operator",
@@ -181,7 +187,15 @@ EOF
         },
         {
             "name": "operator-sha",
-            "image": "example.com/gatekeeper/gatekeeper-operator:@sha256:60635156d6b4e54529195af3bdd07329dcbe6239757db86e536dbe561aa77247"
+            "image": "example.com/gatekeeper/gatekeeper-operator@sha256:60635156d6b4e54529195af3bdd07329dcbe6239757db86e536dbe561aa77247"
+        },
+        {
+            "name": "gatekeeper",
+            "image": "example.com/openpolicyagent/gatekeeper:v3.11.1"
+        },
+        {
+            "name": "keymaster",
+            "image": "example.com/the/keymaster@sha256:fcb3b8ab93dfb5ef2b290e39ea5899dbb5e0c6d430370b8d281e59e74d94d749"
         }
     ]
 }
@@ -190,19 +204,19 @@ EOF
     # Create a fake IDMS file for replace_mirror_pullspec_with_source test
     cat > "${REPLACE_MIRROR_TEST_TMP}/idms.yaml" <<EOF
 ---
-apiVersion: operator.openshift.io/v1alpha1
+apiVersion: config.openshift.io/v1
 kind: ImageDigestMirrorSet
 spec:
   imageDigestMirrors:
   - mirrors:
-    - example.com/gatekeeper/gatekeeper-operator-bundle
-    source: quay.io/gatekeeper/gatekeeper-operator-bundle
+    - quay.io
+    source: example.com
   - mirrors:
-    - example.com/openpolicyagent/gatekeeper
-    source: quay.io/openpolicyagent/gatekeeper
+    - quay.io/gatekeeper
+    source: example.com/gatekeeper
   - mirrors:
-    - example.com/gatekeeper/gatekeeper-operator
-    source: quay.io/gatekeeper/gatekeeper-operator
+    - quay.io/openpolicyagent/gatekeeper
+    source: example.com/openpolicyagent/gatekeeper
 EOF
 }
 
@@ -1714,13 +1728,19 @@ EOF
 
     # Verify that the file content was changed correctly
     expected_content='{
+    "schema": "olm.package",
+    "name": "gatekeeper-operator"
+}
+{
     "schema": "olm.bundle",
     "name": "gatekeeper-operator.v3.11.1",
+    "package": "gatekeeper-operator",
     "image": "quay.io/gatekeeper/gatekeeper-operator-bundle:v3.11.1",
+    "properties": [],
     "relatedImages": [
         {
-            "name": "gatekeeper",
-            "image": "quay.io/openpolicyagent/gatekeeper:v3.11.1"
+            "name": "operator-bundle",
+            "image": "quay.io/gatekeeper/gatekeeper-operator-bundle:v3.11.1"
         },
         {
             "name": "operator",
@@ -1728,10 +1748,19 @@ EOF
         },
         {
             "name": "operator-sha",
-            "image": "quay.io/gatekeeper/gatekeeper-operator:@sha256:60635156d6b4e54529195af3bdd07329dcbe6239757db86e536dbe561aa77247"
+            "image": "quay.io/gatekeeper/gatekeeper-operator@sha256:60635156d6b4e54529195af3bdd07329dcbe6239757db86e536dbe561aa77247"
+        },
+        {
+            "name": "gatekeeper",
+            "image": "quay.io/openpolicyagent/gatekeeper:v3.11.1"
+        },
+        {
+            "name": "keymaster",
+            "image": "quay.io/the/keymaster@sha256:fcb3b8ab93dfb5ef2b290e39ea5899dbb5e0c6d430370b8d281e59e74d94d749"
         }
     ]
-}'
+}
+'
     # Compare the file contents after removing whitespace
     diff <(echo "$expected_content" | jq -c .) <(jq -c . "${REPLACE_MIRROR_TEST_TMP}/catalog.json")
 }
@@ -1744,13 +1773,19 @@ EOF
     # Verify that the catalog.json file was not changed
     original_content=$(cat <<EOF
 {
+    "schema": "olm.package",
+    "name": "gatekeeper-operator"
+}
+{
     "schema": "olm.bundle",
     "name": "gatekeeper-operator.v3.11.1",
+    "package": "gatekeeper-operator",
     "image": "example.com/gatekeeper/gatekeeper-operator-bundle:v3.11.1",
+    "properties": [],
     "relatedImages": [
         {
-            "name": "gatekeeper",
-            "image": "example.com/openpolicyagent/gatekeeper:v3.11.1"
+            "name": "operator-bundle",
+            "image": "example.com/gatekeeper/gatekeeper-operator-bundle:v3.11.1"
         },
         {
             "name": "operator",
@@ -1758,7 +1793,15 @@ EOF
         },
         {
             "name": "operator-sha",
-            "image": "example.com/gatekeeper/gatekeeper-operator:@sha256:60635156d6b4e54529195af3bdd07329dcbe6239757db86e536dbe561aa77247"
+            "image": "example.com/gatekeeper/gatekeeper-operator@sha256:60635156d6b4e54529195af3bdd07329dcbe6239757db86e536dbe561aa77247"
+        },
+        {
+            "name": "gatekeeper",
+            "image": "example.com/openpolicyagent/gatekeeper:v3.11.1"
+        },
+        {
+            "name": "keymaster",
+            "image": "example.com/the/keymaster@sha256:fcb3b8ab93dfb5ef2b290e39ea5899dbb5e0c6d430370b8d281e59e74d94d749"
         }
     ]
 }
@@ -1799,9 +1842,37 @@ EOF
     # Create a catalog with no matching mirrors
     cat > "${REPLACE_MIRROR_TEST_TMP}/catalog_no_match.json" <<EOF
 {
+    "schema": "olm.package",
+    "name": "gatekeeper-operator"
+}
+{
     "schema": "olm.bundle",
-    "name": "some-other-operator",
-    "image": "some.registry/some/operator:1.0.0"
+    "name": "gatekeeper-operator.v3.11.1",
+    "package": "gatekeeper-operator",
+    "image": "some.registry.io/gatekeeper/gatekeeper-operator-bundle:v3.11.1",
+    "properties": [],
+    "relatedImages": [
+        {
+            "name": "operator-bundle",
+            "image": "some.registry.io/gatekeeper/gatekeeper-operator-bundle:v3.11.1"
+        },
+        {
+            "name": "operator",
+            "image": "some.registry.io/gatekeeper/gatekeeper-operator:v3.11.1"
+        },
+        {
+            "name": "operator-sha",
+            "image": "some.registry.io/gatekeeper/gatekeeper-operator@sha256:60635156d6b4e54529195af3bdd07329dcbe6239757db86e536dbe561aa77247"
+        },
+        {
+            "name": "gatekeeper",
+            "image": "some.registry.io/openpolicyagent/gatekeeper:v3.11.1"
+        },
+        {
+            "name": "keymaster",
+            "image": "some.registry.io/the/keymaster@sha256:fcb3b8ab93dfb5ef2b290e39ea5899dbb5e0c6d430370b8d281e59e74d94d749"
+        }
+    ]
 }
 EOF
     original_content=$(cat "${REPLACE_MIRROR_TEST_TMP}/catalog_no_match.json")

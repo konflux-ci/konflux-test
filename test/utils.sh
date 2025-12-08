@@ -1647,7 +1647,6 @@ get_uncompressed_layer_digests() {
   rm -rf "${tmp_dir}"
 }
 
-
 # This function will be used by tasks in build-definitions
 # It replaces the image pullspec mirror found in catalog.json by source defined in imageDigestMirrorSet file
 # It tries to find mirrors in catalog file and replace it by source in case of match
@@ -1671,17 +1670,19 @@ replace_mirror_pullspec_with_source() {
   # Create temporary files
   idms_map_tmp_file="$(mktemp)"
   input_catalog_file="$(mktemp)"
-  trap 'rm -f "$idms_map_tmp_file" "$input_catalog_file"' EXIT
+  pullspecs_tmp_file="$(mktemp)"
+  repos_tmp_file="$(mktemp)"
+  trap 'rm -f "$idms_map_tmp_file" "$input_catalog_file" "$pullspecs_tmp_file" "$repos_tmp_file"' EXIT
 
   # Process mirror mapping
   if [[ -f "${idms_file}" ]]; then
     echo "replace_mirror_pullspec_with_source: Processing ImageDigestMirrorSet from ${idms_file}..."
     mirror_set_yaml=$(cat "${idms_file}")
-    process_image_digest_mirror_set "${mirror_set_yaml}" > "$idms_map_tmp_file"
+    process_image_digest_mirror_set "${mirror_set_yaml}" > "${idms_map_tmp_file}"
 
-    if ! jq -e . "$idms_map_tmp_file" > /dev/null 2>&1; then
+    if ! jq -e . "${idms_map_tmp_file}" > /dev/null 2>&1; then
       echo "replace_mirror_pullspec_with_source: The 'process_image_digest_mirror_set' function did not generate valid JSON." >&2
-      cat "$idms_map_tmp_file" >&2
+      cat "${idms_map_tmp_file}" >&2
       exit 1
     fi
     echo "replace_mirror_pullspec_with_source: ImageDigestMirrorSet was processed successfully."
@@ -1691,38 +1692,78 @@ replace_mirror_pullspec_with_source() {
     exit 0
   fi
 
-  idms_mapping_json=$(cat "$idms_map_tmp_file")
-  echo "replace_mirror_pullspec_with_source: Starting direct replacement process"
+  idms_mapping_json=$(cat "${idms_map_tmp_file}")
+  echo "replace_mirror_pullspec_with_source: processed mirror mapping:"
+  echo "${idms_mapping_json}" | jq
+  echo ""
 
   # Create a working copy of the catalog
-  cp "$catalog_file" "$input_catalog_file"
+  cp "${catalog_file}" "${input_catalog_file}"
+  catalog_json=$(cat "${catalog_file}")
 
-  # Loop over sources and their mirrors from IDMS
-  while IFS=$'\t' read -r source_repository mirror_repository; do
-    # Skip empty lines that might result from jq processing
-    if [[ -z "$source_repository" || -z "$mirror_repository" ]]; then
-      continue
-    fi
+  # Get list of packages defined in catalog file
+  local pkgs=()
+  local pullspecs=()
+  mapfile -t pkgs < <(extract_unique_package_names_from_catalog "${catalog_json}")
+  if [[ -z "${pkgs[0]}" ]]; then
+    echo "replace_mirror_pullspec_with_source: No package names found in catalog." >&2
+    exit 1
+  fi
 
-    # Sed is run for each mirror-source pair on the entire file.
-    #
-    # Pattern explained:
-    # s|...|...|g          - Substitute command with '|' as delimiter.
-    # ${mirror_repository} - Matches the literal mirror repository string.
-    # \([:@][^"']*\)       - This is the capture group (\1):
-    #   [:@]              - Matches the separator: a colon ':' for a tag or an '@' for a digest.
-    #   [^"']* - Matches everything after the separator until a quote or other specified character is found.
-    # ${source_repository}\1 - The replacement: the new source repository followed by the captured tag/digest.
-    if ! sed -i -E "s|${mirror_repository}([:@][^\"', ]*)|${source_repository}\1|g" "$input_catalog_file"; then
-      echo "replace_mirror_pullspec_with_source: ERROR: Replacement failed for mirror '${mirror_repository}'." >&2
+  # Get list of image pullspecs from catalog file
+  for pkg in "${pkgs[@]}"; do
+    extract_related_images_from_catalog "${catalog_json}" "${pkg}" > "${pullspecs_tmp_file}"
+    for img in $(jq -r '.[]' "${pullspecs_tmp_file}"); do
+      pullspecs+=("${img}")
+    done
+  done
+  echo "replace_mirror_pullspec_with_source: catalog contains ${#pullspecs[@]} unique pullspecs."
+
+  # Derive registry/repository strings to be replaced
+  echo "replace_mirror_pullspec_with_source: determining registry and repository for each pullspec..."
+  for pullspec in "${pullspecs[@]}"; do
+    if ! reg_and_repo=$(get_image_registry_and_repository "${pullspec}"); then
+      echo "replace_mirror_pullspec_with_source: unable to parse pullspec: ${pullspec}" >&2
       exit 1
     fi
-  done < <(echo "$idms_mapping_json" | jq -r 'to_entries[] | .key as $source | .value[] | "\($source)\t\(.)"')
+    echo "${reg_and_repo}" >> "${repos_tmp_file}"
+  done
 
-  # Replace the original file with the file we actually modified.
-  mv "$input_catalog_file" "$catalog_file"
-  chmod +r "$catalog_file"
+  local unique_repos=()
+  mapfile -t unique_repos < <( uniq "${repos_tmp_file}")
+  echo ""
+  echo "replace_mirror_pullspec_with_source: ${#unique_repos[@]} unique repositories identified."
 
+  local skipped=()
+  echo "replace_mirror_pullspec_with_source: Starting direct replacement process..."
+  for reg_and_repo in "${unique_repos[@]}"; do
+    mirrors=()
+    mapfile -t mirrors < <(get_image_mirror_list "${reg_and_repo}" "${idms_mapping_json}")
+    if [[ -z "${mirrors[0]}" ]]; then
+      echo "replace_mirror_pullspec_with_source: No mirrors discovered for ${reg_and_repo}. Skipping replacement."
+      skipped+=("${reg_and_repo}")
+      continue
+    fi
+    if [[ ${#mirrors[@]} -gt 1 ]]; then
+      echo "replace_mirror_pullspec_with_source: More than one entry found for ${reg_and_repo}. Using the first entry for replacement:"
+      printf "%s\n" "${mirrors[@]}"
+    fi
+    if ! sed -i -E "s|${reg_and_repo}|${mirrors[0]}|g" "${input_catalog_file}"; then
+      echo "replace_mirror_pullspec_with_source: ERROR: Replacement failed for ${reg_and_repo}." >&2
+      exit 1
+    fi
+    echo -e "${reg_and_repo} replaced with: ${mirrors[0]}"
+  done
+
+  if [[ ${#skipped[@]} -gt 0 ]]; then
+    echo ""
+    echo "replace_mirror_pullspec_with_source: Mirrors for the following registry/repositories cound not be found:"
+    printf "%s\n" "${skipped[@]}"
+  fi
+  echo ""
+
+  mv "${input_catalog_file}" "${catalog_file}"
+  chmod +r "${catalog_file}"
   echo "replace_mirror_pullspec_with_source: Replacement process completed. ${catalog_file} has been updated."
 }
 
