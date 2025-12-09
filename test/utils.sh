@@ -364,7 +364,7 @@ get_base_image() {
   echo -n "$base_image"
 }
 
-ocp_to_opm_version_mapping() {
+validate_ocp_version() {
   # OCP version e.g. v4.12
   local OCP_VERSION="${1#v}"
 
@@ -378,6 +378,13 @@ ocp_to_opm_version_mapping() {
     echo "Invalid OCP version $1 (expected format v4.x or 4.x)." >&2
     exit 2
   fi
+}
+
+ocp_to_opm_version_mapping() {
+  # OCP version e.g. v4.12
+  local OCP_VERSION="${1#v}"
+
+  validate_ocp_version "$1"
 
   case "$OCP_VERSION" in
       # === BEGIN PINNED MAP ===
@@ -405,20 +412,50 @@ ocp_to_opm_version_mapping() {
 # It returns the ocp_version targeted by the FBC fragment
 get_ocp_version_from_fbc_fragment() {
   local FBC_FRAGMENT="$1"
+  local ocp_version_list
+  local ocp_version_list_raw
 
   if [ -z "$FBC_FRAGMENT" ]; then
     echo "get_ocp_version_from_fbc_fragment: Missing positional parameter \$1 (FBC_FRAGMENT)" >&2
     exit 2
   fi
 
-  local base_image
-  base_image=$(get_image_registry_repository_tag "$(get_base_image "$FBC_FRAGMENT")")
-  ocp_version=$(parse_image_url "$base_image" | jq -ej '.tag')
-  if [ -z "${ocp_version}" ]; then
-    echo "get_ocp_version_from_fbc_fragment: No ocp version found; base image tag is empty." >&2
-    exit 2
+  # Attempt to retrieve the ocp version list from the fbc-fragment labels
+  ocp_version_list_raw=$(
+    get_image_labels "$FBC_FRAGMENT" \
+      | grep -m1 '^com.redhat.fbc.openshift.version='
+  )
+
+  # Check if the label is present within labels (If yes, check content, if not use the base image ocp version)
+  if [[ -n "$ocp_version_list_raw" ]]; then
+    ocp_version_list="${ocp_version_list_raw#*=}"
+
+    # Fail if the label content is not an array or an empty array
+    if ! jq -e 'type=="array" and length>0' >/dev/null 2>&1 <<<"$ocp_version_list"; then
+      echo "get_ocp_version_from_fbc_fragment: Label \"com.redhat.fbc.openshift.version\" must contain a non-empty JSON array, got: $ocp_version_list" >&2
+      exit 2
+    fi
+
+    # Normalize the array
+    ocp_version_list=$(jq -c '.' <<<"$ocp_version_list")
+
+    # Check the labels one by one
+    while read -r ocp_version; do
+      validate_ocp_version "$ocp_version"
+    done < <(printf '%s\n' "$ocp_version_list" | jq -r '.[]')
+    echo -n "$ocp_version_list"
+
+  # Use the base image to determine the ocp version, if the label is not present
+  else
+    local base_image
+    base_image=$(get_image_registry_repository_tag "$(get_base_image "$FBC_FRAGMENT")")
+    ocp_version=$(parse_image_url "$base_image" | jq -ej '.tag')
+    if [ -z "${ocp_version}" ]; then
+      echo "get_ocp_version_from_fbc_fragment: No ocp version found; base image tag is empty." >&2
+      exit 2
+    fi
+    echo -n "$ocp_version"
   fi
-  echo -n "$ocp_version"
 }
 
 # Given output of `opm render` command and package name, this function returns

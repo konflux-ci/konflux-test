@@ -20,6 +20,10 @@ setup() {
     }
 
     skopeo() {
+        INDEX_JSON='{"manifests":[{"platform":{"architecture":"amd64"}},{"platform":{"architecture":"arm64"}}]}'
+        MANIFEST_JSON='{"schemaVersion":2,"mediaType":"application/vnd.oci.image.manifest.v1+json","config":{"mediaType":"application/vnd.oci.image.config.v1+json","digest":"valid-manifest-amd64","size":14208},"annotations":{"org.opencontainers.image.base.name":"registry.redhat.io/openshift4/ose-operator-registry:v4.12"}}'
+        LABELS_JSON='{"Name":"valid-manifest-amd64","Architecture":"amd64","Labels":{"architecture":"arm64","name":"my-image"},"Digest":"valid-manifest-amd64","Os":"linux"}'
+
         # The --raw inspects return the OCI metadata for the image references. This includes the mediaType, manifests (for image indexes),
         # digests and their platforms, and annotations.
         # The non-raw skopeo inspect returns information about the image. This is primarily used to get the digest and architecture of an image from its OCI Image Manifest.
@@ -28,11 +32,23 @@ setup() {
         if [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/image@valid-url" ]]; then
             echo '{"schemaVersion":2,"mediaType":"application/vnd.oci.image.index.v1+json","manifests":[{"mediaType":"application/vnd.oci.image.manifest.v1+json","digest":"valid-manifest-amd64","size":928,"platform":{"architecture":"amd64","os":"linux"}},{"mediaType":"application/vnd.oci.image.manifest.v1+json","digest":"valid-manifest-arm64","size":928,"platform":{"architecture":"arm64","os":"linux"}}]}'
 
+        # registry/image@invalid
+        elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "docker://registry/fbc-fragment@invalid" ]]; then
+             echo $INDEX_JSON
+        elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/fbc-fragment@invalid" ]]; then
+            echo $MANIFEST_JSON
+
         # registry/image@valid-manifest-amd64
-        elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "docker://registry/image@valid-manifest-amd64" || $1 == "inspect" && $2 == "--no-tags" && $3 == "docker://registry/fbc-fragment@invalid" || $1 == "inspect" && $2 == "--no-tags" && $3 == "docker://registry/fbc-fragment@valid-manifest-amd64" ]]; then
+        elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "docker://registry/image@valid-manifest-amd64" || $1 == "inspect" && $2 == "--no-tags" && $3 == "docker://registry/fbc-fragment@valid-manifest-amd64" ]]; then
             echo '{"Name": "valid-manifest-amd64", "Architecture": "amd64", "Labels": {"architecture":"arm64", "name": "my-image"}, "Digest": "valid-manifest-amd64", "Os": "linux"}'
-        elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/image@valid-manifest-amd64" || $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/fbc-fragment@invalid" || $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/fbc-fragment@valid-manifest-amd64" ]]; then
+        elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/image@valid-manifest-amd64" || $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/fbc-fragment@valid-manifest-amd64" ]]; then
             echo '{"schemaVersion": 2,"mediaType": "application/vnd.oci.image.manifest.v1+json","config": {"mediaType": "application/vnd.oci.image.config.v1+json","digest": "valid-manifest-amd64","size": 14208},"annotations": {"org.opencontainers.image.base.name": "registry.redhat.io/openshift4/ose-operator-registry:v4.12"}}'
+        elif [[ $1 == "inspect" && $2 == "--raw" && $3 == "docker://registry/image@valid-manifest-amd64" || $1 == "inspect" && $2 == "--raw" && $3 == "docker://registry/fbc-fragment@invalid" ]]; then
+            echo '{"schemaVersion": 2,"mediaType": "application/vnd.oci.image.manifest.v1+json","config": {"mediaType": "application/vnd.oci.image.config.v1+json","digest": "valid-manifest-amd64","size": 14208},"annotations": {"org.opencontainers.image.base.name": "registry.redhat.io/openshift4/ose-operator-registry:v4.12"}}'
+        elif [[ $1 == "inspect" && $2 == --override-arch=* && $3 == "--no-tags" && $4 == "docker://registry/fbc-fragment@valid-manifest-amd64" ]]; then
+            echo $LABELS_JSON
+        elif [[ $1 == "inspect" && $2 == "--raw" && $3 == "docker://registry/fbc-fragment@valid-manifest-amd64" ]]; then
+            echo $INDEX_JSON
 
         #registry/image@valid-url-arm64
         elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "docker://registry/image@valid-url-arm64" ]]; then
@@ -51,16 +67,24 @@ setup() {
             echo '{"schemaVersion": 2,"mediaType": "application/vnd.oci.image.manifest.v1+json","config": {"mediaType": "application/vnd.oci.image.config.v1+json","digest": "valid-manifest-amd64","size": 14208}}'
 
         # registry/image-manifest@valid-oci
-        elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "docker://registry/image-manifest@valid-oci" || $1 == "inspect" && $2 == "--no-tags" && $3 == "docker://registry/image-manifest@valid-oci" || $1 == "inspect" && $2 == "--no-tags" && $3 == "docker://registry/image-manifest@valid-oci" ]]; then
+        elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "docker://registry/image-manifest@valid-oci" ]]; then
             echo '{"Name": "valid-oci", "Architecture": "amd64", "Labels": {"architecture":"arm64", "name": "my-image"}, "Digest": "valid-oci", "Os": "linux"}'
-        elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/image-manifest@valid-oci" || $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/image-manifest@valid-oci" || $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/image@valid-url-arm64" ]]; then
+        elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/image-manifest@valid-oci" || $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/image@valid-url-arm64" ]]; then
             echo '{"schemaVersion": 2,"mediaType": "application/vnd.oci.image.manifest.v1+json","config": {"mediaType": "application/vnd.oci.image.config.v1+json","digest": "valid-oci","size": 14208},"annotations": {"org.opencontainers.image.base.name": "registry.redhat.io/openshift4/ose-operator-registry@sha256:12345"}}'
+        elif [[ $1 == "inspect" && $2 == "--raw" && $3 == "docker://registry/image-manifest@valid-oci" ]]; then
+            echo $INDEX_JSON
+        elif [[ $1 == "inspect" && $2 == --override-arch=* && $3 == "--no-tags" && $4 == "docker://registry/image-manifest@valid-oci" ]]; then
+            echo $LABELS_JSON
 
         # registry/fbc-fragment@valid-success
         elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "docker://registry/fbc-fragment@valid-success" ]]; then
             echo '{"Name": "valid-success", "Architecture": "amd64", "Labels": {"architecture":"arm64", "name": "my-image"}, "Digest": "valid-success", "Os": "linux"}'
         elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/fbc-fragment@valid-success" ]]; then
             echo '{"schemaVersion": 2,"mediaType": "application/vnd.oci.image.manifest.v1+json","config": {"mediaType": "application/vnd.oci.image.config.v1+json","digest": "valid-success","size": 14208},"annotations": {"org.opencontainers.image.base.name": "registry.redhat.io/openshift4/ose-operator-registry:v4.15", "org.opencontainers.image.base.digest": "boo"}}'
+        elif [[ $1 == "inspect" && $2 == "--raw" && $3 == "docker://registry/fbc-fragment@valid-success" ]]; then
+            echo $INDEX_JSON
+        elif [[ $1 == "inspect" && $2 == --override-arch=* && $3 == "--no-tags" && $4 == "docker://registry/fbc-fragment@valid-success" ]]; then
+            echo $LABELS_JSON
 
         # registry/fbc-fragment@valid-success-2
         elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "docker://registry/fbc-fragment@valid-success-2" ]]; then
@@ -73,6 +97,37 @@ setup() {
             echo '{"Name": "isolated", "Architecture": "amd64", "Labels": {"architecture":"arm64", "name": "my-image"}, "Digest": "isolated", "Os": "linux"}'
         elif [[ $1 == "inspect" && $2 == "--no-tags" && $3 == "--raw" && $4 == "docker://registry/fbc-fragment@isolated" ]]; then
             echo '{"schemaVersion": 2,"mediaType": "application/vnd.oci.image.manifest.v1+json","config": {"mediaType": "application/vnd.oci.image.config.v1+json","digest": "isolated","size": 14208},"annotations": {"org.opencontainers.image.base.name": "registry.redhat.io/openshift4/ose-operator-registry:v4.15"}}'
+        elif [[ $1 == "inspect" && $2 == "--raw" && $3 == "docker://registry/fbc-fragment@isolated" ]]; then
+            echo $INDEX_JSON
+        elif [[ $1 == "inspect" && $2 == --override-arch=* && $3 == "--no-tags" && $4 == "docker://registry/fbc-fragment@isolated" ]]; then
+            echo $LABELS_JSON
+
+        # registry/fbc-fragment@label-array-valid
+        elif [[ $1 == "inspect" && $2 == "--raw" && $3 == "docker://registry/fbc-fragment@label-array-valid" ]]; then
+            echo $INDEX_JSON
+        elif [[ $1 == "inspect" && $2 == --override-arch=* && $3=="--no-tags" && $4 == "docker://registry/fbc-fragment@label-array-valid" ]]; then
+            echo '{"Labels": {"com.redhat.fbc.openshift.version": ["v4.19","v4.20","v4.21"]}}'
+
+        # registry/fbc-fragment@label-not-array
+        elif [[ $1 == "inspect" && $2 == "--raw" && $3 == "docker://registry/fbc-fragment@label-not-array" ]]; then
+            echo $INDEX_JSON
+        elif [[ $1 == "inspect" && $2 == --override-arch=* && $3=="--no-tags" && $4 == "docker://registry/fbc-fragment@label-not-array" ]]; then
+            echo '{"Labels": {"com.redhat.fbc.openshift.version":"v4.19"}}'
+
+
+        # registry/fbc-fragment@label-empty-array
+        elif [[ $1 == "inspect" && $2 == "--raw" && $3 == "docker://registry/fbc-fragment@label-empty-array" ]]; then
+            echo $INDEX_JSON
+        elif [[ $1 == "inspect" && $2 == --override-arch=* && $3=="--no-tags" && $4 == "docker://registry/fbc-fragment@label-empty-array" ]]; then
+            echo '{"Labels": {"com.redhat.fbc.openshift.version":[]}}'
+
+        # label-array-invalid-item
+        elif [[ $1 == "inspect" && $2 == "--raw" && $3 == "docker://registry/fbc-fragment@label-array-invalid-item" ]]; then
+            echo $INDEX_JSON
+        elif [[ $1 == "inspect" && $2 == --override-arch=* && $3=="--no-tags" && $4 == "docker://registry/fbc-fragment@label-array-invalid-item" ]]; then
+            echo '{"Labels": {"com.redhat.fbc.openshift.version":["v4.19", "4.19", "vv5.0"]}}'
+
+
 
         elif [[ $1 == "copy" && $2 == docker://registry.fedoraproject.org/fedora-minimal@sha256:e565f9eaa4dd2026c2e94d972fae8e4008f5df182519158e739ccf0214b19e7f ]]; then            
             # Extract the oci output dir: oci:./image-under-test-UUID
@@ -410,6 +465,27 @@ teardown() {
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
 
+@test "Validate_ocp_version: valid versions" {
+    for v in v4.19 4.20 v4.0; do
+        run validate_ocp_version "$v"
+        [[ "$status" -eq 0 ]]
+    done
+}
+
+@test "Validate_ocp_version: invalid formats" {
+    for v in v4.19.1 v5.1 v4.x banana; do
+        run validate_ocp_version "$v"
+        EXPECTED_RESPONSE="Invalid OCP version $v (expected format v4.x or 4.x)."
+        [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
+    done
+}
+
+@test "Validate_ocp_version: missing parameter" {
+    run validate_ocp_version ""
+    EXPECTED_RESPONSE="Missing OCP_VERSION PARAMETER"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
+}
+
 @test "Get OPM version from OCP version - missing parameter" {
     run ocp_to_opm_version_mapping
     EXPECTED_RESPONSE='Missing OCP_VERSION PARAMETER'
@@ -456,6 +532,35 @@ teardown() {
     run get_ocp_version_from_fbc_fragment registry/fbc-fragment@valid-success
     EXPECTED_RESPONSE='v4.15'
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get OCP version from fragment: registry/fbc-fragment@label-array-valid (label present -> returns JSON array)" {
+    # What it tests: reads com.redhat.fbc.openshift.version and returns the JSON array as output.
+    run get_ocp_version_from_fbc_fragment registry/fbc-fragment@label-array-valid
+    EXPECTED_RESPONSE='["v4.19","v4.20","v4.21"]'
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get OCP version from fragment: registry/fbc-fragment@label-not-array (label present but not array -> error)" {
+    # What it tests: label must be a JSON array, not a string/object/etc.
+    run get_ocp_version_from_fbc_fragment registry/fbc-fragment@label-not-array
+    EXPECTED_RESPONSE="get_ocp_version_from_fbc_fragment: Label \"com.redhat.fbc.openshift.version\" must contain a non-empty JSON array, got: v4.19"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
+
+}
+
+@test "Get OCP version from fragment: registry/fbc-fragment@label-empty-array (label present but [] -> error)" {
+    # What it tests: rejects empty array.
+    run get_ocp_version_from_fbc_fragment registry/fbc-fragment@label-empty-array
+    EXPECTED_RESPONSE="get_ocp_version_from_fbc_fragment: Label \"com.redhat.fbc.openshift.version\" must contain a non-empty JSON array, got: []"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
+}
+
+@test "Get OCP version from fragment: registry/fbc-fragment@label-array-invalid-item (label present, array item invalid -> error)" {
+  # What it tests: validate_ocp_version is called for each element and failure bubbles up.
+  run get_ocp_version_from_fbc_fragment registry/fbc-fragment@label-array-invalid-item
+  EXPECTED_RESPONSE="Invalid OCP version vv5.0 (expected format v4.x or 4.x)."
+  [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
 }
 
 @test "Get matching catalog image from fragment: registry/fbc-fragment@valid-success" {
