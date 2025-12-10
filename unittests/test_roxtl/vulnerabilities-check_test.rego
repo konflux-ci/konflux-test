@@ -1,6 +1,6 @@
 package required_checks
 
-import data.roxctl as roxctl
+import data.roxctl_new as roxctl
 import future.keywords.if
 
 test_warn_critical_vulnerabilities if {
