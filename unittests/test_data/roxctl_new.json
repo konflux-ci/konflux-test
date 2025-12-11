@@ -4,7 +4,7 @@
     "summary": {
       "CRITICAL": 2,
       "IMPORTANT": 2,
-      "LOW": 27,
+      "LOW": 28,
       "MODERATE": 15,
       "TOTAL-COMPONENTS": 24,
       "TOTAL-VULNERABILITIES": 46
@@ -40,6 +40,28 @@
         "advisoryId": "",
         "advisoryInfo": "",
         "componentName": "libarchive",
+        "componentVersion": "3.5.3-5.el9_6",
+        "componentFixedVersion": ""
+      },
+      {
+        "cveId": "CVE-2025-5918",
+        "cveSeverity": "LOW",
+        "cveCVSS": 3.9,
+        "cveInfo": "",
+        "advisoryId": "",
+        "advisoryInfo": "",
+        "componentName": "libarchive1",
+        "componentVersion": "3.5.3-5.el9_6",
+        "componentFixedVersion": ""
+      },
+      {
+        "cveId": "CVE-2025-5917",
+        "cveSeverity": "LOW",
+        "cveCVSS": 3.9,
+        "cveInfo": "https://not.a.redh.com",
+        "advisoryId": "",
+        "advisoryInfo": "",
+        "componentName": "libarchive2",
         "componentVersion": "3.5.3-5.el9_6",
         "componentFixedVersion": ""
       },

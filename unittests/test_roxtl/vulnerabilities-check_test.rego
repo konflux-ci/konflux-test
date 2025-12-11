@@ -58,3 +58,10 @@ test_warn_unpatched_low_vulnerabilities if {
     result[_].details.name == "roxctl_unpatched_low_vulnerabilities"
     result[_].msg == "Found components with unpatched low vulnerabilities. These vulnerabilities don't have a known fix at this time."    
 }
+
+test_discrepancies_for_cve if{
+    result := discrepancies_for_cves with input as roxctl
+    count(result) > 0
+    result[_].details.name == "discrepancies"
+    result[_].msg == "Found cves with discrepancies."    
+}
