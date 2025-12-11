@@ -12,7 +12,7 @@ import future.keywords.if
 roxctl_get_patched_vulnerabilities(input_data, severity) := vulnerabilities if {
   vulnerabilities := [{"name": v.componentName, "version": v.componentVersion, "vulnerabilities": vuln} |
     v := input_data.result.vulnerabilities[_]
-    vuln := {v.cveId | v.cveSeverity == severity; v.componentFixedVersion != ""}
+    vuln := {v.cveId | v.cveSeverity == severity; v.componentFixedVersion != ""; contains(v.advisoryId,"RHSA")}
     count(vuln) > 0
   ]
 }
@@ -21,7 +21,7 @@ roxctl_get_patched_vulnerabilities(input_data, severity) := vulnerabilities if {
 roxctl_get_unpatched_vulnerabilities(input_data, severity) := vulnerabilities if {
   vulnerabilities := [{"name": v.componentName, "version": v.componentVersion, "vulnerabilities": vuln} |
     v := input_data.result.vulnerabilities[_]
-    vuln := {v.cveId | v.cveSeverity == severity; v.componentFixedVersion == ""}
+    vuln := {v.cveId | v.cveSeverity == severity; v.componentFixedVersion == ""; not contains(v.advisoryId,"RHSA")}
     count(vuln) > 0
   ]
 }
