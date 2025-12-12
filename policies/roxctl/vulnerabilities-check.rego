@@ -12,7 +12,7 @@ import future.keywords.if
 roxctl_get_patched_vulnerabilities(input_data, severity) := vulnerabilities if {
   vulnerabilities := [{"name": v.componentName, "version": v.componentVersion, "vulnerabilities": vuln} |
     v := input_data.result.vulnerabilities[_]
-    vuln := {v.cveId | v.cveSeverity == severity; v.componentFixedVersion != ""; contains(v.advisoryId,"RHSA")}
+    vuln := {v.cveId | v.cveSeverity == severity; v.componentFixedVersion != ""; contains(v.advisoryId,"RHSA"); v.cveInfo != ""; contains(v.cveInfo,"redhat")}
     count(vuln) > 0
   ]
 }
@@ -22,6 +22,15 @@ roxctl_get_unpatched_vulnerabilities(input_data, severity) := vulnerabilities if
   vulnerabilities := [{"name": v.componentName, "version": v.componentVersion, "vulnerabilities": vuln} |
     v := input_data.result.vulnerabilities[_]
     vuln := {v.cveId | v.cveSeverity == severity; v.componentFixedVersion == ""; not contains(v.advisoryId,"RHSA")}
+    count(vuln) > 0
+  ]
+}
+
+# Function to get all cves with discrepancies
+roxctl_get_discrepancies(input_data) := disc if {
+  disc := [{"name": v.componentName, "version": v.componentVersion, "vulnerabilities": vuln} |
+    v := input_data.result.vulnerabilities[_]
+    vuln := {v.cveId | v.cveInfo == ""; not contains(v.cveInfo,"redhat")}
     count(vuln) > 0
   ]
 }
@@ -124,5 +133,16 @@ warn_roxctl_unpatched_low_vulnerabilities := [{"msg": msg, "vulnerabilities_numb
   vulns_num := roxctl_count_vulnerabilities(components_with_unpatched_low_vulnerabilities)
   msg := "Found components with unpatched low vulnerabilities. These vulnerabilities don't have a known fix at this time."
   description := roxctl_generate_description(components_with_unpatched_low_vulnerabilities)
+  url := "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
+]
+
+discrepancies_for_cves := [{"msg": msg, "discrepancies_number": disc_num, "details": {"name": name, "description": description, "url": url}} |
+  cves_with_discrepancies := roxctl_get_discrepancies(input)
+  not count(cves_with_discrepancies) == 0
+
+  name := "discrepancies"
+  disc_num := roxctl_count_vulnerabilities(cves_with_discrepancies)
+  msg := "Found cves with discrepancies."
+  description := roxctl_generate_description(cves_with_discrepancies)
   url := "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
 ]
