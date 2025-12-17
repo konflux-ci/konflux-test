@@ -259,6 +259,33 @@ spec:
     - example.com/gatekeeper/gatekeeper-operator
     source: quay.io/gatekeeper/gatekeeper-operator
 EOF
+
+    # Create a registry-only fake IDMS file for replace_mirror_pullspec_with_source test
+    cat > "${REPLACE_MIRROR_TEST_TMP}/reg-idms.yaml" <<EOF
+---
+apiVersion: operator.openshift.io/v1alpha1
+kind: ImageDigestMirrorSet
+spec:
+  imageDigestMirrors:
+  - mirrors:
+    - example.com
+    source: quay.io
+EOF
+
+    # Create a registry/namespace fake IDMS file for replace_mirror_pullspec_with_source test
+    cat > "${REPLACE_MIRROR_TEST_TMP}/reg-ns-idms.yaml" <<EOF
+---
+apiVersion: operator.openshift.io/v1alpha1
+kind: ImageDigestMirrorSet
+spec:
+  imageDigestMirrors:
+  - mirrors:
+    - example.com/gatekeeper
+    source: quay.io/gatekeeper
+  - mirrors:
+    - example.com/openpolicyagent
+    source: quay.io/openpolicyagent
+EOF
 }
 
 teardown() {
@@ -1810,6 +1837,72 @@ EOF
 
 @test "replace_mirror_pullspec_with_source: successful replacement" {
     run replace_mirror_pullspec_with_source "${REPLACE_MIRROR_TEST_TMP}/idms.yaml" "${REPLACE_MIRROR_TEST_TMP}/catalog.json"
+
+    # Verify that the function executed successfully
+    [ "$status" -eq 0 ]
+
+    # Verify that the output contains the success message
+    [[ "$output" == *"Replacement process completed"* ]]
+
+    # Verify that the file content was changed correctly
+    expected_content='{
+    "schema": "olm.bundle",
+    "name": "gatekeeper-operator.v3.11.1",
+    "image": "quay.io/gatekeeper/gatekeeper-operator-bundle:v3.11.1",
+    "relatedImages": [
+        {
+            "name": "gatekeeper",
+            "image": "quay.io/openpolicyagent/gatekeeper:v3.11.1"
+        },
+        {
+            "name": "operator",
+            "image": "quay.io/gatekeeper/gatekeeper-operator:v3.11.1"
+        },
+        {
+            "name": "operator-sha",
+            "image": "quay.io/gatekeeper/gatekeeper-operator:@sha256:60635156d6b4e54529195af3bdd07329dcbe6239757db86e536dbe561aa77247"
+        }
+    ]
+}'
+    # Compare the file contents after removing whitespace
+    diff <(echo "$expected_content" | jq -c .) <(jq -c . "${REPLACE_MIRROR_TEST_TMP}/catalog.json")
+}
+
+@test "replace_mirror_pullspec_with_source: successful replacement with registry-only idms" {
+    run replace_mirror_pullspec_with_source "${REPLACE_MIRROR_TEST_TMP}/reg-idms.yaml" "${REPLACE_MIRROR_TEST_TMP}/catalog.json"
+
+    # Verify that the function executed successfully
+    [ "$status" -eq 0 ]
+
+    # Verify that the output contains the success message
+    [[ "$output" == *"Replacement process completed"* ]]
+
+    # Verify that the file content was changed correctly
+    expected_content='{
+    "schema": "olm.bundle",
+    "name": "gatekeeper-operator.v3.11.1",
+    "image": "quay.io/gatekeeper/gatekeeper-operator-bundle:v3.11.1",
+    "relatedImages": [
+        {
+            "name": "gatekeeper",
+            "image": "quay.io/openpolicyagent/gatekeeper:v3.11.1"
+        },
+        {
+            "name": "operator",
+            "image": "quay.io/gatekeeper/gatekeeper-operator:v3.11.1"
+        },
+        {
+            "name": "operator-sha",
+            "image": "quay.io/gatekeeper/gatekeeper-operator:@sha256:60635156d6b4e54529195af3bdd07329dcbe6239757db86e536dbe561aa77247"
+        }
+    ]
+}'
+    # Compare the file contents after removing whitespace
+    diff <(echo "$expected_content" | jq -c .) <(jq -c . "${REPLACE_MIRROR_TEST_TMP}/catalog.json")
+}
+
+@test "replace_mirror_pullspec_with_source: successful replacement with registry/namespace idms" {
+    run replace_mirror_pullspec_with_source "${REPLACE_MIRROR_TEST_TMP}/reg-ns-idms.yaml" "${REPLACE_MIRROR_TEST_TMP}/catalog.json"
 
     # Verify that the function executed successfully
     [ "$status" -eq 0 ]

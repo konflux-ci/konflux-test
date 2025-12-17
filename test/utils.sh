@@ -1746,11 +1746,12 @@ replace_mirror_pullspec_with_source() {
     # Pattern explained:
     # s|...|...|g          - Substitute command with '|' as delimiter.
     # ${mirror_repository} - Matches the literal mirror repository string.
-    # \([:@][^"']*\)       - This is the capture group (\1):
-    #   [:@]              - Matches the separator: a colon ':' for a tag or an '@' for a digest.
+    # \([/:@][^"']*\)       - This is the capture group (\1):
+    #   [/:@]              - Matches the separator: a colon ':' for a tag or an '@' for a digest,
+    #                                               or a '/' for a namespace or registry separator.
     #   [^"']* - Matches everything after the separator until a quote or other specified character is found.
     # ${source_repository}\1 - The replacement: the new source repository followed by the captured tag/digest.
-    if ! sed -i -E "s|${mirror_repository}([:@][^\"', ]*)|${source_repository}\1|g" "$input_catalog_file"; then
+    if ! sed -i -E "s|${mirror_repository}([/:@][^\"', ]*)|${source_repository}\1|g" "$input_catalog_file"; then
       echo "replace_mirror_pullspec_with_source: ERROR: Replacement failed for mirror '${mirror_repository}'." >&2
       exit 1
     fi
