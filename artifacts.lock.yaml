@@ -113,3 +113,6 @@ artifacts:
   - download_url: "https://github.com/mikefarah/yq/releases/download/v4.45.4/yq_linux_amd64"
     checksum: "sha256:b96de04645707e14a12f52c37e6266832e03c29e95b9b139cddcae7314466e69"
     filename: "yq_linux_amd64"
+  - download_url: "https://github.com/siddhesh/find-unicode-control/archive/refs/tags/v0.1.tar.gz"
+    checksum: "sha256:e894578ddfc6e3d0dfedd2b159a26d50f2a2fe5efeeaca6cda9bae84e5885456"
+    filename: "find-unicode-control-v0.1.tar.gz"
