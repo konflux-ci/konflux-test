@@ -43,6 +43,10 @@ RUN dnf install -y --nogpgcheck jq \
     ShellCheck \
     csmock-plugin-shellcheck-core \
     libicu && \
+    # for sast-unicode-check task
+    tar -xzf ${PATH_TO_ART}/find-unicode-control-v0.1.tar.gz -C /tmp/ && \
+    cp /tmp/find-unicode-control-0.1/find_unicode_control.py /usr/local/bin/ && \
+    cp /tmp/find-unicode-control-0.1/exec-git-find-unicode-control.sh /usr/local/bin/ && \
     # Use architecture-specific binaries and sbom-utility
     if [ "$TARGETARCH" = "amd64" ]; then \
         mkdir sbom-utility && tar -xf ${PATH_TO_ART}/sbom-utility.tar.gz -C sbom-utility && \
