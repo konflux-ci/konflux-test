@@ -42,7 +42,8 @@ RUN dnf install -y --nogpgcheck jq \
     clamav-update \
     ShellCheck \
     csmock-plugin-shellcheck-core \
-    libicu && \
+    libicu \
+    tini && \
     # for sast-unicode-check task
     tar -xzf ${PATH_TO_ART}/find-unicode-control-v0.1.tar.gz -C /tmp/ && \
     cp /tmp/find-unicode-control-0.1/find_unicode_control.py /usr/local/bin/ && \
