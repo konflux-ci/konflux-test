@@ -10,7 +10,7 @@ RUN tar -xzf /cachi2/output/deps/generic/check-payload-${CHECK_PAYLOAD_VERSION}.
     chmod +x /opt/app-root/src/check-payload-binary
 
 FROM quay.io/konflux-ci/buildah-task:latest@sha256:ad6b1781824e7fdcc75b0f7a608c78b4f23447cd0a7a7aced6123d8640211aed AS buildah-task-image
-FROM registry.redhat.io/openshift4/ose-tools-rhel9@sha256:d96bc5c5c2c1d4391daca1198c104593a2f922ed7a5027cfed9b4191028cdc64 as oc-bin
+FROM registry.redhat.io/openshift4/ose-tools-rhel9@sha256:12f84700a69f6ce62efca960c2e4b6e3566b7065c97b9bb30376de37a0ca829f as oc-bin
 FROM registry.access.redhat.com/ubi9/ubi:9.7-1769417801
 
 # Note that the version of OPA used by pr-checks must be updated manually to reflect conftest updates
