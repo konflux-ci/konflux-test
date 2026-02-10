@@ -165,6 +165,15 @@ EOF
 
             return 0
 
+        elif [[ $1 == "inspect" && $2 == "--raw" && $3 == "docker://registry/image@valid-url" ]]; then
+            echo '{"manifests":[{"platform":{"architecture":"arm64"}},{"platform":{"architecture":"amd64"}}]}'
+            return 0
+
+        # Mock for single-arch manifest
+        elif [[ $1 == "inspect" && $2 == "--raw" && $3 == "docker://registry/image-manifest@valid" ]]; then
+            echo '{"manifests":[{"platform":{"architecture":"amd64"}}]}'
+            return 0
+
         # Some skopeo commands fail
         else
             echo 'Unrecognized call to mock skopeo'
@@ -2149,4 +2158,25 @@ EOF
     run get_image_mirror_list "${reg_and_repo}" "${mirror_map}"
     EXPECTED_RESPONSE=$(echo 'brew.registry.redhat.io/rh-osbs/salami-operator-bundle*quay.io/salami/operator-bundle'| tr '*' '\n')
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "${status}" -eq 0 ]]
+}
+
+@test "Get first arch: multi-arch index (registry/image@valid-url)" {
+    run get_first_arch "registry/image@valid-url"
+    
+    [ "$status" -eq 0 ]|| { echo "Status was $status. Output: $output"; return 1; }
+    [[ "${output}" == *"arm64"* ]]
+}
+
+@test "Get first arch: single-arch manifest (registry/image-manifest@valid)" {
+    run get_first_arch "registry/image-manifest@valid"
+    
+    [ "$status" -eq 0 ]
+    [[ "${output}" == *"amd64"* ]]
+}
+
+@test "Get first arch: invalid image" {
+    run get_first_arch "registry/non-existent@image"
+    
+    [ "$status" -eq 1 ]
+    [[ "$output" == *"get_first_arch: Error fetching raw manifest"* ]]
 }
