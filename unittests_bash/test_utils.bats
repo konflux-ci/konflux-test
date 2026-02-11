@@ -836,14 +836,12 @@ EOF
 @test "Get Image Labels: registry/image-manifest:tag@invalid" {
     run get_image_labels registry/image-manifest:tag@invalid
 
-    local EXPECTED_LINE_1="get_image_labels: First architecture found:"
-    local EXPECTED_LINE_2="get_image_labels: failed to inspect the image"
-    local EXPECTED_ERROR_LINE="Invalid numeric literal at line 1, column 13"
+    local EXPECTED_LINE_1="get_first_arch: Error fetching raw manifest for registry/image-manifest@invalid"
+    local EXPECTED_LINE_2="get_image_labels: architecture could not be determined for registry/image-manifest@invalid"
 
     [[ "$status" -eq 1 \
         && "${output}" == *"${EXPECTED_LINE_1}"* \
-        && "${output}" == *"${EXPECTED_LINE_2}"* \
-        && "${output}" == *"${EXPECTED_ERROR_LINE}"* ]]
+        && "${output}" == *"${EXPECTED_LINE_2}"* ]]
 }
 
 @test "Get relatedImages from operator bundle: valid-operator-bundle-1" {
@@ -1514,12 +1512,12 @@ EOF
 
 }
 
-@test "Retry Get Image Labels: registry/image:tag@invalid-url" {
+@test "Retry Get Image Labels: registry/image-manifest@valid" {
     RETRY_COUNT=1
     RETRY_INTERVAL=1
     retry_output=$(get_retry_expected_output)
-    run get_image_labels  registry/image:tag@invalid-url
-    EXPECTED_RESPONSE=$(echo -e -n "get_image_labels: First architecture found: \n${retry_output}get_image_labels: failed to inspect the image")
+    run get_image_labels  registry/image-manifest@valid
+    EXPECTED_RESPONSE=$(echo -e -n "get_image_labels: First architecture found: amd64\n${retry_output}get_image_labels: failed to inspect the image")
 
     [[ "${output}" == *"${EXPECTED_RESPONSE}"* && "$status" -eq 1 ]]
 }
@@ -2179,4 +2177,18 @@ EOF
     
     [ "$status" -eq 1 ]
     [[ "$output" == *"get_first_arch: Error fetching raw manifest"* ]]
+}
+@test "Retry get_first_arch: registry/invalid-image:lates" {
+    RETRY_COUNT=1
+    RETRY_INTERVAL=1
+
+    retry_output=$(get_retry_expected_output)
+
+    run get_first_arch "registry/invalid-image:latest"
+
+    local EXPECTED_FINAL_ERROR="get_first_arch: Error fetching raw manifest for ${image}"
+    EXPECTED_RESPONSE=$(echo -e "${retry_output}\n${FINAL_ERROR}")
+    echo "$EXPECTED_RESPONSE"
+    [[ "${output}" == *"${EXPECTED_RESPONSE}"* && "$status" -eq 1 ]]
+
 }
