@@ -837,14 +837,14 @@ EOF
 }
 
 @test "Get package from catalog: success single package" {
-    RENDER_OUT_FBC=$(cat <<EOF
+    RENDER_OUT_FBC=$(mktemp)
+    cat <<EOF > "$RENDER_OUT_FBC"
 {
     "schema": "olm.package",
     "name": "kubevirt-hyperconverged",
     "defaultChannel": "stable"
 }
 EOF
-)
     run get_package_from_catalog "${RENDER_OUT_FBC}"
     EXPECTED_RESPONSE="kubevirt-hyperconverged"
     echo "${output}"
@@ -852,7 +852,8 @@ EOF
 }
 
 @test "Get package from catalog: success multiple packages" {
-    RENDER_OUT_FBC=$(cat <<EOF
+    RENDER_OUT_FBC=$(mktemp)
+    cat <<EOF > "$RENDER_OUT_FBC"
 {
     "schema": "olm.package",
     "name": "kubevirt-hyperconverged-v1",
@@ -897,7 +898,6 @@ EOF
     ]
 }
 EOF
-)
     run get_package_from_catalog "${RENDER_OUT_FBC}"
     EXPECTED_RESPONSE="kubevirt-hyperconverged-v2"
     echo "${output}"
@@ -911,14 +911,14 @@ EOF
 }
 
 @test "Get channel from catalog: success" {
-    RENDER_OUT_FBC=$(cat <<EOF
+    RENDER_OUT_FBC=$(mktemp)
+    cat <<EOF > "$RENDER_OUT_FBC"
 {
     "schema": "olm.package",
     "name": "kubevirt-hyperconverged",
     "defaultChannel": "stable"
 }
 EOF
-)
     PACKAGE_NAME="kubevirt-hyperconverged"
     run get_channel_from_catalog "${RENDER_OUT_FBC}" "${PACKAGE_NAME}"
     EXPECTED_RESPONSE="stable"
@@ -927,14 +927,14 @@ EOF
 }
 
 @test "Get channel from catalog: failure, package not found" {
-    RENDER_OUT_FBC=$(cat <<EOF
+    RENDER_OUT_FBC=$(mktemp)
+    cat <<EOF > "$RENDER_OUT_FBC"
 {
     "schema": "olm.package",
     "name": "kubevirt-hyperconverged",
     "defaultChannel": "stable"
 }
 EOF
-)
     PACKAGE_NAME="kubevirt"
     run get_channel_from_catalog "${RENDER_OUT_FBC}" "${PACKAGE_NAME}"
     EXPECTED_RESPONSE="get_channel_from_catalog: Package name kubevirt not found in the rendered FBC"
@@ -943,14 +943,14 @@ EOF
 }
 
 @test "Get channel from catalog: failure, invalid input" {
-    RENDER_OUT_FBC=$(cat <<EOF
+    RENDER_OUT_FBC=$(mktemp)
+    cat <<EOF > "$RENDER_OUT_FBC"
 {
     "schema": "olm.package",
     "name": "kubevirt-hyperconverged",
     "defaultChannel": "stable"
 }
 EOF
-)
     run get_channel_from_catalog "${RENDER_OUT_FBC}"
     EXPECTED_RESPONSE="get_channel_from_catalog: Invalid input. Usage: get_channel_from_catalog <RENDER_OUT_FBC> <PACKAGE_NAME>"
     echo "${output}"
@@ -960,7 +960,8 @@ EOF
 @test "Get highest bundle version from catalog: success" {
     PACKAGE_NAME="kubevirt-hyperconverged-v1"
     CHANNEL_NAME="stable"
-    RENDER_OUT_FBC=$(cat <<EOF
+    RENDER_OUT_FBC=$(mktemp)
+    cat <<EOF > "$RENDER_OUT_FBC"
 {
     "schema": "olm.package",
     "name": "kubevirt-hyperconverged-v1",
@@ -990,7 +991,6 @@ EOF
     "properties": []
 }
 EOF
-)
     run get_highest_bundle_version "${RENDER_OUT_FBC}" "${PACKAGE_NAME}" "${CHANNEL_NAME}"
     EXPECTED_RESPONSE="registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:4f100135ccbfc726f4b1887703ef7a08453b48c202ba04c0fb7382f0fec637db"
     echo "${output}"
@@ -1008,7 +1008,8 @@ EOF
 @test "Get highest bundle version from catalog: no bundle found" {
     PACKAGE_NAME="kubevirt-hyperconverged"
     CHANNEL_NAME="stable"
-    RENDER_OUT_FBC=$(cat <<EOF
+    RENDER_OUT_FBC=$(mktemp)
+    cat <<EOF > "$RENDER_OUT_FBC"
 {
     "schema": "olm.package",
     "name": "kubevirt-hyperconverged-v1",
@@ -1031,7 +1032,6 @@ EOF
     ]
 }
 EOF
-)
     run get_highest_bundle_version "${RENDER_OUT_FBC}" "${PACKAGE_NAME}" "${CHANNEL_NAME}"
     EXPECTED_RESPONSE="get_highest_bundle_version: No valid bundle version found for package: kubevirt-hyperconverged, channel: stable"
     echo "${output}"
@@ -1039,7 +1039,8 @@ EOF
 }
 
 @test "Get bundle arches: success" {
-    RENDER_OUT_BUNDLE=$(cat <<EOF
+    RENDER_OUT_BUNDLE=$(mktemp)
+    cat <<EOF > "$RENDER_OUT_BUNDLE"
 {
     "schema": "olm.bundle",
     "name": "kubevirt-hyperconverged-operator.v4.16.7",
@@ -1061,14 +1062,14 @@ EOF
     ]
 }
 EOF
-)
     run get_bundle_arches "${RENDER_OUT_BUNDLE}"
     EXPECTED_RESPONSE=$(echo "amd64 arm64 ppc64le"  | tr ' ' '\n')
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
 
 @test "Get bundle arches: no arches found" {
-    RENDER_OUT_BUNDLE=$(cat <<EOF
+    RENDER_OUT_BUNDLE=$(mktemp)
+    cat <<EOF > "$RENDER_OUT_BUNDLE"
 {
     "schema": "olm.bundle",
     "name": "kubevirt-hyperconverged-operator.v4.16.7",
@@ -1082,7 +1083,6 @@ EOF
     ]
 }
 EOF
-)
     run get_bundle_arches "${RENDER_OUT_BUNDLE}"
     EXPECTED_RESPONSE="amd64"
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
@@ -1090,7 +1090,8 @@ EOF
 
 @test "Group bundle images by package: two packages" {
     BUNDLE_IMAGES=$(echo "registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:4f100135ccbfc726f4b1887703ef7a08453b48c202ba04c0fb7382f0fec637db registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89"  | tr ' ' '\n')
-    RENDER_OUT_FBC=$(cat <<EOF
+    RENDER_OUT_FBC=$(mktemp)
+    cat <<EOF > "$RENDER_OUT_FBC"
 {
     "schema": "olm.bundle",
     "name": "kubevirt-hyperconverged-operator.v4.17.5",
@@ -1106,7 +1107,6 @@ EOF
     "properties": []
 }
 EOF
-)
     run group_bundle_images_by_package "${RENDER_OUT_FBC}" "${BUNDLE_IMAGES}"
     EXPECTED_RESPONSE='{"kubevirt-hyperconverged-v1":["registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:4f100135ccbfc726f4b1887703ef7a08453b48c202ba04c0fb7382f0fec637db"],"kubevirt-hyperconverged-v2":["registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89"]}'
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
@@ -1114,7 +1114,8 @@ EOF
 
 @test "Group bundle images by package: one package" {
     BUNDLE_IMAGES=$(echo "registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:4f100135ccbfc726f4b1887703ef7a08453b48c202ba04c0fb7382f0fec637db registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89"  | tr ' ' '\n')
-    RENDER_OUT_FBC=$(cat <<EOF
+    RENDER_OUT_FBC=$(mktemp)
+    cat <<EOF > "$RENDER_OUT_FBC"
 {
     "schema": "olm.bundle",
     "name": "kubevirt-hyperconverged-operator.v4.17.5",
@@ -1130,7 +1131,6 @@ EOF
     "properties": []
 }
 EOF
-)
     run group_bundle_images_by_package "${RENDER_OUT_FBC}" "${BUNDLE_IMAGES}"
     EXPECTED_RESPONSE='{"kubevirt-hyperconverged-v1":["registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:4f100135ccbfc726f4b1887703ef7a08453b48c202ba04c0fb7382f0fec637db","registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89"]}'
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
@@ -1138,7 +1138,8 @@ EOF
 
 @test "Group bundle images by package: no packages found" {
     BUNDLE_IMAGES=$(echo "registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:4f100135ccbfc726f4b1887703ef7a08453b48c202ba04c0fb7382f0fec637db registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89"  | tr ' ' '\n')
-    RENDER_OUT_FBC=$(cat <<EOF
+    RENDER_OUT_FBC=$(mktemp)
+    cat <<EOF > "$RENDER_OUT_FBC"
 {
     "schema": "olm.bundle",
     "name": "kubevirt-hyperconverged-operator.v4.17.5",
@@ -1154,7 +1155,6 @@ EOF
     "properties": []
 }
 EOF
-)
     run group_bundle_images_by_package "${RENDER_OUT_FBC}" "${BUNDLE_IMAGES}"
     EXPECTED_RESPONSE="group_bundle_images_by_package: No matching packages found for the provided bundle images."
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
@@ -1164,7 +1164,8 @@ EOF
     PACKAGE_NAME="kubevirt-hyperconverged"
     CHANNEL_NAME="stable"
     BUNDLE_IMAGES=$(echo "registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:4f100135ccbfc726f4b1887703ef7a08453b48c202ba04c0fb7382f0fec637db registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89"  | tr ' ' '\n')
-    RENDER_OUT_FBC=$(cat <<EOF
+    RENDER_OUT_FBC=$(mktemp)
+    cat <<EOF > "$RENDER_OUT_FBC"
 {
     "schema": "olm.package",
     "name": "kubevirt-hyperconverged",
@@ -1201,7 +1202,6 @@ EOF
     "properties": []
 }
 EOF
-)
     run get_highest_version_from_bundles_list "${RENDER_OUT_FBC}" "${PACKAGE_NAME}" "${CHANNEL_NAME}" "${BUNDLE_IMAGES}"
     EXPECTED_RESPONSE="registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89"
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
@@ -1211,7 +1211,8 @@ EOF
     PACKAGE_NAME="kubevirt-hyperconverged"
     CHANNEL_NAME="stable"
     BUNDLE_IMAGES=$(echo "registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:4f100135ccbfc726f4b1887703ef7a08453b48c202ba04c0fb7382f0fec637db registry.redhat.io/container-native-virtualization/hco-bundle-registry@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89"  | tr ' ' '\n')
-    RENDER_OUT_FBC=$(cat <<EOF
+    RENDER_OUT_FBC=$(mktemp)
+    cat <<EOF > "$RENDER_OUT_FBC"
 {
     "schema": "olm.package",
     "name": "kubevirt-hyperconverged",
@@ -1231,7 +1232,6 @@ EOF
     ]
 }
 EOF
-)
     run get_highest_version_from_bundles_list "${RENDER_OUT_FBC}" "${PACKAGE_NAME}" "${CHANNEL_NAME}" "${BUNDLE_IMAGES}"
     EXPECTED_RESPONSE="get_highest_version_from_bundles_list: No matching bundle versions found in the provided image list."
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
@@ -1241,7 +1241,8 @@ EOF
     PACKAGE_NAME="kubevirt-hyperconverged"
     CHANNEL_NAME="dev-preview"
     BUNDLE_IMAGES=$(echo "registry.redhat.io/container-native-virtualization/hco-bundle-registry-rhel9@sha256:4f100135ccbfc726f4b1887703ef7a08453b48c202ba04c0fb7382f0fec11122 registry.redhat.io/container-native-virtualization/hco-bundle-registry-rhel9@sha256:ee84abe0ae4bb7a905fbfa99fe193428cf3842a895f081696f6cde04230d3255"  | tr ' ' '\n')
-    RENDER_OUT_FBC=$(cat <<EOF
+    RENDER_OUT_FBC=$(mktemp)
+    cat <<EOF > "$RENDER_OUT_FBC"
 {
     "schema": "olm.channel",
     "name": "dev-preview",
@@ -1260,14 +1261,14 @@ EOF
     "properties": []
 }
 EOF
-)
     run get_highest_version_from_bundles_list "${RENDER_OUT_FBC}" "${PACKAGE_NAME}" "${CHANNEL_NAME}" "${BUNDLE_IMAGES}"
     EXPECTED_RESPONSE="registry.redhat.io/container-native-virtualization/hco-bundle-registry-rhel9@sha256:ee84abe0ae4bb7a905fbfa99fe193428cf3842a895f081696f6cde04230d3255"
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
 
 @test "Get bundle suggested namespace: success" {
-    RENDER_OUT_BUNDLE=$(cat <<EOF
+    RENDER_OUT_BUNDLE=$(mktemp)
+    cat <<EOF > "$RENDER_OUT_BUNDLE"
 {
     "schema": "olm.bundle",
     "name": "kubevirt-hyperconverged-operator.v4.16.7",
@@ -1285,14 +1286,14 @@ EOF
     ]
 }
 EOF
-)
     run get_bundle_suggested_namespace "${RENDER_OUT_BUNDLE}"
     EXPECTED_RESPONSE="openshift-cnv"
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
 
 @test "Get bundle suggested namespace: suggested namespace is not defined" {
-    RENDER_OUT_BUNDLE=$(cat <<EOF
+    RENDER_OUT_BUNDLE=$(mktemp)
+    cat <<EOF > "$RENDER_OUT_BUNDLE"
 {
     "schema": "olm.bundle",
     "name": "kubevirt-hyperconverged-operator.v4.16.7",
@@ -1306,14 +1307,14 @@ EOF
     ]
 }
 EOF
-)
     run get_bundle_suggested_namespace "${RENDER_OUT_BUNDLE}"
     EXPECTED_RESPONSE=null
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
 
 @test "Get bundle suggested namespace: no olm.csv.metadata found" {
-    RENDER_OUT_BUNDLE=$(cat <<EOF
+    RENDER_OUT_BUNDLE=$(mktemp)
+    cat <<EOF > "$RENDER_OUT_BUNDLE"
 {
     "schema": "olm.bundle",
     "name": "kubevirt-hyperconverged-operator.v4.16.7",
@@ -1322,14 +1323,14 @@ EOF
     "properties": []
 }
 EOF
-)
     run get_bundle_suggested_namespace "${RENDER_OUT_BUNDLE}"
     EXPECTED_RESPONSE="get_bundle_suggested_namespace: No 'olm.csv.metadata' entry found in bundle properties"
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
 }
 
 @test "Get bundle install modes: success" {
-    RENDER_OUT_BUNDLE=$(cat <<EOF
+    RENDER_OUT_BUNDLE=$(mktemp)
+    cat <<EOF > "$RENDER_OUT_BUNDLE"
 {
     "schema": "olm.bundle",
     "name": "kubevirt-hyperconverged-operator.v4.16.7",
@@ -1362,14 +1363,14 @@ EOF
     ]
 }
 EOF
-)
     run get_bundle_install_modes "${RENDER_OUT_BUNDLE}"
     EXPECTED_RESPONSE=$(echo "OwnNamespace SingleNamespace"  | tr ' ' '\n')
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
 
 @test "Get bundle install modes: no install modes found" {
-    RENDER_OUT_BUNDLE=$(cat <<EOF
+    RENDER_OUT_BUNDLE=$(mktemp)
+    cat <<EOF > "$RENDER_OUT_BUNDLE"
 {
     "schema": "olm.bundle",
     "name": "kubevirt-hyperconverged-operator.v4.16.7",
@@ -1383,14 +1384,14 @@ EOF
     ]
 }
 EOF
-)
     run get_bundle_install_modes "${RENDER_OUT_BUNDLE}"
     EXPECTED_RESPONSE="get_bundle_install_modes: No supported install modes found in bundle"
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
 }
 
 @test "Get bundle install modes: no olm.csv.metadata found" {
-    RENDER_OUT_BUNDLE=$(cat <<EOF
+    RENDER_OUT_BUNDLE=$(mktemp)
+    cat <<EOF > "$RENDER_OUT_BUNDLE"
 {
     "schema": "olm.bundle",
     "name": "kubevirt-hyperconverged-operator.v4.16.7",
@@ -1399,14 +1400,14 @@ EOF
     "properties": []
 }
 EOF
-)
     run get_bundle_install_modes "${RENDER_OUT_BUNDLE}"
     EXPECTED_RESPONSE="get_bundle_install_modes: No 'olm.csv.metadata' entry found in bundle properties"
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
 }
 
 @test "Get bundle name: success" {
-    RENDER_OUT_BUNDLE=$(cat <<EOF
+    RENDER_OUT_BUNDLE=$(mktemp)
+    cat <<EOF > "$RENDER_OUT_BUNDLE"
 {
     "schema": "olm.bundle",
     "name": "kubevirt-hyperconverged-operator.v4.16.7",
@@ -1414,7 +1415,6 @@ EOF
     "image": "registry.redhat.io/container-native-virtualization/hco-bundle-registry-rhel9@sha256:5a75810bdebb97c63cad1d25fe0399ed189b558b50ee6dc1cb61f75f9116aa89"
 }
 EOF
-)
     run get_bundle_name "${RENDER_OUT_BUNDLE}"
     EXPECTED_RESPONSE="kubevirt-hyperconverged-operator.v4.16.7"
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
