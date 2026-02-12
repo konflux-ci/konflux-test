@@ -630,6 +630,52 @@ render_opm() {
   fi
 }
 
+# This function is similar to render_opm but returns the path to the rendered file. This is to avoid reading the entire
+# render output into a variable that causes issues when rendering large index images.
+render_opm_to_file() {
+  local RENDER_TARGET=""
+
+  render_opm_to_file_usage()
+  {
+    echo "
+  render_opm_to_file -t RENDER_TARGET
+  " >&2
+    exit 2
+  }
+
+  local OPTIND opt
+  while getopts "t:" opt; do
+      case "${opt}" in
+          t)
+              RENDER_TARGET="${OPTARG}" ;;
+          *)
+              render_opm_to_file_usage ;;
+      esac
+  done
+
+  if [ -z "$RENDER_TARGET" ]; then
+    echo "render_opm_to_file: missing keyword parameter (-t RENDER_TARGET)" >&2
+    exit 2
+  fi
+
+  local CACHE_DIR CACHE_SUBDIR RENDER_OUTPUT
+  # shellcheck disable=SC2001
+  CACHE_DIR=$(echo "$OPM_RENDER_CACHE" | sed 's:/*$::')
+  # Ensure that the cache directory is present
+  mkdir -p "$CACHE_DIR"
+  CACHE_SUBDIR=$(parse_image_url "$RENDER_TARGET" | jq -jr '.registry_repository + if .tag != "" then "/" + .tag else "" end + if .digest != "" then "/" + .digest else "" end')
+  if [[ -d "$CACHE_DIR/$CACHE_SUBDIR" ]]; then
+    echo "$CACHE_DIR/$CACHE_SUBDIR/catalog"
+  else
+    mkdir -p "$CACHE_DIR/$CACHE_SUBDIR"
+    if ! retry opm render "$RENDER_TARGET" > "$CACHE_DIR/$CACHE_SUBDIR/catalog"; then
+      echo "render_opm_to_file: could not render catalog $RENDER_TARGET" >&2
+      exit 1
+    fi
+    echo "$CACHE_DIR/$CACHE_SUBDIR/catalog"
+  fi
+}
+
 # This helper function can be used to render and extract information from a FBC
 # fragment and its matching index image (i.e according to the tag for the fragment's
 # base image). If the index image is provided with a tag or digest it will use that
