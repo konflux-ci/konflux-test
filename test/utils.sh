@@ -458,7 +458,7 @@ get_ocp_version_from_fbc_fragment() {
   fi
 }
 
-# Given output of `opm render` command and package name, this function returns
+# Given path of file with output of `opm render` command and package name, this function returns
 # all unique bundles for the given package in the catalog
 extract_unique_bundles_from_catalog() {
   local RENDER_OUT="$1"
@@ -476,10 +476,10 @@ extract_unique_bundles_from_catalog() {
 
   # Jq query to extract unique bundles from `opm render` command output
   local jq_unique_bundles='select( .package == "'$PACKAGE_NAME'" ) | select(.schema == "olm.bundle") | select( [.properties[]|select(.type == "olm.deprecated")] == []) | "\(.image)"'
-  echo "$RENDER_OUT" | tr -d '\000-\031' | jq -r "$jq_unique_bundles" | jq -Rc 'split("\n")'
+  tr -d '\000-\031' < "$RENDER_OUT" | jq -r "$jq_unique_bundles" | jq -Rc 'split("\n")'
 }
 
-# Given output of `opm render` command and package name, this function returns
+# Given path of file with output of `opm render` command and package name, this function returns
 # all related images for the given package in the catalog
 extract_related_images_from_catalog() {
   local RENDER_OUT="$1"
@@ -498,10 +498,10 @@ extract_related_images_from_catalog() {
   # Jq query to extract related images from `opm render` command output
   local jq_related_images='select( .package == "'$PACKAGE_NAME'" ) | select(.schema == "olm.bundle") | select( [.properties[]|select(.type == "olm.deprecated")] == []) | ["\(.relatedImages[]? | .image)"]'
   # flatten the lists into one and determine the unique values
-  echo "$RENDER_OUT" | tr -d '\000-\031' | jq "$jq_related_images" | jq -s "flatten(1) | unique"
+  tr -d '\000-\031' < "$RENDER_OUT" | jq "$jq_related_images" | jq -s "flatten(1) | unique"
 }
 
-# Given output of `opm render` command and package name, this function returns
+# Given path of file with output of `opm render` command and package name, this function returns
 # unique package names in the catalog
 extract_unique_package_names_from_catalog() {
   local RENDER_OUT="$1"
@@ -510,25 +510,7 @@ extract_unique_package_names_from_catalog() {
     echo "extract_unique_package_names_from_catalog: missing positional parameter \$1 (opm render output)" >&2
     exit 2
   fi
-
-  echo "$RENDER_OUT" | tr -d '\000-\031' | jq -r 'select(.schema == "olm.package") | .name'
-}
-
-# Given output file of `opm render` command and package name, this function returns
-# unique package names in the catalog
-extract_unique_package_names_from_catalog_file() {
-  local RENDER_FILE="$1"
-
-  if [ -z "$RENDER_FILE" ]; then
-    echo "extract_unique_package_names_from_catalog_file: missing positional parameter \$1 (opm render output file)" >&2
-    exit 2
-  fi
-  if [ ! -s "$RENDER_FILE" ]; then
-    echo "extract_unique_package_names_from_catalog_file: file not found or empty: $RENDER_FILE" >&2
-    exit 2
-  fi
-
-  tr -d '\000-\031' < "$RENDER_FILE" | jq -r 'select(.schema == "olm.package") | .name'
+  tr -d '\000-\031' < "$RENDER_OUT" | jq -r 'select(.schema == "olm.package") | .name'
 }
 
 # This function can be used to get the target catalog image for a FBC fragment.
@@ -612,53 +594,7 @@ render_opm() {
     exit 2
   fi
 
-  local CACHE_DIR CACHE_SUBDIR RENDER_OUTPUT
-  # shellcheck disable=SC2001
-  CACHE_DIR=$(echo "$OPM_RENDER_CACHE" | sed 's:/*$::')
-  # Ensure that the cache directory is present
-  mkdir -p "$CACHE_DIR"
-  CACHE_SUBDIR=$(parse_image_url "$RENDER_TARGET" | jq -jr '.registry_repository + if .tag != "" then "/" + .tag else "" end + if .digest != "" then "/" + .digest else "" end')
-  if [[ -d "$CACHE_DIR/$CACHE_SUBDIR" ]]; then
-    cat "$CACHE_DIR/$CACHE_SUBDIR/catalog"
-  else
-    if ! RENDER_OUTPUT=$(retry opm render "$RENDER_TARGET"); then
-      echo "render_opm: could not render catalog $RENDER_TARGET" >&2
-      exit 1
-    fi
-    mkdir -p "$CACHE_DIR/$CACHE_SUBDIR"
-    echo "$RENDER_OUTPUT" | tee "$CACHE_DIR/$CACHE_SUBDIR/catalog"
-  fi
-}
-
-# This function is similar to render_opm but returns the path to the rendered file. This is to avoid reading the entire
-# render output into a variable that causes issues when rendering large index images.
-render_opm_to_file() {
-  local RENDER_TARGET=""
-
-  render_opm_to_file_usage()
-  {
-    echo "
-  render_opm_to_file -t RENDER_TARGET
-  " >&2
-    exit 2
-  }
-
-  local OPTIND opt
-  while getopts "t:" opt; do
-      case "${opt}" in
-          t)
-              RENDER_TARGET="${OPTARG}" ;;
-          *)
-              render_opm_to_file_usage ;;
-      esac
-  done
-
-  if [ -z "$RENDER_TARGET" ]; then
-    echo "render_opm_to_file: missing keyword parameter (-t RENDER_TARGET)" >&2
-    exit 2
-  fi
-
-  local CACHE_DIR CACHE_SUBDIR RENDER_OUTPUT
+  local CACHE_DIR CACHE_SUBDIR
   # shellcheck disable=SC2001
   CACHE_DIR=$(echo "$OPM_RENDER_CACHE" | sed 's:/*$::')
   # Ensure that the cache directory is present
@@ -669,7 +605,7 @@ render_opm_to_file() {
   else
     mkdir -p "$CACHE_DIR/$CACHE_SUBDIR"
     if ! retry opm render "$RENDER_TARGET" > "$CACHE_DIR/$CACHE_SUBDIR/catalog"; then
-      echo "render_opm_to_file: could not render catalog $RENDER_TARGET" >&2
+      echo "render_opm: could not render catalog $RENDER_TARGET" >&2
       exit 1
     fi
     echo "$CACHE_DIR/$CACHE_SUBDIR/catalog"
@@ -974,7 +910,7 @@ extract_related_images_from_bundle(){
   # opm render on a bundle will always add the bundle. We want to make sure that
   # we strip that out.
   jq_related_images='[.relatedImages[]?.image] - ["'${image}'"] | .[]'
-  related_images=$(echo "${bundle_render_out}" | tr -d '\000-\031' | jq -r "$jq_related_images")
+  related_images=$(tr -d '\000-\031' < "${bundle_render_out}" | jq -r "$jq_related_images")
 
   echo "${related_images}" | tr ' ' '\n'
 }
@@ -1048,16 +984,16 @@ get_package_from_catalog() {
   fi
 
   # Count 'olm.package' entries in the rendered FBC output
-  package_count=$(echo "$RENDER_OUT_FBC" | tr -d '\000-\031' | jq -s '[.[] | select(.schema == "olm.package")] | length')
+  package_count=$(tr -d '\000-\031' < "$RENDER_OUT_FBC" | jq -s '[.[] | select(.schema == "olm.package")] | length')
 
   if [[ "$package_count" -eq 1 ]]; then
     # Return the single package name
-    package_name=$(echo "$RENDER_OUT_FBC" | tr -d '\000-\031' | jq -r 'select(.schema == "olm.package") | .name')
+    package_name=$(tr -d '\000-\031' < "$RENDER_OUT_FBC" | jq -r 'select(.schema == "olm.package") | .name')
     echo "$package_name"
   else
     # Handle multiple packages
     # Find the highest bundle version for each package based on the entries in their respective defaulChannel
-    package_name=$(echo "$RENDER_OUT_FBC" | tr -d '\000-\031' | jq -r '
+    package_name=$(tr -d '\000-\031' < "$RENDER_OUT_FBC" | jq -r '
     reduce inputs as $obj (
       {
         packages: [],
@@ -1094,7 +1030,7 @@ get_channel_from_catalog() {
   fi
 
   # Extract the defaultChannel for a given package
-  default_channel=$(echo "$RENDER_OUT_FBC" | tr -d '\000-\031' | jq -r --arg PACKAGE_NAME "$PACKAGE_NAME" '
+  default_channel=$(tr -d '\000-\031' < "$RENDER_OUT_FBC" | jq -r --arg PACKAGE_NAME "$PACKAGE_NAME" '
     select(.schema == "olm.package" and .name == $PACKAGE_NAME) | .defaultChannel
   ')
 
@@ -1122,7 +1058,7 @@ get_highest_bundle_version() {
 
   # Extract the highest bundle version
   local highest_bundle
-  highest_bundle=$(echo "$RENDER_OUT_FBC" | jq -r --arg package "$PACKAGE_NAME" --arg channel "$CHANNEL_NAME" '
+  highest_bundle=$(tr -d '\000-\031' < "$RENDER_OUT_FBC" | jq -r --arg package "$PACKAGE_NAME" --arg channel "$CHANNEL_NAME" '
     select(.schema == "olm.channel" and .package == $package and .name == $channel) |
     .entries | map({
       name: .name,
@@ -1138,7 +1074,7 @@ get_highest_bundle_version() {
 
   # Find the corresponding image name for the highest bundle
   local bundle_image
-  bundle_image=$(echo "$RENDER_OUT_FBC" | jq -r --arg bundle "$highest_bundle" '
+  bundle_image=$(tr -d '\000-\031' < "$RENDER_OUT_FBC" | jq -r --arg bundle "$highest_bundle" '
     select(.schema == "olm.bundle" and .name == $bundle) | .image
   ')
 
@@ -1165,7 +1101,7 @@ get_bundle_arches() {
     exit 2
   fi
 
-  arches=$(echo "$RENDER_OUT_BUNDLE" | tr -d '\000-\031' | jq -r '
+  arches=$(tr -d '\000-\031' < "$RENDER_OUT_BUNDLE" | jq -r '
     .properties[]
     | select(.type == "olm.csv.metadata")
     | (.value.labels // {})
@@ -1197,7 +1133,7 @@ group_bundle_images_by_package() {
   fi
 
   # Group bundle images by package
-  package_image_map=$(echo "$RENDER_OUT_FBC" | tr -d '\000-\031' | jq -cs \
+  package_image_map=$(tr -d '\000-\031' < "$RENDER_OUT_FBC" | jq -cs \
     --argjson bundles "$(printf '%s\n' "${BUNDLE_IMAGES[@]}" | jq -R . | jq -s .)" \
     '[.[] | select(.schema == "olm.bundle" and (.image as $img | $bundles | index($img) != null))] |
       group_by(.package) |
@@ -1228,13 +1164,13 @@ get_highest_version_from_bundles_list() {
 
   # Extract bundle names from `olm.channel`
   local bundle_names_from_channel
-  bundle_names_from_channel=$(echo "$RENDER_OUT_FBC" | jq -nc --arg PACKAGE_NAME "$PACKAGE_NAME" --arg CHANNEL_NAME "$CHANNEL_NAME" '
+  bundle_names_from_channel=$(tr -d '\000-\031' < "$RENDER_OUT_FBC" | jq -nc --arg PACKAGE_NAME "$PACKAGE_NAME" --arg CHANNEL_NAME "$CHANNEL_NAME" '
     [inputs | select(.schema == "olm.channel" and .package == $PACKAGE_NAME and .name == $CHANNEL_NAME)
     | .entries[].name] | unique')
 
   # Extract bundles from `olm.bundle` matching given BUNDLE_IMAGES list
   local valid_bundles
-  valid_bundles=$(echo "$RENDER_OUT_FBC" | jq -nc --argjson bundle_names "$bundle_names_from_channel" --argjson images "$(echo "$BUNDLE_IMAGES" | jq -R -s -c 'split("\n") | map(select(length > 0))')" '
+  valid_bundles=$(tr -d '\000-\031' < "$RENDER_OUT_FBC" | jq -nc --argjson bundle_names "$bundle_names_from_channel" --argjson images "$(echo "$BUNDLE_IMAGES" | jq -R -s -c 'split("\n") | map(select(length > 0))')" '
     [inputs | select(.schema == "olm.bundle" and (.name | IN($bundle_names[])) and (.image | IN($images[])))
     | { version: (.name | capture("v(?<version>[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9]+)?)$").version // "0"), image: .image }]')
 
@@ -1265,7 +1201,7 @@ get_bundle_suggested_namespace() {
 
   # Check if 'olm.csv.metadata' exists in the bundle
   local metadata_exists
-  metadata_exists=$(echo "$RENDER_OUT_BUNDLE" | tr -d '\000-\031' | jq -e '
+  metadata_exists=$(tr -d '\000-\031' < "$RENDER_OUT_BUNDLE" | jq -e '
     any(.properties[]?; .type == "olm.csv.metadata")' 2>/dev/null)
 
   if [[ "$metadata_exists" != "true" ]]; then
@@ -1274,7 +1210,7 @@ get_bundle_suggested_namespace() {
   fi
 
   local namespace
-  namespace=$(echo "$RENDER_OUT_BUNDLE" | tr -d '\000-\031' | jq -r '
+  namespace=$(tr -d '\000-\031' < "$RENDER_OUT_BUNDLE" | jq -r '
     .properties[]? 
     | select(.type == "olm.csv.metadata" and (.value | type == "object"))
     | .value.annotations["operatorframework.io/suggested-namespace"]')
@@ -1295,7 +1231,7 @@ get_bundle_install_modes() {
 
   # Check if 'olm.csv.metadata' exists in the bundle
   local metadata_exists
-  metadata_exists=$(echo "$RENDER_OUT_BUNDLE" | tr -d '\000-\031' | jq -e '
+  metadata_exists=$(tr -d '\000-\031' < "$RENDER_OUT_BUNDLE" | jq -e '
     any(.properties[]?; .type == "olm.csv.metadata")' 2>/dev/null)
 
   if [[ "$metadata_exists" != "true" ]]; then
@@ -1304,7 +1240,7 @@ get_bundle_install_modes() {
   fi
 
   local install_modes
-  install_modes=$(echo "$RENDER_OUT_BUNDLE" | tr -d '\000-\031' | jq -r '
+  install_modes=$(tr -d '\000-\031' < "$RENDER_OUT_BUNDLE" | jq -r '
     .properties[]? 
     | select(.type == "olm.csv.metadata") 
     | .value.installModes[]? 
@@ -1332,7 +1268,7 @@ get_bundle_name() {
   fi
 
   local bundle_name
-  bundle_name=$(echo "$RENDER_OUT_BUNDLE" | tr -d '\000-\031' | jq -r '.name')
+  bundle_name=$(tr -d '\000-\031' < "$RENDER_OUT_BUNDLE" | jq -r '.name')
 
   # Ensure the bundle name is not empty
   if [[ -z "$bundle_name" || "$bundle_name" == "null" ]]; then
