@@ -514,6 +514,23 @@ extract_unique_package_names_from_catalog() {
   echo "$RENDER_OUT" | tr -d '\000-\031' | jq -r 'select(.schema == "olm.package") | .name'
 }
 
+# Given output file of `opm render` command and package name, this function returns
+# unique package names in the catalog
+extract_unique_package_names_from_catalog_file() {
+  local RENDER_FILE="$1"
+
+  if [ -z "$RENDER_FILE" ]; then
+    echo "extract_unique_package_names_from_catalog_file: missing positional parameter \$1 (opm render output file)" >&2
+    exit 2
+  fi
+  if [ ! -s "$RENDER_FILE" ]; then
+    echo "extract_unique_package_names_from_catalog_file: file not found or empty: $RENDER_FILE" >&2
+    exit 2
+  fi
+
+  tr -d '\000-\031' < "$RENDER_FILE" | jq -r 'select(.schema == "olm.package") | .name'
+}
+
 # This function can be used to get the target catalog image for a FBC fragment.
 # context: https://konflux-ci.dev/architecture/ADR/0026-specifying-ocp-targets-for-fbc.html
 get_target_fbc_catalog_image() {
