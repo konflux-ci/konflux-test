@@ -640,6 +640,82 @@ teardown() {
     EXPECTED_RESPONSE='get_image_manifests: The image manifest could not be inspected'
 }
 
+@test "render_opm with --file returns path" {
+    run render_opm -t "registry.redhat.io/redhat/redhat-operator-index:v4.15" --file
+    EXPECTED_RESPONSE="${OPM_RENDER_CACHE}/registry.redhat.io/redhat/redhat-operator-index/v4.15/catalog"
+    echo "${output}"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "render_opm without --file returns JSON" {
+    run render_opm -t "registry.redhat.io/redhat/redhat-operator-index:v4.15"
+    EXPECTED_RESPONSE='{"schema": "olm.package", "name": "rhbk-operator"}{"schema": "olm.bundle", "package": "rhbk-operator", "image": "registry.redhat.io/rhbk/keycloak-operator-bundle@random-image", "properties":[], "relatedImages": [{"name": "foo-baz", "image": "registry.redhat.io/foo/baz@sha256:my-sha"}]}{"schema": "olm.package", "name": "not-rhbk-operator"}{"schema": "olm.bundle", "package": "not-rhbk-operator", "image": "registry.redhat.io/not-rhbk/operator-bundle@not-my-other-sha", "properties":[], "relatedImages": [{"name": "foo-baz", "image": "registry.redhat.io/foo/bar@sha256:my-bar-sha"}]}'
+    echo "${output}"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get unique packages from catalog: without --file flag" {
+    RENDER_OUT='{"schema": "olm.package", "name": "rhbk-operator"}{"schema": "olm.bundle", "package": "rhbk-operator", "image": "registry.redhat.io/rhbk/keycloak-operator-bundle@random-image", "properties":[], "relatedImages": [{"name": "foo-baz", "image": "registry.redhat.io/foo/baz@sha256:my-sha"}]}{"schema": "olm.package", "name": "not-rhbk-operator"}{"schema": "olm.bundle", "package": "not-rhbk-operator", "image": "registry.redhat.io/not-rhbk/operator-bundle@not-my-other-sha", "properties":[], "relatedImages": [{"name": "foo-baz", "image": "registry.redhat.io/foo/bar@sha256:my-bar-sha"}]}'
+    EXPECTED_RESPONSE=$(cat <<EOF
+rhbk-operator
+not-rhbk-operator
+EOF
+)
+    run extract_unique_package_names_from_catalog "${RENDER_OUT}"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get unique packages from catalog: with --file flag" {
+
+    RENDER_OUT=$(mktemp)
+    cat <<EOF > "${RENDER_OUT}"
+{"schema": "olm.package", "name": "rhbk-operator"}{"schema": "olm.bundle", "package": "rhbk-operator", "image": "registry.redhat.io/rhbk/keycloak-operator-bundle@random-image", "properties":[], "relatedImages": [{"name": "foo-baz", "image": "registry.redhat.io/foo/baz@sha256:my-sha"}]}{"schema": "olm.package", "name": "not-rhbk-operator"}{"schema": "olm.bundle", "package": "not-rhbk-operator", "image": "registry.redhat.io/not-rhbk/operator-bundle@not-my-other-sha", "properties":[], "relatedImages": [{"name": "foo-baz", "image": "registry.redhat.io/foo/bar@sha256:my-bar-sha"}]}
+EOF
+
+    EXPECTED_RESPONSE=$(cat <<EOF
+rhbk-operator
+not-rhbk-operator
+EOF
+)
+    run extract_unique_package_names_from_catalog "${RENDER_OUT}" --file
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get unique bundles from catalog: without --file flag" {
+
+    RENDER_OUT='{"schema": "olm.package", "name": "rhbk-operator"}{"schema": "olm.bundle", "package": "rhbk-operator", "image": "registry.redhat.io/rhbk/keycloak-operator-bundle@random-image", "properties":[], "relatedImages": [{"name": "foo-baz", "image": "registry.redhat.io/foo/baz@sha256:my-sha"}]}{"schema": "olm.package", "name": "not-rhbk-operator"}{"schema": "olm.bundle", "package": "not-rhbk-operator", "image": "registry.redhat.io/not-rhbk/operator-bundle@not-my-other-sha", "properties":[], "relatedImages": [{"name": "foo-baz", "image": "registry.redhat.io/foo/bar@sha256:my-bar-sha"}]}'
+    EXPECTED_RESPONSE='["registry.redhat.io/rhbk/keycloak-operator-bundle@random-image"]'
+    run extract_unique_bundles_from_catalog "$RENDER_OUT" "rhbk-operator"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get unique bundles from catalog: with --file flag" {
+    RENDER_OUT=$(mktemp)
+    cat <<EOF > "${RENDER_OUT}"
+{"schema": "olm.package", "name": "rhbk-operator"}{"schema": "olm.bundle", "package": "rhbk-operator", "image": "registry.redhat.io/rhbk/keycloak-operator-bundle@random-image", "properties":[], "relatedImages": [{"name": "foo-baz", "image": "registry.redhat.io/foo/baz@sha256:my-sha"}]}{"schema": "olm.package", "name": "not-rhbk-operator"}{"schema": "olm.bundle", "package": "not-rhbk-operator", "image": "registry.redhat.io/not-rhbk/operator-bundle@not-my-other-sha", "properties":[], "relatedImages": [{"name": "foo-baz", "image": "registry.redhat.io/foo/bar@sha256:my-bar-sha"}]}
+EOF
+    EXPECTED_RESPONSE='["registry.redhat.io/rhbk/keycloak-operator-bundle@random-image"]'
+    run extract_unique_bundles_from_catalog "$RENDER_OUT" "rhbk-operator" --file
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get related images from catalog: without --file flag" {
+    RENDER_OUT='{"schema": "olm.package", "name": "rhbk-operator"}{"schema": "olm.bundle", "package": "rhbk-operator", "image": "registry.redhat.io/rhbk/keycloak-operator-bundle@random-image", "properties":[], "relatedImages": [{"name": "foo-baz", "image": "registry.redhat.io/foo/baz@sha256:my-sha"}]}{"schema": "olm.package", "name": "not-rhbk-operator"}{"schema": "olm.bundle", "package": "not-rhbk-operator", "image": "registry.redhat.io/not-rhbk/operator-bundle@not-my-other-sha", "properties":[], "relatedImages": [{"name": "foo-baz", "image": "registry.redhat.io/foo/bar@sha256:my-bar-sha"}]}'
+    EXPECTED_RESPONSE=$(echo '["registry.redhat.io/foo/bar@sha256:my-bar-sha"]' | jq .)
+    run extract_related_images_from_catalog "$RENDER_OUT" "not-rhbk-operator"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get related images from catalog: with --file flag" {
+    RENDER_OUT=$(mktemp)
+    cat <<EOF > "${RENDER_OUT}"
+{"schema": "olm.package", "name": "rhbk-operator"}{"schema": "olm.bundle", "package": "rhbk-operator", "image": "registry.redhat.io/rhbk/keycloak-operator-bundle@random-image", "properties":[], "relatedImages": [{"name": "foo-baz", "image": "registry.redhat.io/foo/baz@sha256:my-sha"}]}{"schema": "olm.package", "name": "not-rhbk-operator"}{"schema": "olm.bundle", "package": "not-rhbk-operator", "image": "registry.redhat.io/not-rhbk/operator-bundle@not-my-other-sha", "properties":[], "relatedImages": [{"name": "foo-baz", "image": "registry.redhat.io/foo/bar@sha256:my-bar-sha"}]}
+EOF
+    EXPECTED_RESPONSE=$(echo '["registry.redhat.io/foo/bar@sha256:my-bar-sha"]' | jq .)
+    run extract_related_images_from_catalog "$RENDER_OUT" "not-rhbk-operator" --file
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
 @test "Get Unreleased Bundle: missing FBC_FRAGMENT" {
     run get_unreleased_bundles
     EXPECTED_RESPONSE="get_unreleased_bundles: missing keyword parameter (-i FBC_FRAGMENT)"

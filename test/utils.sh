@@ -86,6 +86,12 @@ make_result_json() {
   echo "${OUTPUT}"
 }
 
+# Print usage string and exit 2
+print_usage_and_exit() {
+  local usage=$1
+  echo "${usage}" >&2
+  exit 2
+}
 
 # Parse test result and genarate TEST_OUTPUT
 parse_test_output() {
@@ -463,20 +469,40 @@ get_ocp_version_from_fbc_fragment() {
 extract_unique_bundles_from_catalog() {
   local RENDER_OUT="$1"
   local PACKAGE_NAME="$2"
+  local render_out_is_file=false
+  local usage='Usage: extract_unique_bundles_from_catalog: OPM_RENDER_OUTPUT PACKAGE_NAME [-f|--file (OPM_RENDER_OUTPUT is a file)]'
 
   if [ -z "$RENDER_OUT" ]; then
     echo "extract_unique_bundles_from_catalog: missing positional parameter \$1 (opm render output)" >&2
-    exit 2
+    print_usage_and_exit "${usage}"
   fi
 
   if [ -z "$PACKAGE_NAME" ]; then
     echo "extract_unique_bundles_from_catalog: missing positional parameter \$2 (package name)" >&2
-    exit 2
+    print_usage_and_exit "${usage}"
   fi
+
+  shift 2
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -f|--file)
+        render_out_is_file=true
+        shift 1
+        ;;
+      *)
+        echo "extract_unique_bundles_from_catalog: Unknown option $1" >&2
+        print_usage_and_exit "${usage}"
+        ;;
+    esac
+  done
 
   # Jq query to extract unique bundles from `opm render` command output
   local jq_unique_bundles='select( .package == "'$PACKAGE_NAME'" ) | select(.schema == "olm.bundle") | select( [.properties[]|select(.type == "olm.deprecated")] == []) | "\(.image)"'
-  echo "$RENDER_OUT" | tr -d '\000-\031' | jq -r "$jq_unique_bundles" | jq -Rc 'split("\n")'
+  if [[ "${render_out_is_file}" == true ]]; then
+    tr -d '\000-\031' < "$RENDER_OUT" | jq -r "$jq_unique_bundles" | jq -Rc 'split("\n")'
+  else
+    echo "$RENDER_OUT" | tr -d '\000-\031' | jq -r "$jq_unique_bundles" | jq -Rc 'split("\n")'
+  fi
 }
 
 # Given output of `opm render` command and package name, this function returns
@@ -484,6 +510,8 @@ extract_unique_bundles_from_catalog() {
 extract_related_images_from_catalog() {
   local RENDER_OUT="$1"
   local PACKAGE_NAME="$2"
+  local render_out_is_file=false
+  local usage='Usage: extract_related_images_from_catalog: OPM_RENDER_OUTPUT PACKAGE_NAME [-f|--file (OPM_RENDER_OUTPUT is a file)]'
 
   if [ -z "$RENDER_OUT" ]; then
     echo "extract_related_images_from_catalog: missing positional parameter \$1 (opm render output)" >&2
@@ -495,40 +523,69 @@ extract_related_images_from_catalog() {
     exit 2
   fi
 
+  shift 2
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -f|--file)
+        render_out_is_file=true
+        shift 1
+        ;;
+      *)
+        echo "extract_related_images_from_catalog: Unknown option $1" >&2
+        print_usage_and_exit "${usage}"
+        ;;
+    esac
+  done
+
   # Jq query to extract related images from `opm render` command output
   local jq_related_images='select( .package == "'$PACKAGE_NAME'" ) | select(.schema == "olm.bundle") | select( [.properties[]|select(.type == "olm.deprecated")] == []) | ["\(.relatedImages[]? | .image)"]'
+
   # flatten the lists into one and determine the unique values
-  echo "$RENDER_OUT" | tr -d '\000-\031' | jq "$jq_related_images" | jq -s "flatten(1) | unique"
+  if [[ "${render_out_is_file}" == true ]]; then
+    tr -d '\000-\031' < "$RENDER_OUT" | jq "$jq_related_images" | jq -s "flatten(1) | unique"
+  else
+    echo "$RENDER_OUT" | tr -d '\000-\031' | jq "$jq_related_images" | jq -s "flatten(1) | unique"
+  fi
 }
 
 # Given output of `opm render` command and package name, this function returns
 # unique package names in the catalog
 extract_unique_package_names_from_catalog() {
-  local RENDER_OUT="$1"
 
-  if [ -z "$RENDER_OUT" ]; then
+  local usage='Usage: extract_unique_package_names_from_catalog: OPM_RENDER_OUTPUT [-f|--file (OPM_RENDER_OUTPUT is a file)]'
+  local render_out_is_file=false
+
+  print_usage() {
+    echo "${usage}" >&2
+    exit 2
+  }
+
+  if [[ $# -eq 0 ]]; then
     echo "extract_unique_package_names_from_catalog: missing positional parameter \$1 (opm render output)" >&2
-    exit 2
+    print_usage
   fi
 
-  echo "$RENDER_OUT" | tr -d '\000-\031' | jq -r 'select(.schema == "olm.package") | .name'
-}
+  local RENDER_OUT="$1"
+  shift 1
 
-# Given output file of `opm render` command and package name, this function returns
-# unique package names in the catalog
-extract_unique_package_names_from_catalog_file() {
-  local RENDER_FILE="$1"
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -f|--file)
+        render_out_is_file=true
+        shift 1
+        ;;
+      *)
+        echo "extract_unique_package_names_from_catalog: Unknown option $1" >&2
+        print_usage
+        ;;
+    esac
+  done
 
-  if [ -z "$RENDER_FILE" ]; then
-    echo "extract_unique_package_names_from_catalog_file: missing positional parameter \$1 (opm render output file)" >&2
-    exit 2
+  if [[ "$render_out_is_file" == true ]]; then
+    tr -d '\000-\031' < "$RENDER_OUT" | jq -r 'select(.schema == "olm.package") | .name'
+  else
+    echo "$RENDER_OUT" | tr -d '\000-\031' | jq -r 'select(.schema == "olm.package") | .name'
   fi
-  if [ ! -s "$RENDER_FILE" ]; then
-    echo "extract_unique_package_names_from_catalog_file: file not found or empty: $RENDER_FILE" >&2
-    exit 2
-  fi
-
-  tr -d '\000-\031' < "$RENDER_FILE" | jq -r 'select(.schema == "olm.package") | .name'
 }
 
 # This function can be used to get the target catalog image for a FBC fragment.
@@ -588,91 +645,62 @@ get_target_fbc_catalog_image() {
 # rendered catalogs will be stored in a directory matching the index's digest.
 render_opm() {
   local RENDER_TARGET=""
+  local RETURN_PATH=false
+  local usage="Usage: render_opm -t/--target <TARGET> [-f/--file]"
 
-  render_opm_usage()
-  {
-    echo "
-  render_opm -t RENDER_TARGET
-  " >&2
-    exit 2
-  }
+  # Show usage if no arguments provided
+  if [[ $# -eq 0 ]]; then
+    print_usage_and_exit "${usage}"
+  fi
 
-  local OPTIND opt
-  while getopts "t:" opt; do
-      case "${opt}" in
-          t)
-              RENDER_TARGET="${OPTARG}" ;;
-          *)
-              render_opm_usage ;;
-      esac
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -t|--target)
+        if [[ $# -ge 2 && "$2" != -* ]]; then
+          RENDER_TARGET="$2"
+          shift 2
+        else
+          echo "render_opm: \$1 requires a target argument" >&2
+          print_usage_and_exit "${usage}"
+        fi
+        ;;
+      -f|--file)
+        RETURN_PATH=true
+        shift 1
+        ;;
+      *)
+        echo "render_opm: Unknown option '$1'" >&2
+        print_usage_and_exit "${usage}"
+        ;;
+    esac
   done
 
-  if [ -z "$RENDER_TARGET" ]; then
-    echo "render_opm: missing keyword parameter (-t RENDER_TARGET)" >&2
+  # Validation
+  if [[ -z "$RENDER_TARGET" ]]; then
+    echo "render_opm: missing mandatory parameter (-t/--target)" >&2
     exit 2
   fi
 
-  local CACHE_DIR CACHE_SUBDIR RENDER_OUTPUT
-  # shellcheck disable=SC2001
-  CACHE_DIR=$(echo "$OPM_RENDER_CACHE" | sed 's:/*$::')
-  # Ensure that the cache directory is present
+  local CACHE_DIR="${OPM_RENDER_CACHE%/}"
   mkdir -p "$CACHE_DIR"
+  local CACHE_SUBDIR
   CACHE_SUBDIR=$(parse_image_url "$RENDER_TARGET" | jq -jr '.registry_repository + if .tag != "" then "/" + .tag else "" end + if .digest != "" then "/" + .digest else "" end')
-  if [[ -d "$CACHE_DIR/$CACHE_SUBDIR" ]]; then
-    cat "$CACHE_DIR/$CACHE_SUBDIR/catalog"
-  else
-    if ! RENDER_OUTPUT=$(retry opm render "$RENDER_TARGET"); then
+  local FINAL_DIR="$CACHE_DIR/$CACHE_SUBDIR"
+  local CATALOG_FILE="$FINAL_DIR/catalog"
+
+  if [[ ! -d "$FINAL_DIR" ]]; then
+    mkdir -p "$FINAL_DIR"
+    if ! retry opm render "$RENDER_TARGET" > "$CATALOG_FILE"; then
       echo "render_opm: could not render catalog $RENDER_TARGET" >&2
       exit 1
     fi
-    mkdir -p "$CACHE_DIR/$CACHE_SUBDIR"
-    echo "$RENDER_OUTPUT" | tee "$CACHE_DIR/$CACHE_SUBDIR/catalog"
-  fi
-}
-
-# This function is similar to render_opm but returns the path to the rendered file. This is to avoid reading the entire
-# render output into a variable that causes issues when rendering large index images.
-render_opm_to_file() {
-  local RENDER_TARGET=""
-
-  render_opm_to_file_usage()
-  {
-    echo "
-  render_opm_to_file -t RENDER_TARGET
-  " >&2
-    exit 2
-  }
-
-  local OPTIND opt
-  while getopts "t:" opt; do
-      case "${opt}" in
-          t)
-              RENDER_TARGET="${OPTARG}" ;;
-          *)
-              render_opm_to_file_usage ;;
-      esac
-  done
-
-  if [ -z "$RENDER_TARGET" ]; then
-    echo "render_opm_to_file: missing keyword parameter (-t RENDER_TARGET)" >&2
-    exit 2
   fi
 
-  local CACHE_DIR CACHE_SUBDIR RENDER_OUTPUT
-  # shellcheck disable=SC2001
-  CACHE_DIR=$(echo "$OPM_RENDER_CACHE" | sed 's:/*$::')
-  # Ensure that the cache directory is present
-  mkdir -p "$CACHE_DIR"
-  CACHE_SUBDIR=$(parse_image_url "$RENDER_TARGET" | jq -jr '.registry_repository + if .tag != "" then "/" + .tag else "" end + if .digest != "" then "/" + .digest else "" end')
-  if [[ -d "$CACHE_DIR/$CACHE_SUBDIR" ]]; then
-    echo "$CACHE_DIR/$CACHE_SUBDIR/catalog"
+  # Return path or stream content
+  if [[ "$RETURN_PATH" == true ]]; then
+    echo "$CATALOG_FILE"
   else
-    mkdir -p "$CACHE_DIR/$CACHE_SUBDIR"
-    if ! retry opm render "$RENDER_TARGET" > "$CACHE_DIR/$CACHE_SUBDIR/catalog"; then
-      echo "render_opm_to_file: could not render catalog $RENDER_TARGET" >&2
-      exit 1
-    fi
-    echo "$CACHE_DIR/$CACHE_SUBDIR/catalog"
+    cat "$CATALOG_FILE"
   fi
 }
 
@@ -733,11 +761,11 @@ extract_differential_fbc_metadata() {
 
   # Run opm render on the FBC fragment to extract package names
   local render_out_fbc package_names
-  if ! render_out_fbc=$(render_opm -t "$FBC_FRAGMENT"); then
+  if ! render_out_fbc=$(render_opm -t "$FBC_FRAGMENT" --file); then
     echo "extract_differential_fbc_metadata: could not render FBC fragment $FBC_FRAGMENT" >&2
     exit 1
   fi
-  package_names=$(extract_unique_package_names_from_catalog "$render_out_fbc")
+  package_names=$(extract_unique_package_names_from_catalog "$render_out_fbc" --file)
 
   # Run opm render on the matching index image
   local render_out_index index_url
@@ -763,7 +791,7 @@ extract_differential_fbc_metadata() {
       exit 1
     fi
   fi
-  if ! render_out_index=$(render_opm -t "$index_url"); then
+  if ! render_out_index=$(render_opm -t "$index_url" --file); then
     echo "extract_differential_fbc_metadata: could not render index image $index_url" >&2
     exit 1
   fi
@@ -771,13 +799,13 @@ extract_differential_fbc_metadata() {
   # Get unique bundles for each package from the fragment and the index
   if [[ "$EXTRACT_OPERATION" == "unique_bundles" ]]; then
     for package_name in $package_names; do
-      extract_unique_bundles_from_catalog "$render_out_fbc" "$package_name" >> /tmp/unique_fbc.json
-      extract_unique_bundles_from_catalog "$render_out_index" "$package_name" >> /tmp/unique_index.json
+      extract_unique_bundles_from_catalog "$render_out_fbc" "$package_name" --file >> /tmp/unique_fbc.json
+      extract_unique_bundles_from_catalog "$render_out_index" "$package_name" --file >> /tmp/unique_index.json
     done
   elif [[ "$EXTRACT_OPERATION" == "related_images" ]]; then
     for package_name in $package_names; do
-      extract_related_images_from_catalog "$render_out_fbc" "$package_name" >> /tmp/unique_fbc.json
-      extract_related_images_from_catalog "$render_out_index" "$package_name" >> /tmp/unique_index.json
+      extract_related_images_from_catalog "$render_out_fbc" "$package_name" --file >> /tmp/unique_fbc.json
+      extract_related_images_from_catalog "$render_out_index" "$package_name" --file >> /tmp/unique_index.json
     done
   else
     echo "extract_differential_fbc_metadata: extract operation $EXTRACT_OPERATION not supported: [unique_bundles, related_images]" >&2
