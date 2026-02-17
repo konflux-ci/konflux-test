@@ -938,22 +938,18 @@ get_image_labels() {
     exit 2
   fi
 
-  local image_labels
   # Ensure that we don't have a tag and digest for skopeo
   image=$(get_image_registry_repository_digest "$image")
 
-  # Fetch first arch using --raw as skopeo may fail when
-  # the image does not have build for arch same as base system.
-  local raw_output
-
-  if ! raw_output=$(retry skopeo inspect --raw "docker://${image}"); then
-    echo "get_image_labels: raw inspect failed after retries" >&2
+  first_arch=$(get_first_arch "${image}")
+  if [ -z "${first_arch}" ] || [ "${first_arch}" == "null" ]; then
+      echo "get_image_labels: architecture could not be determined for ${image}" >&2
+      exit 1
   fi
 
-  first_arch=$(echo "${raw_output}" | jq -r '.manifests[].platform.architecture' | head -n 1)
   echo "get_image_labels: First architecture found: ${first_arch}"
 
-
+  local image_labels
   if ! image_labels=$(retry skopeo inspect  --override-arch="${first_arch}" --no-tags docker://"${image}"); then
     echo "get_image_labels: failed to inspect the image" >&2
     exit 1
@@ -1923,4 +1919,26 @@ get_image_mirror_list() {
   fi
 
   printf "%s\n" "${mirrors[@]}" | sort -u
+}
+
+# Fetch first architecture for the image
+get_first_arch() {
+  local image="$1"
+  local raw_output
+  local arch
+
+  if ! raw_output=$(retry skopeo inspect --raw "docker://${image}"); then
+    echo "get_first_arch: Error fetching raw manifest for ${image}" >&2
+    exit 1
+  fi
+
+  # Fetch the architecture from the first entry in the manifest list
+  arch=$(echo "${raw_output}" | jq -r '.manifests[0].platform.architecture // empty')
+
+  if [[ -z "$arch" || "$arch" == "null" ]]; then
+    echo "get_first_arch: No architecture found in .manifests[0] for ${image}" >&2
+    exit 1
+  fi
+
+  echo "$arch"
 }

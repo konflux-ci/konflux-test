@@ -165,6 +165,15 @@ EOF
 
             return 0
 
+        elif [[ $1 == "inspect" && $2 == "--raw" && $3 == "docker://registry/image@valid-url" ]]; then
+            echo '{"manifests":[{"platform":{"architecture":"arm64"}},{"platform":{"architecture":"amd64"}}]}'
+            return 0
+
+        # Mock for single-arch manifest
+        elif [[ $1 == "inspect" && $2 == "--raw" && $3 == "docker://registry/image-manifest@valid" ]]; then
+            echo '{"manifests":[{"platform":{"architecture":"amd64"}}]}'
+            return 0
+
         # Some skopeo commands fail
         else
             echo 'Unrecognized call to mock skopeo'
@@ -827,14 +836,12 @@ EOF
 @test "Get Image Labels: registry/image-manifest:tag@invalid" {
     run get_image_labels registry/image-manifest:tag@invalid
 
-    local EXPECTED_LINE_1="get_image_labels: First architecture found:"
-    local EXPECTED_LINE_2="get_image_labels: failed to inspect the image"
-    local EXPECTED_ERROR_LINE="Invalid numeric literal at line 1, column 13"
+    local EXPECTED_LINE_1="get_first_arch: Error fetching raw manifest for registry/image-manifest@invalid"
+    local EXPECTED_LINE_2="get_image_labels: architecture could not be determined for registry/image-manifest@invalid"
 
     [[ "$status" -eq 1 \
         && "${output}" == *"${EXPECTED_LINE_1}"* \
-        && "${output}" == *"${EXPECTED_LINE_2}"* \
-        && "${output}" == *"${EXPECTED_ERROR_LINE}"* ]]
+        && "${output}" == *"${EXPECTED_LINE_2}"* ]]
 }
 
 @test "Get relatedImages from operator bundle: valid-operator-bundle-1" {
@@ -1505,12 +1512,12 @@ EOF
 
 }
 
-@test "Retry Get Image Labels: registry/image:tag@invalid-url" {
+@test "Retry Get Image Labels: registry/image-manifest@valid" {
     RETRY_COUNT=1
     RETRY_INTERVAL=1
     retry_output=$(get_retry_expected_output)
-    run get_image_labels  registry/image:tag@invalid-url
-    EXPECTED_RESPONSE=$(echo -e -n "get_image_labels: First architecture found: \n${retry_output}get_image_labels: failed to inspect the image")
+    run get_image_labels  registry/image-manifest@valid
+    EXPECTED_RESPONSE=$(echo -e -n "get_image_labels: First architecture found: amd64\n${retry_output}get_image_labels: failed to inspect the image")
 
     [[ "${output}" == *"${EXPECTED_RESPONSE}"* && "$status" -eq 1 ]]
 }
@@ -2149,4 +2156,39 @@ EOF
     run get_image_mirror_list "${reg_and_repo}" "${mirror_map}"
     EXPECTED_RESPONSE=$(echo 'brew.registry.redhat.io/rh-osbs/salami-operator-bundle*quay.io/salami/operator-bundle'| tr '*' '\n')
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "${status}" -eq 0 ]]
+}
+
+@test "Get first arch: multi-arch index (registry/image@valid-url)" {
+    run get_first_arch "registry/image@valid-url"
+    
+    [ "$status" -eq 0 ]|| { echo "Status was $status. Output: $output"; return 1; }
+    [[ "${output}" == *"arm64"* ]]
+}
+
+@test "Get first arch: single-arch manifest (registry/image-manifest@valid)" {
+    run get_first_arch "registry/image-manifest@valid"
+    
+    [ "$status" -eq 0 ]
+    [[ "${output}" == *"amd64"* ]]
+}
+
+@test "Get first arch: invalid image" {
+    run get_first_arch "registry/non-existent@image"
+    
+    [ "$status" -eq 1 ]
+    [[ "$output" == *"get_first_arch: Error fetching raw manifest"* ]]
+}
+@test "Retry get_first_arch: registry/invalid-image:lates" {
+    RETRY_COUNT=1
+    RETRY_INTERVAL=1
+
+    retry_output=$(get_retry_expected_output)
+
+    run get_first_arch "registry/invalid-image:latest"
+
+    local EXPECTED_FINAL_ERROR="get_first_arch: Error fetching raw manifest for ${image}"
+    EXPECTED_RESPONSE=$(echo -e "${retry_output}\n${FINAL_ERROR}")
+    echo "$EXPECTED_RESPONSE"
+    [[ "${output}" == *"${EXPECTED_RESPONSE}"* && "$status" -eq 1 ]]
+
 }
