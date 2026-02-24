@@ -130,13 +130,13 @@ arches:
     name: golang-src
     evr: 1.25.7-1.el9_7
     sourcerpm: golang-1.25.7-1.el9_7.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/appstream/os/Packages/k/kernel-headers-5.14.0-611.34.1.el9_7.aarch64.rpm
+  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/appstream/os/Packages/k/kernel-headers-5.14.0-611.35.1.el9_7.aarch64.rpm
     repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-appstream-rpms
-    size: 2978525
-    checksum: sha256:eddce638a249ea9f3b42e56a9860b5dffb9958f5afa9a9a1c8317cd43dd923e6
+    size: 2978789
+    checksum: sha256:32fa7425a81398e94d001ed6da353e643ce95574e2d031d60614c081f10bed4d
     name: kernel-headers
-    evr: 5.14.0-611.34.1.el9_7
-    sourcerpm: kernel-5.14.0-611.34.1.el9_7.src.rpm
+    evr: 5.14.0-611.35.1.el9_7
+    sourcerpm: kernel-5.14.0-611.35.1.el9_7.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/appstream/os/Packages/l/libasan-11.5.0-11.el9.aarch64.rpm
     repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-appstream-rpms
     size: 408716
@@ -1107,13 +1107,13 @@ arches:
     name: golang-src
     evr: 1.25.7-1.el9_7
     sourcerpm: golang-1.25.7-1.el9_7.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/k/kernel-headers-5.14.0-611.34.1.el9_7.x86_64.rpm
+  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/k/kernel-headers-5.14.0-611.35.1.el9_7.x86_64.rpm
     repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-appstream-rpms
-    size: 3017565
-    checksum: sha256:a44cd4df083740e6de10a546a6a549b5df55ef20063af9f9fdac2e290879a368
+    size: 3017809
+    checksum: sha256:beca4f8a886a45f20f1ff796fe68b0c2b447d54cff861c3c658c8d497f1adcc5
     name: kernel-headers
-    evr: 5.14.0-611.34.1.el9_7
-    sourcerpm: kernel-5.14.0-611.34.1.el9_7.src.rpm
+    evr: 5.14.0-611.35.1.el9_7
+    sourcerpm: kernel-5.14.0-611.35.1.el9_7.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/l/libmpc-1.2.1-4.el9.x86_64.rpm
     repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-appstream-rpms
     size: 66075
