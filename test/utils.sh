@@ -1919,26 +1919,27 @@ get_image_mirror_list() {
 # Fetch first architecture for the image
 get_first_arch() {
   local image="$1"
+  local first_arch
+  local output
   local raw_output
-  local arch
 
-  if ! raw_output=$(retry skopeo inspect --raw "docker://${image}"); then
-    echo "get_first_arch: Error fetching raw manifest for ${image}" >&2
-    exit 1
+  if raw_output=$(retry skopeo inspect --raw "docker://${image}" 2>/dev/null); then
+    first_arch=$(echo "$raw_output" | jq -r '.manifests[0].platform.architecture // empty')
   fi
 
-  # Fetch the architecture from the first entry in the Manifest List
-  arch=$(echo "${raw_output}" | jq -r '.manifests[0].platform.architecture // empty')
-
-  # If arch is empty try fetching arch for Signle Arch Manifest
-  if [[ -z "${arch}" ]]; then
-    arch=$(echo "${raw_output}" | jq -r '.Architecture // empty')
+  if [[ -z "${first_arch}" || "${first_arch}" == "null" ]]; then
+    if output=$(retry skopeo inspect --no-tags "docker://${image}" 2>/dev/null); then
+       first_arch=$(echo "$output" | jq -r '.Architecture // empty')
+    else
+       echo "get_first_arch: Error fetching manifest for ${image}" >&2
+       exit 1
+    fi
   fi
 
-  if [[ -z "$arch" || "$arch" == "null" ]]; then
+  if [[ -z "$first_arch" || "$first_arch" == "null" ]]; then
     echo "get_first_arch: No architecture found for ${image}" >&2
     exit 1
   fi
 
-  echo "$arch"
+  echo "$first_arch"
 }
