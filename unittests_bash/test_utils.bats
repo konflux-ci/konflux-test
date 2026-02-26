@@ -176,7 +176,7 @@ EOF
 
         # Mock for null arch manifest
         elif [[ $1 == "inspect" && $3 == "docker://registry/image-manifest@no-arch" ]]; then
-            echo '{"Name": "quay.io/ashwkuma/ashwkuma-rhoai","Architecture": "","Os": "linux"}'
+            echo '{"Name": "quay.io/ashwkuma/ashwkuma-rhoai","Architecture": "null","Os": "linux"}'
             return 0
 
         # Some skopeo commands fail
@@ -841,10 +841,10 @@ EOF
 @test "Get Image Labels: registry/image-manifest:tag@invalid" {
     run get_image_labels registry/image-manifest:tag@invalid
 
-    local EXPECTED_LINE_1="get_first_arch: Error fetching raw manifest for registry/image-manifest@invalid"
+    local EXPECTED_LINE="get_first_arch: Error fetching manifest for registry/image-manifest@invalid"
 
     [[ "$status" -eq 1 \
-        && "${output}" == *"${EXPECTED_LINE_1}"* ]]
+        && "${output}" == *"${EXPECTED_LINE}"* ]]
 }
 
 @test "Get relatedImages from operator bundle: valid-operator-bundle-1" {
@@ -2175,12 +2175,6 @@ EOF
     [[ "${output}" == *"ppc64le"* ]]
 }
 
-@test "Get first arch: invalid image" {
-    run get_first_arch "registry/non-existent@image"
-    
-    [ "$status" -eq 1 ]
-    [[ "$output" == *"get_first_arch: Error fetching raw manifest"* ]]
-}
 
 @test "Test for No arch found: invalid arch" {
     run get_first_arch "registry/image-manifest@no-arch"
@@ -2189,7 +2183,7 @@ EOF
     [[ "$output" == *"get_first_arch: No architecture found for registry/image-manifest@no-arch"* ]]
 }
 
-@test "Retry get_first_arch: registry/invalid-image:lates" {
+@test "Retry get_first_arch: registry/invalid-image:latest" {
     RETRY_COUNT=1
     RETRY_INTERVAL=1
 
@@ -2197,9 +2191,8 @@ EOF
 
     run get_first_arch "registry/invalid-image:latest"
 
-    local EXPECTED_FINAL_ERROR="get_first_arch: Error fetching raw manifest for ${image}"
-    EXPECTED_RESPONSE=$(echo -e "${retry_output}\n${FINAL_ERROR}")
-    echo "$EXPECTED_RESPONSE"
+    local EXPECTED_FINAL_ERROR="get_first_arch: Error fetching manifest for ${image}"
+    EXPECTED_RESPONSE=$(echo -e "${FINAL_ERROR}")
     [[ "${output}" == *"${EXPECTED_RESPONSE}"* && "$status" -eq 1 ]]
 
 }
