@@ -1,0 +1,222 @@
+{
+  "curated_spdx_valid": {
+    "scanned": {
+      "total": 4,
+      "direct": 3,
+      "transitive": 1
+    },
+    "providers": {
+      "rhtpa": {
+        "status": {
+          "ok": true,
+          "name": "rhtpa",
+          "code": 200,
+          "message": "OK",
+          "warnings": {}
+        },
+        "sources": {
+          "osv-github": {
+            "dependencies": [
+              {
+                "ref": "pkg:pypi/pymysql@0.10.1",
+                "issues": [
+                  {
+                    "id": "CVE-2024-36039",
+                    "title": "PyMySQL through 1.1.0 allows SQL injection if used with untrusted JSON input because keys are not escaped by escape_dict.",
+                    "source": "osv-github",
+                    "cvssScore": 9.8,
+                    "severity": "CRITICAL",
+                    "cves": ["CVE-2024-36039"],
+                    "unique": false
+                  }
+                ],
+                "transitive": [],
+                "highestVulnerability": {
+                  "id": "CVE-2024-36039",
+                  "title": "PyMySQL through 1.1.0 allows SQL injection if used with untrusted JSON input because keys are not escaped by escape_dict.",
+                  "source": "osv-github",
+                  "cvssScore": 9.8,
+                  "severity": "CRITICAL",
+                  "cves": ["CVE-2024-36039"],
+                  "unique": false
+                }
+              },
+              {
+                "ref": "pkg:pypi/setuptools@53.0.0",
+                "issues": [
+                  {
+                    "id": "CVE-2024-6345",
+                    "source": "osv-github",
+                    "cvssScore": 8.8,
+                    "severity": "HIGH",
+                    "cves": ["CVE-2024-6345"],
+                    "unique": false
+                  },
+                  {
+                    "id": "CVE-2022-40897",
+                    "source": "osv-github",
+                    "cvssScore": 7.5,
+                    "severity": "HIGH",
+                    "cves": ["CVE-2022-40897"],
+                    "unique": false
+                  }
+                ],
+                "transitive": [
+                  {
+                    "ref": "pkg:pypi/pip@21.3.1",
+                    "issues": [
+                      {
+                        "id": "CVE-2023-5752",
+                        "source": "osv-github",
+                        "cvssScore": 5.5,
+                        "severity": "MEDIUM",
+                        "cves": ["CVE-2023-5752"],
+                        "unique": false
+                      }
+                    ],
+                    "highestVulnerability": {
+                      "id": "CVE-2023-5752",
+                      "source": "osv-github",
+                      "cvssScore": 5.5,
+                      "severity": "MEDIUM",
+                      "cves": ["CVE-2023-5752"],
+                      "unique": false
+                    }
+                  }
+                ],
+                "highestVulnerability": {
+                  "id": "CVE-2024-6345",
+                  "source": "osv-github",
+                  "cvssScore": 8.8,
+                  "severity": "HIGH",
+                  "cves": ["CVE-2024-6345"],
+                  "unique": false
+                }
+              }
+            ]
+          },
+          "redhat-csaf": {
+            "dependencies": [
+              {
+                "ref": "pkg:rpm/redhat/bind-libs@9.16.23-34.el9_7.1?arch=x86_64&distro=rhel-9.7&epoch=32&upstream=bind-9.16.23-34.el9_7.1.src.rpm",
+                "issues": [
+                  {
+                    "id": "CVE-2025-40778",
+                    "source": "redhat-csaf",
+                    "cvssScore": 8.6,
+                    "severity": "HIGH",
+                    "cves": ["CVE-2025-40778"],
+                    "unique": false
+                  },
+                  {
+                    "id": "CVE-2025-40780",
+                    "source": "redhat-csaf",
+                    "cvssScore": 8.6,
+                    "severity": "HIGH",
+                    "cves": ["CVE-2025-40780"],
+                    "unique": false
+                  }
+                ],
+                "transitive": [
+                  {
+                    "ref": "pkg:rpm/redhat/openssl-libs@3.5.1-7.el9_7?arch=x86_64&distro=rhel-9.7&epoch=1&upstream=openssl-3.5.1-7.el9_7.src.rpm",
+                    "issues": [
+                      {
+                        "id": "CVE-2025-15467",
+                        "source": "redhat-csaf",
+                        "cvssScore": 9.8,
+                        "severity": "CRITICAL",
+                        "cves": ["CVE-2025-15467"],
+                        "unique": false
+                      },
+                      {
+                        "id": "CVE-2025-69419",
+                        "source": "redhat-csaf",
+                        "cvssScore": 7.4,
+                        "severity": "HIGH",
+                        "cves": ["CVE-2025-69419"],
+                        "unique": false
+                      },
+                      {
+                        "id": "CVE-2025-69421",
+                        "source": "redhat-csaf",
+                        "cvssScore": 6.5,
+                        "severity": "MEDIUM",
+                        "cves": ["CVE-2025-69421"],
+                        "unique": false
+                      }
+                    ],
+                    "highestVulnerability": {
+                      "id": "CVE-2025-15467",
+                      "source": "redhat-csaf",
+                      "cvssScore": 9.8,
+                      "severity": "CRITICAL",
+                      "cves": ["CVE-2025-15467"],
+                      "unique": false
+                    }
+                  }
+                ],
+                "highestVulnerability": {
+                  "id": "CVE-2025-15467",
+                  "source": "redhat-csaf",
+                  "cvssScore": 9.8,
+                  "severity": "CRITICAL",
+                  "cves": ["CVE-2025-15467"],
+                  "unique": false
+                }
+              },
+              {
+                "ref": "pkg:rpm/redhat/postgresql@13.23-1.el9_7?arch=x86_64&distro=rhel-9.7&upstream=postgresql-13.23-1.el9_7.src.rpm",
+                "issues": [
+                  {
+                    "id": "CVE-2023-5869",
+                    "source": "redhat-csaf",
+                    "cvssScore": 8.8,
+                    "severity": "HIGH",
+                    "cves": ["CVE-2023-5869"],
+                    "unique": false
+                  },
+                  {
+                    "id": "CVE-2025-4207",
+                    "title": "PostgreSQL GB18030 encoding validation can read one byte past end of allocation for text that fails validation",
+                    "source": "redhat-csaf",
+                    "cvssScore": 5.9,
+                    "severity": "MEDIUM",
+                    "cves": ["CVE-2025-4207"],
+                    "unique": false
+                  },
+                  {
+                    "id": "CVE-2023-39418",
+                    "source": "redhat-csaf",
+                    "cvssScore": 3.1,
+                    "severity": "LOW",
+                    "cves": ["CVE-2023-39418"],
+                    "unique": false
+                  },
+                  {
+                    "id": "CVE-2024-4317",
+                    "title": "PostgreSQL pg_stats_ext and pg_stats_ext_exprs lack authorization checks",
+                    "source": "redhat-csaf",
+                    "cvssScore": 3.1,
+                    "severity": "LOW",
+                    "cves": ["CVE-2024-4317"],
+                    "unique": false
+                  }
+                ],
+                "transitive": [],
+                "highestVulnerability": {
+                  "id": "CVE-2023-5869",
+                  "source": "redhat-csaf",
+                  "cvssScore": 8.8,
+                  "severity": "HIGH",
+                  "cves": ["CVE-2023-5869"],
+                  "unique": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}
