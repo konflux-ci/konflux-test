@@ -1919,15 +1919,18 @@ get_image_mirror_list() {
 # Fetch first architecture for the image
 get_first_arch() {
   local image="$1"
-  local first_arch
-  local output
-  local raw_output
+  local first_arch=""
+  local output=""
+  local raw_output=""
 
+  # Attempt to extract architecture from a Manifest List
   if raw_output=$(retry skopeo inspect --raw "docker://${image}" 2>/dev/null); then
     first_arch=$(echo "$raw_output" | jq -r '.manifests[0].platform.architecture // empty')
   fi
 
   if [[ -z "${first_arch}" || "${first_arch}" == "null" ]]; then
+
+    # Fallback if the image is a Single-arch Manifest
     if output=$(retry skopeo inspect --no-tags "docker://${image}" 2>/dev/null); then
        first_arch=$(echo "$output" | jq -r '.Architecture // empty')
     else
