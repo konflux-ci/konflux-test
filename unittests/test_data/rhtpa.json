@@ -1,0 +1,146 @@
+{
+  "rhtpa": {
+    "providers": {
+      "rhtpa": {
+        "sources": {
+          "source-a": {
+            "dependencies": [
+              {
+                "ref": "pkg:pypi/foo@1.0",
+                "issues": [
+                  {
+                    "id": "CVE-2024-0001",
+                    "title": "Critical vulnerability in foo",
+                    "source": "source-a",
+                    "cvssScore": 9.8,
+                    "severity": "CRITICAL",
+                    "cves": ["CVE-2024-0001"],
+                    "unique": false
+                  }
+                ],
+                "transitive": []
+              },
+              {
+                "ref": "pkg:pypi/bar@2.0",
+                "issues": [
+                  {
+                    "id": "CVE-2024-0002",
+                    "source": "source-a",
+                    "cvssScore": 8.1,
+                    "severity": "HIGH",
+                    "cves": ["CVE-2024-0002"],
+                    "unique": false
+                  }
+                ],
+                "transitive": []
+              },
+              {
+                "ref": "pkg:pypi/baz@3.0",
+                "issues": [
+                  {
+                    "id": "CVE-2024-0003",
+                    "title": "Medium vulnerability in baz",
+                    "source": "source-a",
+                    "cvssScore": 5.5,
+                    "severity": "MEDIUM",
+                    "cves": ["CVE-2024-0003"],
+                    "unique": false
+                  }
+                ],
+                "transitive": [
+                  {
+                    "ref": "pkg:pypi/qux@1.0",
+                    "issues": [
+                      {
+                        "id": "CVE-2024-0004",
+                        "source": "source-a",
+                        "cvssScore": 6.1,
+                        "severity": "MEDIUM",
+                        "cves": ["CVE-2024-0004"],
+                        "unique": false
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "ref": "pkg:pypi/quux@4.0",
+                "issues": [
+                  {
+                    "id": "CVE-2024-0005",
+                    "title": "Low vulnerability in quux",
+                    "source": "source-a",
+                    "cvssScore": 3.1,
+                    "severity": "LOW",
+                    "cves": ["CVE-2024-0005"],
+                    "unique": false
+                  }
+                ],
+                "transitive": []
+              }
+            ]
+          },
+          "source-b": {
+            "dependencies": [
+              {
+                "ref": "pkg:golang/example.com/lib@1.0",
+                "issues": [
+                  {
+                    "id": "CVE-2024-0006",
+                    "source": "source-b",
+                    "cvssScore": 7.5,
+                    "severity": "HIGH",
+                    "cves": ["CVE-2024-0006"],
+                    "unique": false
+                  },
+                  {
+                    "id": "CVE-2024-0002",
+                    "source": "source-b",
+                    "cvssScore": 8.1,
+                    "severity": "HIGH",
+                    "cves": ["CVE-2024-0002"],
+                    "unique": false
+                  }
+                ],
+                "transitive": []
+              },
+              {
+                "ref": "pkg:golang/example.com/core@2.0",
+                "issues": [],
+                "transitive": [
+                  {
+                    "ref": "pkg:golang/example.com/net@1.0",
+                    "issues": [
+                      {
+                        "id": "CVE-2024-0007",
+                        "source": "source-b",
+                        "cvssScore": 5.0,
+                        "severity": "MEDIUM",
+                        "cves": ["CVE-2024-0007"],
+                        "unique": false
+                      }
+                    ]
+                  },
+                  {
+                    "ref": "pkg:golang/example.com/crypto@1.0",
+                    "issues": [
+                      {
+                        "id": "CVE-2024-0008",
+                        "title": "Low vulnerability in crypto",
+                        "source": "source-b",
+                        "cvssScore": 2.5,
+                        "severity": "LOW",
+                        "cves": ["CVE-2024-0008"],
+                        "unique": false
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}
