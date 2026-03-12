@@ -10,6 +10,7 @@ RUN tar -xzf /cachi2/output/deps/generic/check-payload-${CHECK_PAYLOAD_VERSION}.
     chmod +x /opt/app-root/src/check-payload-binary
 
 FROM quay.io/konflux-ci/buildah-task:latest@sha256:4c470b5a153c4acd14bf4f8731b5e36c61d7faafe09c2bf376bb81ce84aa5709 AS buildah-task-image
+FROM quay.io/konflux-ci/task-runner:1.4.1@sha256:d9feec6f2ce9b10cfb76b45ea14f83b5ed9f231de7d6083291550aebe8eb09ea AS appstudio-utils
 FROM registry.redhat.io/openshift4/ose-tools-rhel9@sha256:444f9a3b38160c59b9adddefa2c34673cbbd6e865b7850163661dbf3084002b6 as oc-bin
 FROM registry.access.redhat.com/ubi9/ubi:9.7-1773204657
 
@@ -105,6 +106,8 @@ COPY --from=check-payload-build /opt/app-root/src/check-payload-binary /usr/bin/
 COPY --from=oc-bin /usr/bin/oc /usr/bin/
 
 COPY --from=buildah-task-image /usr/bin/retry /usr/bin/
+
+COPY --from=appstudio-utils /usr/local/bin/select-oci-auth /usr/local/bin/select-oci-auth
 
 COPY policies $POLICY_PATH
 COPY test/conftest.sh $POLICY_PATH
