@@ -25,11 +25,6 @@ rhtpa_get_transitive_vulns(source, severity) := vulns if {
   ]
 }
 
-# Count total issues across vulnerability entries
-rhtpa_count_vulns(vulns) := cnt if {
-  cnt := sum([count(v.issues) | v := vulns[_]])
-}
-
 # Format description string from direct and transitive vulnerability entries
 rhtpa_generate_description(source_name, direct, transitive) := dsc if {
   direct_descs := [sprintf("%s [direct] (%s)", [v.ref, concat(", ", [i.id | i := v.issues[_]])]) | v := direct[_]]
@@ -42,66 +37,84 @@ rhtpa_generate_description(source_name, direct, transitive) := dsc if {
 rhtpa_pluralize(n) = "vulnerability" { n == 1 }
 rhtpa_pluralize(n) = "vulnerabilities" { n != 1 }
 
-warn_rhtpa_critical_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vulns_num, "details": {"name": name, "description": description, "url": url}} |
-  some source_name
-  source := input.providers.rhtpa.sources[source_name]
+# Collect unique CVE IDs across all sources for a given severity
+rhtpa_unique_cve_ids(severity) := ids if {
+  direct_ids := {issue.id |
+    some source_name
+    source := input.providers.rhtpa.sources[source_name]
+    dep := source.dependencies[_]
+    issue := dep.issues[_]
+    issue.severity == severity
+  }
+  transitive_ids := {issue.id |
+    some source_name
+    source := input.providers.rhtpa.sources[source_name]
+    dep := source.dependencies[_]
+    tdep := dep.transitive[_]
+    issue := tdep.issues[_]
+    issue.severity == severity
+  }
+  ids := direct_ids | transitive_ids
+}
 
-  direct := rhtpa_get_direct_vulns(source, "CRITICAL")
-  transitive := rhtpa_get_transitive_vulns(source, "CRITICAL")
-  all_vulns := array.concat(direct, transitive)
-  not count(all_vulns) == 0
+# Concatenate per-source descriptions for a given severity
+rhtpa_source_descriptions(severity) := desc if {
+  descs := [d |
+    some source_name
+    source := input.providers.rhtpa.sources[source_name]
+    direct := rhtpa_get_direct_vulns(source, severity)
+    transitive := rhtpa_get_transitive_vulns(source, severity)
+    all_vulns := array.concat(direct, transitive)
+    count(all_vulns) > 0
+    d := rhtpa_generate_description(source_name, direct, transitive)
+  ]
+  desc := concat("; ", descs)
+}
 
+default warn_rhtpa_critical_vulnerabilities := []
+
+warn_rhtpa_critical_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vulns_num, "details": {"name": name, "description": description, "url": url}}] if {
+  unique_ids := rhtpa_unique_cve_ids("CRITICAL")
+  vulns_num := count(unique_ids)
+  vulns_num > 0
   name := "rhtpa_critical_vulnerabilities"
-  vulns_num := rhtpa_count_vulns(all_vulns)
-  msg := sprintf("Found %d critical %s from source %s.", [vulns_num, rhtpa_pluralize(vulns_num), source_name])
-  description := rhtpa_generate_description(source_name, direct, transitive)
+  msg := sprintf("Found %d critical %s.", [vulns_num, rhtpa_pluralize(vulns_num)])
+  description := rhtpa_source_descriptions("CRITICAL")
   url := "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
-]
+}
 
-warn_rhtpa_high_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vulns_num, "details": {"name": name, "description": description, "url": url}} |
-  some source_name
-  source := input.providers.rhtpa.sources[source_name]
+default warn_rhtpa_high_vulnerabilities := []
 
-  direct := rhtpa_get_direct_vulns(source, "HIGH")
-  transitive := rhtpa_get_transitive_vulns(source, "HIGH")
-  all_vulns := array.concat(direct, transitive)
-  not count(all_vulns) == 0
-
+warn_rhtpa_high_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vulns_num, "details": {"name": name, "description": description, "url": url}}] if {
+  unique_ids := rhtpa_unique_cve_ids("HIGH")
+  vulns_num := count(unique_ids)
+  vulns_num > 0
   name := "rhtpa_high_vulnerabilities"
-  vulns_num := rhtpa_count_vulns(all_vulns)
-  msg := sprintf("Found %d high %s from source %s.", [vulns_num, rhtpa_pluralize(vulns_num), source_name])
-  description := rhtpa_generate_description(source_name, direct, transitive)
+  msg := sprintf("Found %d high %s.", [vulns_num, rhtpa_pluralize(vulns_num)])
+  description := rhtpa_source_descriptions("HIGH")
   url := "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
-]
+}
 
-warn_rhtpa_medium_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vulns_num, "details": {"name": name, "description": description, "url": url}} |
-  some source_name
-  source := input.providers.rhtpa.sources[source_name]
+default warn_rhtpa_medium_vulnerabilities := []
 
-  direct := rhtpa_get_direct_vulns(source, "MEDIUM")
-  transitive := rhtpa_get_transitive_vulns(source, "MEDIUM")
-  all_vulns := array.concat(direct, transitive)
-  not count(all_vulns) == 0
-
+warn_rhtpa_medium_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vulns_num, "details": {"name": name, "description": description, "url": url}}] if {
+  unique_ids := rhtpa_unique_cve_ids("MEDIUM")
+  vulns_num := count(unique_ids)
+  vulns_num > 0
   name := "rhtpa_medium_vulnerabilities"
-  vulns_num := rhtpa_count_vulns(all_vulns)
-  msg := sprintf("Found %d medium %s from source %s.", [vulns_num, rhtpa_pluralize(vulns_num), source_name])
-  description := rhtpa_generate_description(source_name, direct, transitive)
+  msg := sprintf("Found %d medium %s.", [vulns_num, rhtpa_pluralize(vulns_num)])
+  description := rhtpa_source_descriptions("MEDIUM")
   url := "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
-]
+}
 
-warn_rhtpa_low_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vulns_num, "details": {"name": name, "description": description, "url": url}} |
-  some source_name
-  source := input.providers.rhtpa.sources[source_name]
+default warn_rhtpa_low_vulnerabilities := []
 
-  direct := rhtpa_get_direct_vulns(source, "LOW")
-  transitive := rhtpa_get_transitive_vulns(source, "LOW")
-  all_vulns := array.concat(direct, transitive)
-  not count(all_vulns) == 0
-
+warn_rhtpa_low_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vulns_num, "details": {"name": name, "description": description, "url": url}}] if {
+  unique_ids := rhtpa_unique_cve_ids("LOW")
+  vulns_num := count(unique_ids)
+  vulns_num > 0
   name := "rhtpa_low_vulnerabilities"
-  vulns_num := rhtpa_count_vulns(all_vulns)
-  msg := sprintf("Found %d low %s from source %s.", [vulns_num, rhtpa_pluralize(vulns_num), source_name])
-  description := rhtpa_generate_description(source_name, direct, transitive)
+  msg := sprintf("Found %d low %s.", [vulns_num, rhtpa_pluralize(vulns_num)])
+  description := rhtpa_source_descriptions("LOW")
   url := "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
-]
+}

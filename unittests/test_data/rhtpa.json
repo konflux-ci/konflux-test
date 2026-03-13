@@ -92,6 +92,14 @@
                     "severity": "HIGH",
                     "cves": ["CVE-2024-0006"],
                     "unique": false
+                  },
+                  {
+                    "id": "CVE-2024-0002",
+                    "source": "source-b",
+                    "cvssScore": 8.1,
+                    "severity": "HIGH",
+                    "cves": ["CVE-2024-0002"],
+                    "unique": false
                   }
                 ],
                 "transitive": []
