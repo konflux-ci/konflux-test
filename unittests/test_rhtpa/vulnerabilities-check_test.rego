@@ -7,73 +7,55 @@ import future.keywords.if
 test_warn_rhtpa_critical_vulnerabilities if {
     result := warn_rhtpa_critical_vulnerabilities with input as rhtpa
     count(result) == 1
-    result[_].details.name == "rhtpa_critical_vulnerabilities"
-    result[_].vulnerabilities_number == 1
-    contains(result[_].msg, "critical")
-    contains(result[_].msg, "source-a")
+    result[0].details.name == "rhtpa_critical_vulnerabilities"
+    result[0].vulnerabilities_number == 1
+    contains(result[0].msg, "critical")
 }
 
 test_warn_rhtpa_high_vulnerabilities if {
     result := warn_rhtpa_high_vulnerabilities with input as rhtpa
-    count(result) == 2
-    some i, j
-    result[i].details.name == "rhtpa_high_vulnerabilities"
-    result[j].details.name == "rhtpa_high_vulnerabilities"
-    result[i].vulnerabilities_number == 1
-    result[j].vulnerabilities_number == 1
-    contains(result[i].msg, "high")
-    contains(result[j].msg, "high")
+    count(result) == 1
+    result[0].details.name == "rhtpa_high_vulnerabilities"
+    # CVE-2024-0002 appears in both sources but is counted once (dedup)
+    result[0].vulnerabilities_number == 2
+    contains(result[0].msg, "high")
 }
 
 test_warn_rhtpa_medium_vulnerabilities if {
     result := warn_rhtpa_medium_vulnerabilities with input as rhtpa
-    count(result) == 2
-    some i, j
-    result[i].details.name == "rhtpa_medium_vulnerabilities"
-    result[j].details.name == "rhtpa_medium_vulnerabilities"
-    contains(result[i].msg, "medium")
-    contains(result[j].msg, "medium")
-    # One source has 2 medium vulns (1 direct + 1 transitive), the other has 1 (transitive)
-    nums := {result[k].vulnerabilities_number | some k; result[k].details.name == "rhtpa_medium_vulnerabilities"}
-    nums == {1, 2}
+    count(result) == 1
+    result[0].details.name == "rhtpa_medium_vulnerabilities"
+    result[0].vulnerabilities_number == 3
+    contains(result[0].msg, "medium")
 }
 
 test_warn_rhtpa_low_vulnerabilities if {
     result := warn_rhtpa_low_vulnerabilities with input as rhtpa
-    count(result) == 2
-    some i, j
-    result[i].details.name == "rhtpa_low_vulnerabilities"
-    result[j].details.name == "rhtpa_low_vulnerabilities"
-    result[i].vulnerabilities_number == 1
-    result[j].vulnerabilities_number == 1
-    contains(result[i].msg, "low")
-    contains(result[j].msg, "low")
+    count(result) == 1
+    result[0].details.name == "rhtpa_low_vulnerabilities"
+    result[0].vulnerabilities_number == 2
+    contains(result[0].msg, "low")
 }
 
 test_warn_rhtpa_critical_vulnerabilities_realworld if {
     result := warn_rhtpa_critical_vulnerabilities with input as curated
-    count(result) == 2
-    some i, j
-    result[i].details.name == "rhtpa_critical_vulnerabilities"
-    result[j].details.name == "rhtpa_critical_vulnerabilities"
-    result[i].vulnerabilities_number == 1
-    result[j].vulnerabilities_number == 1
+    count(result) == 1
+    result[0].details.name == "rhtpa_critical_vulnerabilities"
+    result[0].vulnerabilities_number == 2
 }
 
 test_warn_rhtpa_high_vulnerabilities_realworld if {
     result := warn_rhtpa_high_vulnerabilities with input as curated
-    count(result) == 2
-    # osv-github has 2 high vulns, redhat-csaf has 4 (2 bind-libs + 1 openssl transitive + 1 postgresql)
-    nums := {result[k].vulnerabilities_number | some k; result[k].details.name == "rhtpa_high_vulnerabilities"}
-    nums == {2, 4}
+    count(result) == 1
+    result[0].details.name == "rhtpa_high_vulnerabilities"
+    result[0].vulnerabilities_number == 6
 }
 
 test_warn_rhtpa_medium_vulnerabilities_realworld if {
     result := warn_rhtpa_medium_vulnerabilities with input as curated
-    count(result) == 2
-    # osv-github has 1 medium (transitive pip), redhat-csaf has 2 (1 openssl transitive + 1 postgresql)
-    nums := {result[k].vulnerabilities_number | some k; result[k].details.name == "rhtpa_medium_vulnerabilities"}
-    nums == {1, 2}
+    count(result) == 1
+    result[0].details.name == "rhtpa_medium_vulnerabilities"
+    result[0].vulnerabilities_number == 3
 }
 
 test_warn_rhtpa_low_vulnerabilities_realworld if {
@@ -81,5 +63,12 @@ test_warn_rhtpa_low_vulnerabilities_realworld if {
     count(result) == 1
     result[0].details.name == "rhtpa_low_vulnerabilities"
     result[0].vulnerabilities_number == 2
-    contains(result[0].msg, "redhat-csaf")
+}
+
+test_warn_rhtpa_no_vulnerabilities if {
+    empty := {"providers": {"rhtpa": {"sources": {}}}}
+    warn_rhtpa_critical_vulnerabilities == [] with input as empty
+    warn_rhtpa_high_vulnerabilities == [] with input as empty
+    warn_rhtpa_medium_vulnerabilities == [] with input as empty
+    warn_rhtpa_low_vulnerabilities == [] with input as empty
 }
