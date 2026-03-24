@@ -106,7 +106,7 @@ setup() {
         elif [[ $1 == "inspect" && $2 == "--raw" && $3 == "docker://registry/fbc-fragment@label-array-valid" ]]; then
             echo $INDEX_JSON
         elif [[ $1 == "inspect" && $2 == --override-arch=* && $3=="--no-tags" && $4 == "docker://registry/fbc-fragment@label-array-valid" ]]; then
-            echo '{"Labels": {"com.redhat.fbc.openshift.version": ["v4.19","v4.20","v4.21"]}}'
+            echo '{"Labels": {"com.redhat.fbc.openshift.version": "[v4.19,v4.20,v4.21]"}}'
 
         # registry/fbc-fragment@label-not-array
         elif [[ $1 == "inspect" && $2 == "--raw" && $3 == "docker://registry/fbc-fragment@label-not-array" ]]; then
@@ -119,13 +119,13 @@ setup() {
         elif [[ $1 == "inspect" && $2 == "--raw" && $3 == "docker://registry/fbc-fragment@label-empty-array" ]]; then
             echo $INDEX_JSON
         elif [[ $1 == "inspect" && $2 == --override-arch=* && $3=="--no-tags" && $4 == "docker://registry/fbc-fragment@label-empty-array" ]]; then
-            echo '{"Labels": {"com.redhat.fbc.openshift.version":[]}}'
+            echo '{"Labels": {"com.redhat.fbc.openshift.version":"[]"}}'
 
         # label-array-invalid-item
         elif [[ $1 == "inspect" && $2 == "--raw" && $3 == "docker://registry/fbc-fragment@label-array-invalid-item" ]]; then
             echo $INDEX_JSON
         elif [[ $1 == "inspect" && $2 == --override-arch=* && $3=="--no-tags" && $4 == "docker://registry/fbc-fragment@label-array-invalid-item" ]]; then
-            echo '{"Labels": {"com.redhat.fbc.openshift.version":["v4.19", "4.19", "vv5.0"]}}'
+            echo '{"Labels": {"com.redhat.fbc.openshift.version":"[v4.19, 4.19, vv5.0]"}}'
 
 
 

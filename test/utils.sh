@@ -436,14 +436,15 @@ get_ocp_version_from_fbc_fragment() {
   if [[ -n "$ocp_version_list_raw" ]]; then
     ocp_version_list="${ocp_version_list_raw#*=}"
 
-    # Fail if the label content is not an array or an empty array
-    if ! jq -e 'type=="array" and length>0' >/dev/null 2>&1 <<<"$ocp_version_list"; then
+    # Label value must be a non-empty bracket-wrapped list (e.g. [v4.18,v4.21])
+    if [[ "$ocp_version_list" != \[*\] || "$ocp_version_list" == "[]" ]]; then
       echo "get_ocp_version_from_fbc_fragment: Label \"com.redhat.fbc.openshift.version\" must contain a non-empty JSON array, got: $ocp_version_list" >&2
       exit 2
     fi
 
-    # Normalize the array
-    ocp_version_list=$(jq -c '.' <<<"$ocp_version_list")
+    # Normalize unquoted array values (e.g. [v4.18,v4.21] -> ["v4.18","v4.21"])
+    # Buildah/Podman strip inner double quotes from LABEL values
+    ocp_version_list=$(jq -Rc 'ltrimstr("[") | rtrimstr("]") | split(",")' <<<"$ocp_version_list")
 
     # Check the labels one by one
     while read -r ocp_version; do
