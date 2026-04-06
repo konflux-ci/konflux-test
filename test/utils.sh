@@ -1946,3 +1946,18 @@ get_first_arch() {
 
   echo "$first_arch"
 }
+
+# Fetch ACS output from image scan
+parse_acs_output(){
+  local output_data=$1
+  data=$(jq '.' < "$output_data")
+  if [[ -e "$output_data" && -n "$data" ]]; then
+    # Create temporary file
+    output_tmp_file="$(mktemp)"
+    jq -s -f parsers/parse_to_cve_oriented_output.jq "$output_data" > "$output_tmp_file"
+    cat "$output_tmp_file"
+  else
+    echo "output not found or empty" >&2
+    exit 1
+  fi
+}

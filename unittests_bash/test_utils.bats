@@ -2196,3 +2196,26 @@ EOF
     [[ "${output}" == *"${EXPECTED_RESPONSE}"* && "$status" -eq 1 ]]
 
 }
+
+@test "Test for parsing ACS output with empty file" {
+    run parse_acs_output unittests_bash/data/empty.json
+
+    EXPECTED_ERROR="output not found or empty"
+    [[ "${output}" == *"${EXPECTED_ERROR}"* && "$status" -eq 1 ]]
+}
+
+@test "Test for parsing ACS output on valid file and check if it contains all required fields" {
+    run parse_acs_output unittests_bash/data/konflux-test-verb-output.json
+    TEST_FOR_CVE=$(echo "${output}" | jq 'map(has("cve"))[0]')
+    TEST_FOR_ADVISORY=$(echo "${output}" | jq 'map(has("advisory"))[0]')
+    TEST_FOR_SUMMARY=$(echo "${output}" | jq 'map(has("summary"))[0]')
+    TEST_FOR_LINKS=$(echo "${output}" | jq 'map(has("links"))[0]')
+    TEST_FOR_FIXEDBY=$(echo "${output}" | jq 'map(has("fixedBy"))[0]')
+    TEST_FOR_SEVERITY=$(echo "${output}" | jq 'map(has("severity"))[0]')
+    TEST_FOR_COMPONENTS=$(echo "${output}" | jq 'map(has("components"))[0]')
+    TEST_FOR_COMPONENT=$(echo "${output}" | jq '.[0].components | map(has("component"))[0]')
+    TEST_FOR_VERSION=$(echo "${output}" | jq '.[0].components | map(has("version"))[0]')
+    TEST_FOR_SOURCE=$(echo "${output}" | jq '.[0].components | map(has("source"))[0]')
+    [[ "$TEST_FOR_CVE" == true  && "$TEST_FOR_ADVISORY" == true && "$TEST_FOR_SUMMARY" == true && "$TEST_FOR_LINKS" == true && "$TEST_FOR_FIXEDBY" == true && "$TEST_FOR_SEVERITY" == true && "$TEST_FOR_COMPONENT" == true && "$TEST_FOR_COMPONENTS" == true && "$TEST_FOR_VERSION" == true && "$TEST_FOR_SOURCE" == true ]]
+    [ "$status" -eq 0 ]
+}

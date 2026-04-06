@@ -115,5 +115,6 @@ COPY test/conftest.sh $POLICY_PATH
 # Copies your code file from your action repository to the filesystem path `/` of the container
 COPY test/selftest.sh /selftest.sh
 COPY test/utils.sh /utils.sh
+COPY parsers/parse_to_cve_oriented_output.jq /parse_to_cve_oriented_output.jq
 
 ENTRYPOINT ["/usr/bin/bash"]
