@@ -879,7 +879,7 @@ arches:
     name: boost1.78-system
     evr: 1.78.0-1.el9
     sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
-  - url: https://ftp.sh.cvut.cz/fedora/epel/9/Everything/aarch64/Packages/c/clamav-1.4.3-3.el9.aarch64.rpm
+  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/aarch64/Packages/c/clamav-1.4.3-3.el9.aarch64.rpm
     repoid: epel
     size: 3789815
     checksum: sha256:4ffefa33fa6b18c800f4c88c1b3fa49d23d73842db929b9df9de7d3f353d8c75
@@ -900,7 +900,7 @@ arches:
     name: clamav-freshclam
     evr: 1.4.3-3.el9
     sourcerpm: clamav-1.4.3-3.el9.src.rpm
-  - url: https://ftp.sh.cvut.cz/fedora/epel/9/Everything/aarch64/Packages/c/clamav-lib-1.4.3-3.el9.aarch64.rpm
+  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/aarch64/Packages/c/clamav-lib-1.4.3-3.el9.aarch64.rpm
     repoid: epel
     size: 3707396
     checksum: sha256:d71b6fbca9979a972feb6541062146cde4e477d538684f61155a59d3430a7b99
@@ -914,20 +914,20 @@ arches:
     name: clamd
     evr: 1.4.3-3.el9
     sourcerpm: clamav-1.4.3-3.el9.src.rpm
-  - url: https://ftp.sh.cvut.cz/fedora/epel/9/Everything/aarch64/Packages/c/csdiff-3.5.7-1.el9.aarch64.rpm
+  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/aarch64/Packages/c/csdiff-3.5.7-1.el9.aarch64.rpm
     repoid: epel
     size: 888126
     checksum: sha256:c2021d08737f6db18f392c2b2836d35e027907ddc6a1786bedf475547ac0ec73
     name: csdiff
     evr: 3.5.7-1.el9
     sourcerpm: csdiff-3.5.7-1.el9.src.rpm
-  - url: https://ftp.sh.cvut.cz/fedora/epel/9/Everything/aarch64/Packages/c/csmock-plugin-shellcheck-core-3.8.5-1.el9.noarch.rpm
+  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/aarch64/Packages/c/csmock-plugin-shellcheck-core-3.8.5-1.el9.noarch.rpm
     repoid: epel
     size: 22679
     checksum: sha256:1cf03a4a63c60e1a1a559bcac69754636d614e5af090d6d17edc2aba708c7cd8
     name: csmock-plugin-shellcheck-core
-    evr: 3.8.4-1.el9
-    sourcerpm: csmock-3.8.4-1.el9.src.rpm
+    evr: 3.8.5-1.el9
+    sourcerpm: csmock-3.8.5-1.el9.src.rpm
   - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/aarch64/Packages/s/ShellCheck-0.10.0-3.el9.aarch64.rpm
     repoid: epel
     size: 3602973
@@ -1814,7 +1814,7 @@ arches:
     name: boost1.78-system
     evr: 1.78.0-1.el9
     sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
-  - url: https://mirror.karneval.cz/pub/linux/fedora/epel/9/Everything/x86_64/Packages/c/clamav-1.4.3-3.el9.x86_64.rpm
+  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/x86_64/Packages/c/clamav-1.4.3-3.el9.x86_64.rpm
     repoid: epel
     size: 7038941
     checksum: sha256:3976a48f6eb2a27e3e6d777b5b2c23782a47b825205438969c0a1534976b4ea3
@@ -1835,10 +1835,10 @@ arches:
     name: clamav-freshclam
     evr: 1.4.3-3.el9
     sourcerpm: clamav-1.4.3-3.el9.src.rpm
-  - url: https://mirror.karneval.cz/pub/linux/fedora/epel/9/Everything/x86_64/Packages/c/clamav-lib-1.4.3-3.el9.x86_64.rpm
+  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/x86_64/Packages/c/clamav-lib-1.4.3-3.el9.x86_64.rpm
     repoid: epel
     size: 4159687
-    checksum: sha256:49be3f72c741257e98d9d4e463ee7fa2527672906aa31b21dcce89ce4bb3ed1d 
+    checksum: sha256:49be3f72c741257e98d9d4e463ee7fa2527672906aa31b21dcce89ce4bb3ed1d
     name: clamav-lib
     evr: 1.4.3-3.el9
     sourcerpm: clamav-1.4.3-3.el9.src.rpm
@@ -1849,20 +1849,20 @@ arches:
     name: clamd
     evr: 1.4.3-3.el9
     sourcerpm: clamav-1.4.3-3.el9.src.rpm
-  - url: https://mirror.karneval.cz/pub/linux/fedora/epel/9/Everything/x86_64/Packages/c/csdiff-3.5.7-1.el9.x86_64.rpm
+  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/x86_64/Packages/c/csdiff-3.5.7-1.el9.x86_64.rpm
     repoid: epel
     size: 944586
     checksum: sha256:9a6e44bc0633aa8ba95a4cc5744acd90cb8291bdc3f5f9d0a19f1a4ca3e54478
     name: csdiff
     evr: 3.5.7-1.el9
     sourcerpm: csdiff-3.5.7-1.el9.src.rpm
-  - url: https://mirror.karneval.cz/pub/linux/fedora/epel/9/Everything/x86_64/Packages/c/csmock-plugin-shellcheck-core-3.8.5-1.el9.noarch.rpm
+  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/x86_64/Packages/c/csmock-plugin-shellcheck-core-3.8.5-1.el9.noarch.rpm
     repoid: epel
     size: 22679
     checksum: sha256:1cf03a4a63c60e1a1a559bcac69754636d614e5af090d6d17edc2aba708c7cd8
     name: csmock-plugin-shellcheck-core
-    evr: 3.8.4-1.el9
-    sourcerpm: csmock-3.8.4-1.el9.src.rpm
+    evr: 3.8.5-1.el9
+    sourcerpm: csmock-3.8.5-1.el9.src.rpm
   - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/x86_64/Packages/s/ShellCheck-0.10.0-3.el9.x86_64.rpm
     repoid: epel
     size: 2761018
