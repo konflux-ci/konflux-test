@@ -116,3 +116,6 @@ artifacts:
   - download_url: "https://github.com/siddhesh/find-unicode-control/archive/refs/tags/v0.1.tar.gz"
     checksum: "sha256:e894578ddfc6e3d0dfedd2b159a26d50f2a2fe5efeeaca6cda9bae84e5885456"
     filename: "find-unicode-control-v0.1.tar.gz"
+  - download_url: "https://files.pythonhosted.org/packages/5c/88/dd6e4c9b9a7a7fccd7203c4745203a0eec6ec77426a987411ddd7eb845b7/picklescan-1.0.4-py3-none-any.whl"
+    checksum: "sha256:6e156d130326da09ca6d195b0f38fdb81b90cbd1ac2ec69d16694e7e5062f8e7"
+    filename: "picklescan-1.0.4-py3-none-any.whl"
