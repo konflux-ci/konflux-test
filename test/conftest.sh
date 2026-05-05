@@ -67,3 +67,9 @@
   run conftest test --namespace fbc_checks --policy $POLICY_PATH/image/fbc-labels.rego fbc_label_fail.json
   [ "$status" -eq 1 ]
 }
+
+# PICKLESCAN for test_picklescan
+@test "/project/picklescan/virus-check" {
+  run conftest test --namespace required_checks --policy $POLICY_PATH/picklescan/virus-check.rego picklescan.json
+  [ "$status" -eq 1 ]
+}

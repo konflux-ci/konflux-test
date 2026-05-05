@@ -1961,3 +1961,42 @@ parse_acs_output(){
     exit 1
   fi
 }
+
+# Convert raw picklescan stdout to a JSON string suitable for conftest/rego input.
+# Usage: parse_picklescan_output "$PICKLESCAN_OUTPUT"
+# Produces: {"infected_files": {...}, "summary": {"scanned_files": N, "infected_files": N, "dangerous_globals": N}}
+parse_picklescan_output() {
+  local scan_output="$1"
+  local marker="----------- SCAN SUMMARY -----------"
+
+  local hits_section summary_section
+  hits_section=$(printf '%s\n' "$scan_output" | awk "/${marker}/{exit} 1")
+  summary_section=$(printf '%s\n' "$scan_output" | awk "f; /${marker}/{f=1}")
+
+  local infected_files_json
+  infected_files_json=$(printf '%s\n' "$hits_section" | \
+    grep ' FOUND$' | \
+    jq -Rs '
+      [ split("\n")[] | select(length > 0) |
+        . as $line |
+        ($line | index(": ")) as $i |
+        { ($line[:$i]): ($line[$i+2:]) }
+      ] | add // {}
+    ')
+
+  local summary_json
+  summary_json=$(printf '%s\n' "$summary_section" | \
+    grep -E '^[[:space:]]*[A-Za-z ]+:[[:space:]]*[0-9]+[[:space:]]*$' | \
+    jq -Rs '
+      [ split("\n")[] | select(length > 0) |
+        split(": ") |
+        { (.[0] | ltrimstr(" ") | rtrimstr(" ") | ascii_downcase | gsub(" "; "_")):
+          (.[1] | ltrimstr(" ") | rtrimstr(" ") | tonumber) }
+      ] | add // {}
+    ')
+
+  jq -cn \
+    --argjson infected_files "$infected_files_json" \
+    --argjson summary "$summary_json" \
+    '{infected_files: $infected_files, summary: $summary}'
+}

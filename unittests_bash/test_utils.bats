@@ -2219,3 +2219,36 @@ EOF
     [[ "$TEST_FOR_CVE" == true  && "$TEST_FOR_ADVISORY" == true && "$TEST_FOR_SUMMARY" == true && "$TEST_FOR_LINKS" == true && "$TEST_FOR_FIXEDBY" == true && "$TEST_FOR_SEVERITY" == true && "$TEST_FOR_COMPONENT" == true && "$TEST_FOR_COMPONENTS" == true && "$TEST_FOR_VERSION" == true && "$TEST_FOR_SOURCE" == true ]]
     [ "$status" -eq 0 ]
 }
+
+@test "parse_picklescan_output: infected files are parsed to JSON" {
+    SCAN_OUTPUT="file1.pkl: global import 'os.system' FOUND
+file2.pkl: global import 'eval' FOUND
+----------- SCAN SUMMARY -----------
+Scanned files: 10
+Infected files: 2
+Dangerous globals: 2"
+
+    run parse_picklescan_output "$SCAN_OUTPUT"
+
+    [ "$status" -eq 0 ]
+    [ "$(echo "$output" | jq -r '.infected_files["file1.pkl"]')" = "global import 'os.system' FOUND" ]
+    [ "$(echo "$output" | jq -r '.infected_files["file2.pkl"]')" = "global import 'eval' FOUND" ]
+    [ "$(echo "$output" | jq -r '.summary.scanned_files')" = "10" ]
+    [ "$(echo "$output" | jq -r '.summary.infected_files')" = "2" ]
+    [ "$(echo "$output" | jq -r '.summary.dangerous_globals')" = "2" ]
+}
+
+@test "parse_picklescan_output: clean scan produces empty infected_files" {
+    SCAN_OUTPUT="----------- SCAN SUMMARY -----------
+Scanned files: 5
+Infected files: 0
+Dangerous globals: 0"
+
+    run parse_picklescan_output "$SCAN_OUTPUT"
+
+    [ "$status" -eq 0 ]
+    [ "$(echo "$output" | jq -r '.infected_files')" = "{}" ]
+    [ "$(echo "$output" | jq -r '.summary.scanned_files')" = "5" ]
+    [ "$(echo "$output" | jq -r '.summary.infected_files')" = "0" ]
+    [ "$(echo "$output" | jq -r '.summary.dangerous_globals')" = "0" ]
+}

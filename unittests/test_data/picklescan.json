@@ -1,0 +1,13 @@
+{
+  "picklescan_output": {
+    "infected_files": {
+      "file1.pkl": "global import 'os.system' FOUND",
+      "file2.pkl": "global import 'eval' FOUND"
+    },
+    "summary": {
+      "scanned_files": 10,
+      "infected_files": 2,
+      "dangerous_globals": 2
+    }
+  }
+}
