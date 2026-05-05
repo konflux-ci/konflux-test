@@ -1,0 +1,20 @@
+excluded_attributes:
+  - type_annotations
+  - standard_layout
+  - lock_files
+  - dbt_project_config
+  - dbt_model_documentation
+  - test_coverage
+  - precommit_hooks
+  - gitignore_completeness
+  - one_command_setup
+  - inline_documentation
+  - cyclomatic_complexity
+  - dbt_data_tests
+  - dbt_project_structure
+  - semantic_naming
+  - architecture_decisions
+  - structured_logging
+  - openapi_specs
+  - branch_protection
+  - code_smells
