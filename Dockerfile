@@ -70,6 +70,7 @@ RUN dnf install -y --nogpgcheck jq \
         cp ${PATH_TO_ART}/ec_linux_amd64 /usr/local/bin/ec && \
         cp ${PATH_TO_ART}/cosign-linux-amd64 /usr/local/bin/cosign && \
         cp ${PATH_TO_ART}/yq_linux_amd64 /usr/local/bin/yq && chmod +x /usr/local/bin/yq && \
+        tar -xzf ${PATH_TO_ART}/gitleaks_8.30.1_linux_x64.tar.gz -C /usr/bin/ && \
         tar -xzf ${PATH_TO_ART}/conftest_0.45.0_Linux_x86_64.tar.gz -C /usr/bin/ && \
         python3 -c "import zipfile; zipfile.ZipFile('${PATH_TO_ART}/codeql-linux64.zip').extractall('/usr/local/bin/')"; \
     elif [ "$TARGETARCH" = "arm64" ]; then \
@@ -90,6 +91,7 @@ RUN dnf install -y --nogpgcheck jq \
         cp ${PATH_TO_ART}/ec_linux_arm64 /usr/local/bin/ec && \
         cp ${PATH_TO_ART}/cosign-linux-arm64 /usr/local/bin/cosign && \
         cp ${PATH_TO_ART}/yq_linux_arm64 /usr/local/bin/yq && chmod +x /usr/local/bin/yq && \
+        tar -xzf ${PATH_TO_ART}/gitleaks_8.30.1_linux_arm64.tar.gz -C /usr/bin/ && \
         tar -xzf ${PATH_TO_ART}/conftest_0.45.0_Linux_arm64.tar.gz -C /usr/bin/ && \
         python3 -c "import zipfile; zipfile.ZipFile('${PATH_TO_ART}/codeql-linux64.zip').extractall('/usr/local/bin/')"; \
     fi && \
