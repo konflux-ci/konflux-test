@@ -507,16 +507,16 @@ teardown() {
 }
 
 @test "Validate_ocp_version: valid versions" {
-    for v in v4.19 4.20 v4.0; do
+    for v in v4.19 4.20 v4.0 v5.0 5.1; do
         run validate_ocp_version "$v"
         [[ "$status" -eq 0 ]]
     done
 }
 
 @test "Validate_ocp_version: invalid formats" {
-    for v in v4.19.1 v5.1 v4.x banana; do
+    for v in v4.19.1 v5.1.1 v4.x banana v6.0; do
         run validate_ocp_version "$v"
-        EXPECTED_RESPONSE="Invalid OCP version $v (expected format v4.x or 4.x)."
+        EXPECTED_RESPONSE="Invalid OCP version $v (expected format v4.x/v5.x or 4.x/5.x)."
         [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
     done
 }
@@ -551,15 +551,15 @@ teardown() {
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
 
-@test "Get OPM version from OCP version - invalid ocp version v5.1" {
+@test "Get OPM version from OCP version v5.x - default value" {
     run ocp_to_opm_version_mapping v5.1
-    EXPECTED_RESPONSE="Invalid OCP version v5.1 (expected format v4.x or 4.x)."
-    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
+    EXPECTED_RESPONSE="opm-v1.50.0"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
 }
 
 @test "Get OPM version from OCP version - invalid ocp version v4.1.1" {
     run ocp_to_opm_version_mapping v4.1.1
-    EXPECTED_RESPONSE="Invalid OCP version v4.1.1 (expected format v4.x or 4.x)."
+    EXPECTED_RESPONSE="Invalid OCP version v4.1.1 (expected format v4.x/v5.x or 4.x/5.x)."
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
 }
 
@@ -600,7 +600,7 @@ teardown() {
 @test "Get OCP version from fragment: registry/fbc-fragment@label-array-invalid-item (label present, array item invalid -> error)" {
   # What it tests: validate_ocp_version is called for each element and failure bubbles up.
   run get_ocp_version_from_fbc_fragment registry/fbc-fragment@label-array-invalid-item
-  EXPECTED_RESPONSE="Invalid OCP version vv5.0 (expected format v4.x or 4.x)."
+  EXPECTED_RESPONSE="Invalid OCP version vv5.0 (expected format v4.x/v5.x or 4.x/5.x)."
   [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
 }
 

@@ -371,7 +371,7 @@ get_base_image() {
 }
 
 validate_ocp_version() {
-  # OCP version e.g. v4.12
+  # OCP version e.g. v4.12 or v5.0
   local OCP_VERSION="${1#v}"
 
   if [ -z "$OCP_VERSION" ]; then
@@ -379,9 +379,8 @@ validate_ocp_version() {
     exit 2
   fi
 
-  # Validate format: must be v4.x or 4.x (no patch allowed)
-  if ! [[ "$OCP_VERSION" =~ ^4\.[0-9]+$ ]]; then
-    echo "Invalid OCP version $1 (expected format v4.x or 4.x)." >&2
+  if ! [[ "$OCP_VERSION" =~ ^[45]\.[0-9]+$ ]]; then
+    echo "Invalid OCP version $1 (expected format v4.x/v5.x or 4.x/5.x)." >&2
     exit 2
   fi
 }
