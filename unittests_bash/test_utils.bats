@@ -2252,3 +2252,63 @@ Dangerous globals: 0"
     [ "$(echo "$output" | jq -r '.summary.infected_files')" = "0" ]
     [ "$(echo "$output" | jq -r '.summary.dangerous_globals')" = "0" ]
 }
+
+@test "Get prev OCP version: missing argument" {
+    run get_prev_ocp_version
+    EXPECTED_RESPONSE="get_prev_ocp_version: Missing positional parameter \$1 (OCP_VERSION)"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
+}
+
+@test "Get prev OCP version: invalid format (no dot)" {
+    run get_prev_ocp_version v5
+    EXPECTED_RESPONSE="get_prev_ocp_version: Invalid OCP version format 'v5' (expected vX.Y or X.Y)"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
+}
+
+@test "Get prev OCP version: v5.0 cross-major boundary returns v4.22" {
+    run get_prev_ocp_version v5.0
+    EXPECTED_RESPONSE="v4.22"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get prev OCP version: 5.0 without v-prefix returns v4.22" {
+    run get_prev_ocp_version 5.0
+    EXPECTED_RESPONSE="v4.22"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get prev OCP version: v5.1 returns v5.0" {
+    run get_prev_ocp_version v5.1
+    EXPECTED_RESPONSE="v5.0"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get prev OCP version: v4.23 returns v4.22" {
+    run get_prev_ocp_version v4.23
+    EXPECTED_RESPONSE="v4.22"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get prev OCP version: v4.1 returns v4.0" {
+    run get_prev_ocp_version v4.1
+    EXPECTED_RESPONSE="v4.0"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 0 ]]
+}
+
+@test "Get prev OCP version: v6.0 unknown mapping returns error" {
+    run get_prev_ocp_version v6.0
+    EXPECTED_RESPONSE="get_prev_ocp_version: No cross-major version mapping for 'v6.0' (previous major: 5)"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+}
+
+@test "Get prev OCP version: v4.0 unknown cross-major mapping returns error" {
+    run get_prev_ocp_version v4.0
+    EXPECTED_RESPONSE="get_prev_ocp_version: No cross-major version mapping for 'v4.0' (previous major: 3)"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 1 ]]
+}
+
+@test "Get prev OCP version: non-numeric minor returns invalid format error" {
+    run get_prev_ocp_version v5.abc
+    EXPECTED_RESPONSE="get_prev_ocp_version: Invalid OCP version format 'v5.abc' (expected vX.Y or X.Y)"
+    [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
+}
