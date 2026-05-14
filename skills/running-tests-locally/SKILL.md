@@ -87,7 +87,7 @@ Tests the actual conftest CLI invocation against real policies, not just Rego lo
 **File:** `test/selftest.sh`
 
 Validates the built Docker image has:
-- Required binaries: yq, skopeo, snyk, ec, cosign, clamscan
+- Required binaries: yq, skopeo, snyk, ec, cosign
 - conftest CLI working with all three namespaces
 - parse_test_output bash function correct
 - Clair/scanning API integration functional
