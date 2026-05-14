@@ -463,6 +463,44 @@ get_ocp_version_from_fbc_fragment() {
   fi
 }
 
+# This function will be used by tekton tasks in build-definitions
+# Returns the previous OCP catalog version for a given OCP version.
+# Handles the cross-major version boundary (e.g., v5.0 -> v4.22).
+# Usage: get_prev_ocp_version OCP_VERSION
+#   OCP_VERSION: target OCP version (e.g., v5.0 or 5.0)
+get_prev_ocp_version() {
+  if [ -z "${1:-}" ]; then
+    echo "get_prev_ocp_version: Missing positional parameter \$1 (OCP_VERSION)" >&2
+    exit 2
+  fi
+
+  local OCP_VERSION="${1#v}"
+  local major minor
+  major=$(echo "$OCP_VERSION" | awk -F'.' '{print $1}')
+  minor=$(echo "$OCP_VERSION" | awk -F'.' '{print $2}')
+
+  if [ -z "$major" ] || [ -z "$minor" ] || ! [[ "$major" =~ ^[0-9]+$ ]] || ! [[ "$minor" =~ ^[0-9]+$ ]]; then
+    echo "get_prev_ocp_version: Invalid OCP version format '$1' (expected vX.Y or X.Y)" >&2
+    exit 2
+  fi
+
+  if [[ "${minor}" -eq 0 ]]; then
+    # Cross-major boundary: decrementing minor yields an invalid version (e.g. v5.-1).
+    # Map the previous major to its last known minor release.
+    # To support a future major boundary, add an entry: [prev_major]=last_minor
+    declare -A last_minor_of_prev_major=([4]=22)
+    local prev_major=$(( major - 1 ))
+    local prev_minor=${last_minor_of_prev_major[${prev_major}]:-}
+    if [[ -z "${prev_minor}" ]]; then
+      echo "get_prev_ocp_version: No cross-major version mapping for '${1}' (previous major: ${prev_major})" >&2
+      exit 1
+    fi
+    echo "v${prev_major}.${prev_minor}"
+  else
+    echo "v${major}.$(( minor - 1 ))"
+  fi
+}
+
 # Given output of `opm render` command and package name, this function returns
 # all unique bundles for the given package in the catalog
 extract_unique_bundles_from_catalog() {
