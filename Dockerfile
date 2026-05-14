@@ -33,14 +33,11 @@ RUN dnf install -y --nogpgcheck jq \
     skopeo \
     tar \
     python3 \
-    clamav \
-    clamd \
     csdiff \
     git \
     golang \
     python3-file-magic \
     python3-pip \
-    clamav-update \
     ShellCheck \
     csmock-plugin-shellcheck-core \
     libicu \

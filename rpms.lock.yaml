@@ -879,41 +879,6 @@ arches:
     name: boost1.78-system
     evr: 1.78.0-1.el9
     sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
-  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/aarch64/Packages/c/clamav-1.4.3-3.el9.aarch64.rpm
-    repoid: epel
-    size: 3789815
-    checksum: sha256:4ffefa33fa6b18c800f4c88c1b3fa49d23d73842db929b9df9de7d3f353d8c75
-    name: clamav
-    evr: 1.4.3-3.el9
-    sourcerpm: clamav-1.4.3-3.el9.src.rpm
-  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/aarch64/Packages/c/clamav-filesystem-1.4.3-3.el9.noarch.rpm
-    repoid: epel
-    size: 17833
-    checksum: sha256:18a441394a4ac51074ca8c90fc9f6112bc818578a4d9d08acdf19805d95dc352
-    name: clamav-filesystem
-    evr: 1.4.3-3.el9
-    sourcerpm: clamav-1.4.3-3.el9.src.rpm
-  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/aarch64/Packages/c/clamav-freshclam-1.4.3-3.el9.aarch64.rpm
-    repoid: epel
-    size: 3025975
-    checksum: sha256:f52cacab90b80f3235ce2382d874718266304087e7c0f70fb45e610408b2151a
-    name: clamav-freshclam
-    evr: 1.4.3-3.el9
-    sourcerpm: clamav-1.4.3-3.el9.src.rpm
-  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/aarch64/Packages/c/clamav-lib-1.4.3-3.el9.aarch64.rpm
-    repoid: epel
-    size: 3707396
-    checksum: sha256:d71b6fbca9979a972feb6541062146cde4e477d538684f61155a59d3430a7b99
-    name: clamav-lib
-    evr: 1.4.3-3.el9
-    sourcerpm: clamav-1.4.3-3.el9.src.rpm
-  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/aarch64/Packages/c/clamd-1.4.3-3.el9.aarch64.rpm
-    repoid: epel
-    size: 94009
-    checksum: sha256:ddaf96d654136da65db57e8a247d763164bcbd54345225bfd168e98279cc9ef0
-    name: clamd
-    evr: 1.4.3-3.el9
-    sourcerpm: clamav-1.4.3-3.el9.src.rpm
   - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/aarch64/Packages/c/csdiff-3.5.7-1.el9.aarch64.rpm
     repoid: epel
     size: 888126
@@ -1814,41 +1779,6 @@ arches:
     name: boost1.78-system
     evr: 1.78.0-1.el9
     sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
-  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/x86_64/Packages/c/clamav-1.4.3-3.el9.x86_64.rpm
-    repoid: epel
-    size: 7038941
-    checksum: sha256:3976a48f6eb2a27e3e6d777b5b2c23782a47b825205438969c0a1534976b4ea3
-    name: clamav
-    evr: 1.4.3-3.el9
-    sourcerpm: clamav-1.4.3-3.el9.src.rpm
-  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/x86_64/Packages/c/clamav-filesystem-1.4.3-3.el9.noarch.rpm
-    repoid: epel
-    size: 17833
-    checksum: sha256:18a441394a4ac51074ca8c90fc9f6112bc818578a4d9d08acdf19805d95dc352
-    name: clamav-filesystem
-    evr: 1.4.3-3.el9
-    sourcerpm: clamav-1.4.3-3.el9.src.rpm
-  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/x86_64/Packages/c/clamav-freshclam-1.4.3-3.el9.x86_64.rpm
-    repoid: epel
-    size: 3460373
-    checksum: sha256:f1916aba45bb3d39f20c90acd630f79214f4e4c0988e64cc3906053dd891cd0e
-    name: clamav-freshclam
-    evr: 1.4.3-3.el9
-    sourcerpm: clamav-1.4.3-3.el9.src.rpm
-  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/x86_64/Packages/c/clamav-lib-1.4.3-3.el9.x86_64.rpm
-    repoid: epel
-    size: 4159687
-    checksum: sha256:49be3f72c741257e98d9d4e463ee7fa2527672906aa31b21dcce89ce4bb3ed1d
-    name: clamav-lib
-    evr: 1.4.3-3.el9
-    sourcerpm: clamav-1.4.3-3.el9.src.rpm
-  - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/x86_64/Packages/c/clamd-1.4.3-3.el9.x86_64.rpm
-    repoid: epel
-    size: 94679
-    checksum: sha256:1e3f0a94e2e0e613dbfc43333044ee063157fa6905a318a05843ce7a3399f2db
-    name: clamd
-    evr: 1.4.3-3.el9
-    sourcerpm: clamav-1.4.3-3.el9.src.rpm
   - url: https://d2lzkl7pfhq30w.cloudfront.net/pub/epel/9/Everything/x86_64/Packages/c/csdiff-3.5.7-1.el9.x86_64.rpm
     repoid: epel
     size: 944586
