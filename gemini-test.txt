@@ -1,0 +1,1 @@
+a simple text file to commit to test the new gemini code assist on the repo
