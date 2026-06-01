@@ -125,3 +125,6 @@ artifacts:
   - download_url: "https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz"
     checksum: "sha256:551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb"
     filename: "gitleaks_8.30.1_linux_x64.tar.gz"
+  - download_url: https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-9
+    checksum: "sha256:fcf0eab4f05a1c0de6363ac4b707600a27a9d774e9b491059e59e6921b255a84"
+    filename: RPM-GPG-KEY-EPEL-9
