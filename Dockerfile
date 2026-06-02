@@ -28,8 +28,9 @@ ARG TARGETARCH
 ARG TARGETOS
 
 # Build dependency offline to streamline build
-#rpm -Uvh epel-release-latest-9.noarch.rpm && \
-RUN dnf install -y --nogpgcheck jq \
+# Import GPG keys for RPM signature verification
+RUN rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release ${PATH_TO_ART}/RPM-GPG-KEY-EPEL-9 && \
+    dnf install -y jq \
     skopeo \
     tar \
     python3 \
