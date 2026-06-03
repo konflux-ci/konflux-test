@@ -34,16 +34,19 @@ Contributions of all kinds are welcome. In particular pull requests are apprecia
 
 This repository uses [pre-commit](https://pre-commit.com/) to run checks locally before each commit.
 
-pipx:
+**One-time setup (pipx):**
+
 ```sh
 pipx install pre-commit
 pre-commit install
+pre-commit install --hook-type commit-msg
 ```
 
-uvx:
+**Or with uvx:**
+
 ```sh
 uvx pre-commit install
-uvx pre-commit
+uvx pre-commit install --hook-type commit-msg
 ```
 
 **What the hooks check:**
@@ -54,8 +57,6 @@ uvx pre-commit
 | end-of-file-fixer | Missing or extra final newline |
 | check-yaml | YAML syntax errors |
 | check-added-large-files | Accidentally committed large binaries |
-| yamllint | YAML style violations (uses `.yamllint` config) |
-| shellcheck | Bash issues in `test/utils.sh` |
 | hadolint | Dockerfile lint violations |
 | gitlint | Non-conventional commit messages, title > 72 chars, uppercase description |
 
@@ -63,7 +64,8 @@ uvx pre-commit
 
 ```bash
 pre-commit run --all-files    # run all hooks on all files
-pre-commit run yamllint       # run a specific hook
+pre-commit run hadolint       # run a specific hook
+pre-commit autoupdate         # update hooks to latest versions
 ```
 
 ### Pull Request Guidelines
