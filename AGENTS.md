@@ -34,6 +34,22 @@ The Bash utility functions in the `test/` directory are meant to be used in the 
 ### Image-hosted utilities
 The `konflux-test` image also contains additional utilities (binaries, scripts, etc.) which are required by the Konflux CI Tekton tasks. See the `Dockerfile` for more details on them.
 
+## Build Constraints
+
+This image is built hermetically via Tekton pipelines using Cachi2 for dependency prefetch. **No network access is available during `docker build`.** All dependencies must be declared and prefetched before the build starts.
+
+### RPM packages
+All RPM packages must be declared in `rpms.in.yaml` with their repository source listed under `contentOrigin.repofiles`. Cachi2 prefetches them before the build; `dnf install` in the Dockerfile runs offline against the prefetched content. To add a new RPM package, add it to the `packages` list in `rpms.in.yaml` and ensure its source repository is listed. Do not add repositories or packages that are not declared in this file.
+
+### Binary artifacts
+External binaries, tools, and archives must be declared in `artifacts.lock.yaml` with a `download_url`, a `checksum` (SHA-256), and a `filename`. Cachi2 prefetches these artifacts and makes them available at `/cachi2/output/deps/generic/` during the build. Multi-architecture images require separate entries for each architecture (e.g., `amd64` and `arm64` variants).
+
+### Dockerfile rules
+- **No network access**: Do not use `curl`, `wget`, `git clone`, or any command that fetches resources from the network in `RUN` instructions. All external resources must be prefetched via `artifacts.lock.yaml` or `rpms.in.yaml`.
+- **No `--nogpgcheck`**: Do not add `--nogpgcheck` to `dnf` commands. GPG keys must come from the base image or be prefetched via `artifacts.lock.yaml`.
+- **Prefetched artifacts path**: Reference prefetched binaries and archives using the `${PATH_TO_ART}` build arg (set to `/cachi2/output/deps/generic`).
+- **Multi-arch support**: Use the `TARGETARCH` build arg to select architecture-specific binaries. Provide both `amd64` and `arm64` variants in `artifacts.lock.yaml`.
+
 ## Development Guidelines
 
 - See `CONTRIBUTING.md` for overall guidelines for making contributions to this repository.
