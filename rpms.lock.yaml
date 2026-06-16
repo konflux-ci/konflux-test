@@ -4,6 +4,97 @@ lockfileVendor: redhat
 arches:
 - arch: aarch64
   packages:
+  - url: http://mirror.grid.uchicago.edu/pub/linux/epel/9/Everything/aarch64/Packages/b/boost1.78-atomic-1.78.0-1.el9.aarch64.rpm
+    repoid: epel
+    size: 14535
+    checksum: sha256:cadbcf774a28c0a4a95c242a9874caed2b5a0f5a664a138d9a80f7dd7be30f12
+    name: boost1.78-atomic
+    evr: 1.78.0-1.el9
+    sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
+  - url: http://mirror.grid.uchicago.edu/pub/linux/epel/9/Everything/aarch64/Packages/b/boost1.78-filesystem-1.78.0-1.el9.aarch64.rpm
+    repoid: epel
+    size: 57331
+    checksum: sha256:f4df758081d4306c0a49a94ef4c57d807105c7575eb80010685a9e001226d690
+    name: boost1.78-filesystem
+    evr: 1.78.0-1.el9
+    sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
+  - url: http://mirror.grid.uchicago.edu/pub/linux/epel/9/Everything/aarch64/Packages/b/boost1.78-program-options-1.78.0-1.el9.aarch64.rpm
+    repoid: epel
+    size: 100258
+    checksum: sha256:100de2aeac3be1893c38ff78eba748f021685c2390684a5833bc3cc0f4f398c4
+    name: boost1.78-program-options
+    evr: 1.78.0-1.el9
+    sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
+  - url: http://mirror.grid.uchicago.edu/pub/linux/epel/9/Everything/aarch64/Packages/b/boost1.78-system-1.78.0-1.el9.aarch64.rpm
+    repoid: epel
+    size: 11055
+    checksum: sha256:e8f51a6e87360899e4a39934481e13c36178d7d5e9c38d2cd1ccae865053059b
+    name: boost1.78-system
+    evr: 1.78.0-1.el9
+    sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
+  - url: http://mirror.grid.uchicago.edu/pub/linux/epel/9/Everything/aarch64/Packages/c/clamav-1.4.3-3.el9.aarch64.rpm
+    repoid: epel
+    size: 3789815
+    checksum: sha256:4ffefa33fa6b18c800f4c88c1b3fa49d23d73842db929b9df9de7d3f353d8c75
+    name: clamav
+    evr: 1.4.3-3.el9
+    sourcerpm: clamav-1.4.3-3.el9.src.rpm
+  - url: http://mirror.grid.uchicago.edu/pub/linux/epel/9/Everything/aarch64/Packages/c/clamav-filesystem-1.4.3-3.el9.noarch.rpm
+    repoid: epel
+    size: 17833
+    checksum: sha256:18a441394a4ac51074ca8c90fc9f6112bc818578a4d9d08acdf19805d95dc352
+    name: clamav-filesystem
+    evr: 1.4.3-3.el9
+    sourcerpm: clamav-1.4.3-3.el9.src.rpm
+  - url: http://mirror.grid.uchicago.edu/pub/linux/epel/9/Everything/aarch64/Packages/c/clamav-freshclam-1.4.3-3.el9.aarch64.rpm
+    repoid: epel
+    size: 3025975
+    checksum: sha256:f52cacab90b80f3235ce2382d874718266304087e7c0f70fb45e610408b2151a
+    name: clamav-freshclam
+    evr: 1.4.3-3.el9
+    sourcerpm: clamav-1.4.3-3.el9.src.rpm
+  - url: http://mirror.grid.uchicago.edu/pub/linux/epel/9/Everything/aarch64/Packages/c/clamav-lib-1.4.3-3.el9.aarch64.rpm
+    repoid: epel
+    size: 3707396
+    checksum: sha256:d71b6fbca9979a972feb6541062146cde4e477d538684f61155a59d3430a7b99
+    name: clamav-lib
+    evr: 1.4.3-3.el9
+    sourcerpm: clamav-1.4.3-3.el9.src.rpm
+  - url: http://mirror.grid.uchicago.edu/pub/linux/epel/9/Everything/aarch64/Packages/c/clamd-1.4.3-3.el9.aarch64.rpm
+    repoid: epel
+    size: 94009
+    checksum: sha256:ddaf96d654136da65db57e8a247d763164bcbd54345225bfd168e98279cc9ef0
+    name: clamd
+    evr: 1.4.3-3.el9
+    sourcerpm: clamav-1.4.3-3.el9.src.rpm
+  - url: http://mirror.grid.uchicago.edu/pub/linux/epel/9/Everything/aarch64/Packages/c/csdiff-3.5.7-1.el9.aarch64.rpm
+    repoid: epel
+    size: 888126
+    checksum: sha256:c2021d08737f6db18f392c2b2836d35e027907ddc6a1786bedf475547ac0ec73
+    name: csdiff
+    evr: 3.5.7-1.el9
+    sourcerpm: csdiff-3.5.7-1.el9.src.rpm
+  - url: http://mirror.grid.uchicago.edu/pub/linux/epel/9/Everything/aarch64/Packages/c/csmock-plugin-shellcheck-core-3.8.6-1.el9.noarch.rpm
+    repoid: epel
+    size: 22847
+    checksum: sha256:54b5a58d78d30193aa615ddce29b20d35ccd1a09c77a474fdbfe77f5ddc6b6ee
+    name: csmock-plugin-shellcheck-core
+    evr: 3.8.6-1.el9
+    sourcerpm: csmock-3.8.6-1.el9.src.rpm
+  - url: http://mirror.grid.uchicago.edu/pub/linux/epel/9/Everything/aarch64/Packages/s/ShellCheck-0.10.0-3.el9.aarch64.rpm
+    repoid: epel
+    size: 3602973
+    checksum: sha256:8ad8f318d53460d9bc40598be534e98aec8333e71b65abeb4597f8820334e2de
+    name: ShellCheck
+    evr: 0.10.0-3.el9
+    sourcerpm: ShellCheck-0.10.0-3.el9.src.rpm
+  - url: http://mirror.grid.uchicago.edu/pub/linux/epel/9/Everything/aarch64/Packages/t/tini-0.19.0-5.el9.aarch64.rpm
+    repoid: epel
+    size: 22568
+    checksum: sha256:486454b6e2e84c96850a12038b5e70348bb85da0266332e203acd967fd91db90
+    name: tini
+    evr: 0.19.0-5.el9
+    sourcerpm: tini-0.19.0-5.el9.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/appstream/os/Packages/c/containers-common-5.8-1.el9.aarch64.rpm
     repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-appstream-rpms
     size: 170106
@@ -123,13 +214,13 @@ arches:
     name: golang-src
     evr: 1.26.3-1.el9_8
     sourcerpm: golang-1.26.3-1.el9_8.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/appstream/os/Packages/k/kernel-headers-5.14.0-687.12.1.el9_8.aarch64.rpm
+  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/appstream/os/Packages/k/kernel-headers-5.14.0-687.15.1.el9_8.aarch64.rpm
     repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-appstream-rpms
-    size: 2804481
-    checksum: sha256:964d828a12cfd8a81d64ffa080ad56ae238091b277a9a0829c8a6c65babfb88d
+    size: 2809569
+    checksum: sha256:d98aded7854057998d3787a82d3bcfb75533683d6d9e8b3731c90b8e227e30da
     name: kernel-headers
-    evr: 5.14.0-687.12.1.el9_8
-    sourcerpm: kernel-5.14.0-687.12.1.el9_8.src.rpm
+    evr: 5.14.0-687.15.1.el9_8
+    sourcerpm: kernel-5.14.0-687.15.1.el9_8.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/appstream/os/Packages/l/libasan-11.5.0-14.el9.aarch64.rpm
     repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-appstream-rpms
     size: 409047
@@ -179,13 +270,13 @@ arches:
     name: oniguruma
     evr: 6.9.6-1.el9.5
     sourcerpm: oniguruma-6.9.6-1.el9.5.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/appstream/os/Packages/o/openssl-devel-3.5.5-3.el9_8.aarch64.rpm
+  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/appstream/os/Packages/o/openssl-devel-3.5.5-4.el9_8.aarch64.rpm
     repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-appstream-rpms
-    size: 5005672
-    checksum: sha256:a335e1a575037638c5d18d9cf91244da5278c4121fc768f6738a18e8b3d74743
+    size: 5017465
+    checksum: sha256:63bc63f47f90c0475f5e2688817a41b61bc65768fc43c1b2a9ec3de87eff5b23
     name: openssl-devel
-    evr: 1:3.5.5-3.el9_8
-    sourcerpm: openssl-3.5.5-3.el9_8.src.rpm
+    evr: 1:3.5.5-4.el9_8
+    sourcerpm: openssl-3.5.5-4.el9_8.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/appstream/os/Packages/p/perl-AutoLoader-5.74-481.1.el9_6.noarch.rpm
     repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-appstream-rpms
     size: 21344
@@ -683,32 +774,11 @@ arches:
     name: elfutils-debuginfod-client
     evr: 0.194-1.el9
     sourcerpm: elfutils-0.194-1.el9.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/baseos/os/Packages/e/elfutils-libelf-0.194-1.el9.aarch64.rpm
-    repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-baseos-rpms
-    size: 203006
-    checksum: sha256:04ff63b7b669b16827f3688baa0be4a2782f1405db3c6d3ee03c0e4cebc2cdf2
-    name: elfutils-libelf
-    evr: 0.194-1.el9
-    sourcerpm: elfutils-0.194-1.el9.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/baseos/os/Packages/e/elfutils-libs-0.194-1.el9.aarch64.rpm
-    repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-baseos-rpms
-    size: 271645
-    checksum: sha256:b90a6ad3e465995538785a2536986ad705625daf606d6258bf23d1dd29aec208
-    name: elfutils-libs
-    evr: 0.194-1.el9
-    sourcerpm: elfutils-0.194-1.el9.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/baseos/os/Packages/f/file-5.39-17.el9.aarch64.rpm
     repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-baseos-rpms
     size: 55012
     checksum: sha256:0c2be26e6bf93b5e07bb4e7b26c5f6ab35948f9057a6fdaffd0f52a5e66c6446
     name: file
-    evr: 5.39-17.el9
-    sourcerpm: file-5.39-17.el9.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/baseos/os/Packages/f/file-libs-5.39-17.el9.aarch64.rpm
-    repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-baseos-rpms
-    size: 606222
-    checksum: sha256:0cc7fbea876d6f45bcc33cdebe5d8391ec8be2d84e7b43a44f83319f3ac93c8b
-    name: file-libs
     evr: 5.39-17.el9
     sourcerpm: file-5.39-17.el9.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/baseos/os/Packages/f/fuse-common-3.10.2-9.el9.aarch64.rpm
@@ -718,34 +788,6 @@ arches:
     name: fuse-common
     evr: 3.10.2-9.el9
     sourcerpm: fuse3-3.10.2-9.el9.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/baseos/os/Packages/g/glibc-2.34-270.el9_8.aarch64.rpm
-    repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-baseos-rpms
-    size: 1814894
-    checksum: sha256:3c53335370d5ac00dfb094f18f1f1a113452ffc88521ba4af1bb70449149453a
-    name: glibc
-    evr: 2.34-270.el9_8
-    sourcerpm: glibc-2.34-270.el9_8.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/baseos/os/Packages/g/glibc-common-2.34-270.el9_8.aarch64.rpm
-    repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-baseos-rpms
-    size: 313725
-    checksum: sha256:b908c768c75770132812c89f216af25377cb3efc69b7bafb19d63de41cac526a
-    name: glibc-common
-    evr: 2.34-270.el9_8
-    sourcerpm: glibc-2.34-270.el9_8.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/baseos/os/Packages/g/glibc-langpack-en-2.34-270.el9_8.aarch64.rpm
-    repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-baseos-rpms
-    size: 685204
-    checksum: sha256:4d31741da5a750bf4ba52da7a736d95bcfcd8c455dadc2cab8eebff2cb554c21
-    name: glibc-langpack-en
-    evr: 2.34-270.el9_8
-    sourcerpm: glibc-2.34-270.el9_8.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/baseos/os/Packages/g/glibc-minimal-langpack-2.34-270.el9_8.aarch64.rpm
-    repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-baseos-rpms
-    size: 31813
-    checksum: sha256:bc3bc61593f11049120c35d6bb297456577ad31a0db114737305c428c6270932
-    name: glibc-minimal-langpack
-    evr: 2.34-270.el9_8
-    sourcerpm: glibc-2.34-270.el9_8.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/baseos/os/Packages/g/groff-base-1.22.4-10.el9.aarch64.rpm
     repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-baseos-rpms
     size: 1088949
@@ -802,20 +844,6 @@ arches:
     name: libfido2
     evr: 1.13.0-2.el9
     sourcerpm: libfido2-1.13.0-2.el9.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/baseos/os/Packages/l/libgcc-11.5.0-14.el9.aarch64.rpm
-    repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-baseos-rpms
-    size: 81211
-    checksum: sha256:6923218fdef581189a4b51c7ba158083597f1c6df08cae021a1d90e9d61938a9
-    name: libgcc
-    evr: 11.5.0-14.el9
-    sourcerpm: gcc-11.5.0-14.el9.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/baseos/os/Packages/l/libgomp-11.5.0-14.el9.aarch64.rpm
-    repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-baseos-rpms
-    size: 262138
-    checksum: sha256:c8b3788fee442304e4158c802ff413df27d394b82f19c0f34ff43b5d3760470c
-    name: libgomp
-    evr: 11.5.0-14.el9
-    sourcerpm: gcc-11.5.0-14.el9.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/baseos/os/Packages/l/libicu-67.1-10.el9_6.aarch64.rpm
     repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-baseos-rpms
     size: 9930142
@@ -865,20 +893,20 @@ arches:
     name: openssh-clients
     evr: 9.9p1-7.el9_8
     sourcerpm: openssh-9.9p1-7.el9_8.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/baseos/os/Packages/o/openssl-3.5.5-3.el9_8.aarch64.rpm
+  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/baseos/os/Packages/o/openssl-3.5.5-4.el9_8.aarch64.rpm
     repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-baseos-rpms
-    size: 1540182
-    checksum: sha256:75511f7bb94d241b5c0a30b06cc0acf6a84d24d8c445e5609a41dff594fb53c8
+    size: 1540982
+    checksum: sha256:b0d7b7d68bdb9ab710ecd3ccd83119173f4d6a7a36c5d475a768bf07d7c69907
     name: openssl
-    evr: 1:3.5.5-3.el9_8
-    sourcerpm: openssl-3.5.5-3.el9_8.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/baseos/os/Packages/o/openssl-libs-3.5.5-3.el9_8.aarch64.rpm
+    evr: 1:3.5.5-4.el9_8
+    sourcerpm: openssl-3.5.5-4.el9_8.src.rpm
+  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/baseos/os/Packages/o/openssl-libs-3.5.5-4.el9_8.aarch64.rpm
     repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-baseos-rpms
-    size: 2289630
-    checksum: sha256:8a9d213791df60c339213f0590f3df96a6b5e64b602737c215e33264d8596dbb
+    size: 2289161
+    checksum: sha256:ba16b5253cfd99797f4582afcf60d58acd16d84bbbba9f5a8b6ccf3f2b7e1ba0
     name: openssl-libs
-    evr: 1:3.5.5-3.el9_8
-    sourcerpm: openssl-3.5.5-3.el9_8.src.rpm
+    evr: 1:3.5.5-4.el9_8
+    sourcerpm: openssl-3.5.5-4.el9_8.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/baseos/os/Packages/p/pkgconf-1.7.3-10.el9.aarch64.rpm
     repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-baseos-rpms
     size: 45196
@@ -914,192 +942,10 @@ arches:
     name: shadow-utils-subid
     evr: 2:4.9-16.el9
     sourcerpm: shadow-utils-4.9-16.el9.src.rpm
-  - url: https://mirror.fcix.net/epel/9/Everything/aarch64/Packages/b/boost1.78-atomic-1.78.0-1.el9.aarch64.rpm
-    repoid: epel
-    size: 14535
-    checksum: sha256:cadbcf774a28c0a4a95c242a9874caed2b5a0f5a664a138d9a80f7dd7be30f12
-    name: boost1.78-atomic
-    evr: 1.78.0-1.el9
-    sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
-  - url: https://mirror.fcix.net/epel/9/Everything/aarch64/Packages/b/boost1.78-filesystem-1.78.0-1.el9.aarch64.rpm
-    repoid: epel
-    size: 57331
-    checksum: sha256:f4df758081d4306c0a49a94ef4c57d807105c7575eb80010685a9e001226d690
-    name: boost1.78-filesystem
-    evr: 1.78.0-1.el9
-    sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
-  - url: https://mirror.fcix.net/epel/9/Everything/aarch64/Packages/b/boost1.78-program-options-1.78.0-1.el9.aarch64.rpm
-    repoid: epel
-    size: 100258
-    checksum: sha256:100de2aeac3be1893c38ff78eba748f021685c2390684a5833bc3cc0f4f398c4
-    name: boost1.78-program-options
-    evr: 1.78.0-1.el9
-    sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
-  - url: https://mirror.fcix.net/epel/9/Everything/aarch64/Packages/b/boost1.78-system-1.78.0-1.el9.aarch64.rpm
-    repoid: epel
-    size: 11055
-    checksum: sha256:e8f51a6e87360899e4a39934481e13c36178d7d5e9c38d2cd1ccae865053059b
-    name: boost1.78-system
-    evr: 1.78.0-1.el9
-    sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
-  - url: https://mirror.fcix.net/epel/9/Everything/aarch64/Packages/c/clamav-1.4.3-3.el9.aarch64.rpm
-    repoid: epel
-    size: 3789815
-    checksum: sha256:4ffefa33fa6b18c800f4c88c1b3fa49d23d73842db929b9df9de7d3f353d8c75
-    name: clamav
-    evr: 1.4.3-3.el9
-    sourcerpm: clamav-1.4.3-3.el9.src.rpm
-  - url: https://mirror.fcix.net/epel/9/Everything/aarch64/Packages/c/clamav-filesystem-1.4.3-3.el9.noarch.rpm
-    repoid: epel
-    size: 17833
-    checksum: sha256:18a441394a4ac51074ca8c90fc9f6112bc818578a4d9d08acdf19805d95dc352
-    name: clamav-filesystem
-    evr: 1.4.3-3.el9
-    sourcerpm: clamav-1.4.3-3.el9.src.rpm
-  - url: https://mirror.fcix.net/epel/9/Everything/aarch64/Packages/c/clamav-freshclam-1.4.3-3.el9.aarch64.rpm
-    repoid: epel
-    size: 3025975
-    checksum: sha256:f52cacab90b80f3235ce2382d874718266304087e7c0f70fb45e610408b2151a
-    name: clamav-freshclam
-    evr: 1.4.3-3.el9
-    sourcerpm: clamav-1.4.3-3.el9.src.rpm
-  - url: https://mirror.fcix.net/epel/9/Everything/aarch64/Packages/c/clamav-lib-1.4.3-3.el9.aarch64.rpm
-    repoid: epel
-    size: 3707396
-    checksum: sha256:d71b6fbca9979a972feb6541062146cde4e477d538684f61155a59d3430a7b99
-    name: clamav-lib
-    evr: 1.4.3-3.el9
-    sourcerpm: clamav-1.4.3-3.el9.src.rpm
-  - url: https://mirror.fcix.net/epel/9/Everything/aarch64/Packages/c/clamd-1.4.3-3.el9.aarch64.rpm
-    repoid: epel
-    size: 94009
-    checksum: sha256:ddaf96d654136da65db57e8a247d763164bcbd54345225bfd168e98279cc9ef0
-    name: clamd
-    evr: 1.4.3-3.el9
-    sourcerpm: clamav-1.4.3-3.el9.src.rpm
-  - url: https://mirror.fcix.net/epel/9/Everything/aarch64/Packages/c/csdiff-3.5.7-1.el9.aarch64.rpm
-    repoid: epel
-    size: 888126
-    checksum: sha256:c2021d08737f6db18f392c2b2836d35e027907ddc6a1786bedf475547ac0ec73
-    name: csdiff
-    evr: 3.5.7-1.el9
-    sourcerpm: csdiff-3.5.7-1.el9.src.rpm
-  - url: https://mirror.fcix.net/epel/9/Everything/aarch64/Packages/c/csmock-plugin-shellcheck-core-3.8.5-1.el9.noarch.rpm
-    repoid: epel
-    size: 22679
-    checksum: sha256:1cf03a4a63c60e1a1a559bcac69754636d614e5af090d6d17edc2aba708c7cd8
-    name: csmock-plugin-shellcheck-core
-    evr: 3.8.5-1.el9
-    sourcerpm: csmock-3.8.5-1.el9.src.rpm
-  - url: https://mirror.fcix.net/epel/9/Everything/aarch64/Packages/s/ShellCheck-0.10.0-3.el9.aarch64.rpm
-    repoid: epel
-    size: 3602973
-    checksum: sha256:8ad8f318d53460d9bc40598be534e98aec8333e71b65abeb4597f8820334e2de
-    name: ShellCheck
-    evr: 0.10.0-3.el9
-    sourcerpm: ShellCheck-0.10.0-3.el9.src.rpm
-  - url: https://mirror.fcix.net/epel/9/Everything/aarch64/Packages/t/tini-0.19.0-5.el9.aarch64.rpm
-    repoid: epel
-    size: 22568
-    checksum: sha256:486454b6e2e84c96850a12038b5e70348bb85da0266332e203acd967fd91db90
-    name: tini
-    evr: 0.19.0-5.el9
-    sourcerpm: tini-0.19.0-5.el9.src.rpm
   source: []
   module_metadata: []
 - arch: x86_64
   packages:
-  - url: http://volico.mm.fcix.net/epel/9/Everything/x86_64/Packages/b/boost1.78-atomic-1.78.0-1.el9.x86_64.rpm
-    repoid: epel
-    size: 14900
-    checksum: sha256:2f125176700c2923f55dc66d53a2e09312202aef9fde63fac40b6aebfc016c4b
-    name: boost1.78-atomic
-    evr: 1.78.0-1.el9
-    sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
-  - url: http://volico.mm.fcix.net/epel/9/Everything/x86_64/Packages/b/boost1.78-filesystem-1.78.0-1.el9.x86_64.rpm
-    repoid: epel
-    size: 61579
-    checksum: sha256:c4e62a0c8149f14a792aa816ed8360ad3ac6e576da38cf329a6bbcb6ac4c67ac
-    name: boost1.78-filesystem
-    evr: 1.78.0-1.el9
-    sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
-  - url: http://volico.mm.fcix.net/epel/9/Everything/x86_64/Packages/b/boost1.78-program-options-1.78.0-1.el9.x86_64.rpm
-    repoid: epel
-    size: 106462
-    checksum: sha256:a545fe18f516dae3c6280d663fe0a58c011de2c6a53fc5319b894c945207f387
-    name: boost1.78-program-options
-    evr: 1.78.0-1.el9
-    sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
-  - url: http://volico.mm.fcix.net/epel/9/Everything/x86_64/Packages/b/boost1.78-system-1.78.0-1.el9.x86_64.rpm
-    repoid: epel
-    size: 11135
-    checksum: sha256:e31ffb8df3f283abc5ce448ac266b47108246e903b7e36f2c87b40e93ad015b9
-    name: boost1.78-system
-    evr: 1.78.0-1.el9
-    sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
-  - url: http://volico.mm.fcix.net/epel/9/Everything/x86_64/Packages/c/clamav-1.4.3-3.el9.x86_64.rpm
-    repoid: epel
-    size: 7038941
-    checksum: sha256:3976a48f6eb2a27e3e6d777b5b2c23782a47b825205438969c0a1534976b4ea3
-    name: clamav
-    evr: 1.4.3-3.el9
-    sourcerpm: clamav-1.4.3-3.el9.src.rpm
-  - url: http://volico.mm.fcix.net/epel/9/Everything/x86_64/Packages/c/clamav-filesystem-1.4.3-3.el9.noarch.rpm
-    repoid: epel
-    size: 17833
-    checksum: sha256:18a441394a4ac51074ca8c90fc9f6112bc818578a4d9d08acdf19805d95dc352
-    name: clamav-filesystem
-    evr: 1.4.3-3.el9
-    sourcerpm: clamav-1.4.3-3.el9.src.rpm
-  - url: http://volico.mm.fcix.net/epel/9/Everything/x86_64/Packages/c/clamav-freshclam-1.4.3-3.el9.x86_64.rpm
-    repoid: epel
-    size: 3460373
-    checksum: sha256:f1916aba45bb3d39f20c90acd630f79214f4e4c0988e64cc3906053dd891cd0e
-    name: clamav-freshclam
-    evr: 1.4.3-3.el9
-    sourcerpm: clamav-1.4.3-3.el9.src.rpm
-  - url: http://volico.mm.fcix.net/epel/9/Everything/x86_64/Packages/c/clamav-lib-1.4.3-3.el9.x86_64.rpm
-    repoid: epel
-    size: 4159687
-    checksum: sha256:49be3f72c741257e98d9d4e463ee7fa2527672906aa31b21dcce89ce4bb3ed1d
-    name: clamav-lib
-    evr: 1.4.3-3.el9
-    sourcerpm: clamav-1.4.3-3.el9.src.rpm
-  - url: http://volico.mm.fcix.net/epel/9/Everything/x86_64/Packages/c/clamd-1.4.3-3.el9.x86_64.rpm
-    repoid: epel
-    size: 94679
-    checksum: sha256:1e3f0a94e2e0e613dbfc43333044ee063157fa6905a318a05843ce7a3399f2db
-    name: clamd
-    evr: 1.4.3-3.el9
-    sourcerpm: clamav-1.4.3-3.el9.src.rpm
-  - url: http://volico.mm.fcix.net/epel/9/Everything/x86_64/Packages/c/csdiff-3.5.7-1.el9.x86_64.rpm
-    repoid: epel
-    size: 944586
-    checksum: sha256:9a6e44bc0633aa8ba95a4cc5744acd90cb8291bdc3f5f9d0a19f1a4ca3e54478
-    name: csdiff
-    evr: 3.5.7-1.el9
-    sourcerpm: csdiff-3.5.7-1.el9.src.rpm
-  - url: http://volico.mm.fcix.net/epel/9/Everything/x86_64/Packages/c/csmock-plugin-shellcheck-core-3.8.5-1.el9.noarch.rpm
-    repoid: epel
-    size: 22679
-    checksum: sha256:1cf03a4a63c60e1a1a559bcac69754636d614e5af090d6d17edc2aba708c7cd8
-    name: csmock-plugin-shellcheck-core
-    evr: 3.8.5-1.el9
-    sourcerpm: csmock-3.8.5-1.el9.src.rpm
-  - url: http://volico.mm.fcix.net/epel/9/Everything/x86_64/Packages/s/ShellCheck-0.10.0-3.el9.x86_64.rpm
-    repoid: epel
-    size: 2761018
-    checksum: sha256:a10bba0d29731a43100ef0d6070279a3a2633e621c439788113a0b04ec90f41a
-    name: ShellCheck
-    evr: 0.10.0-3.el9
-    sourcerpm: ShellCheck-0.10.0-3.el9.src.rpm
-  - url: http://volico.mm.fcix.net/epel/9/Everything/x86_64/Packages/t/tini-0.19.0-5.el9.x86_64.rpm
-    repoid: epel
-    size: 22793
-    checksum: sha256:1cedbdf9afa27bf03ee70681ff9b8bd68d681a48050d6d35d69014964f90ce2b
-    name: tini
-    evr: 0.19.0-5.el9
-    sourcerpm: tini-0.19.0-5.el9.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/c/containers-common-5.8-1.el9.x86_64.rpm
     repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-appstream-rpms
     size: 170139
@@ -1226,13 +1072,13 @@ arches:
     name: golang-src
     evr: 1.26.3-1.el9_8
     sourcerpm: golang-1.26.3-1.el9_8.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/k/kernel-headers-5.14.0-687.12.1.el9_8.x86_64.rpm
+  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/k/kernel-headers-5.14.0-687.15.1.el9_8.x86_64.rpm
     repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-appstream-rpms
-    size: 2843797
-    checksum: sha256:01c5445b944b4283bef53bf7eba78cbeff9c3733f75cf13eb29c61b591c315b5
+    size: 2848829
+    checksum: sha256:363ae85f369c866bed2c4cf08ebd2c6a95935c18b57126eee9f0251e014d6de1
     name: kernel-headers
-    evr: 5.14.0-687.12.1.el9_8
-    sourcerpm: kernel-5.14.0-687.12.1.el9_8.src.rpm
+    evr: 5.14.0-687.15.1.el9_8
+    sourcerpm: kernel-5.14.0-687.15.1.el9_8.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/l/libmpc-1.2.1-4.el9.x86_64.rpm
     repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-appstream-rpms
     size: 66075
@@ -1275,13 +1121,13 @@ arches:
     name: oniguruma
     evr: 6.9.6-1.el9.5
     sourcerpm: oniguruma-6.9.6-1.el9.5.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/o/openssl-devel-3.5.5-3.el9_8.x86_64.rpm
+  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/o/openssl-devel-3.5.5-4.el9_8.x86_64.rpm
     repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-appstream-rpms
-    size: 5007516
-    checksum: sha256:ea5fbee07e4425beacc88f17c0056bd796b363fc9849b2ad480d260614c443a2
+    size: 5018420
+    checksum: sha256:b8bd95180ea457da07e0bf5e33c5425703df34ba25426266baec5336e18e5dea
     name: openssl-devel
-    evr: 1:3.5.5-3.el9_8
-    sourcerpm: openssl-3.5.5-3.el9_8.src.rpm
+    evr: 1:3.5.5-4.el9_8
+    sourcerpm: openssl-3.5.5-4.el9_8.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/p/perl-AutoLoader-5.74-481.1.el9_6.noarch.rpm
     repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-appstream-rpms
     size: 21344
@@ -1779,32 +1625,11 @@ arches:
     name: elfutils-debuginfod-client
     evr: 0.194-1.el9
     sourcerpm: elfutils-0.194-1.el9.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/e/elfutils-libelf-0.194-1.el9.x86_64.rpm
-    repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
-    size: 205864
-    checksum: sha256:00bbe4776149d8ccedcdf19dd6ceb08c3bb42ff41b98d744abe101af0b11a6c5
-    name: elfutils-libelf
-    evr: 0.194-1.el9
-    sourcerpm: elfutils-0.194-1.el9.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/e/elfutils-libs-0.194-1.el9.x86_64.rpm
-    repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
-    size: 274670
-    checksum: sha256:ad4f6d425cbc975cead56a2c982e38b0146d00944cbd9b3072d3d1f1271237a5
-    name: elfutils-libs
-    evr: 0.194-1.el9
-    sourcerpm: elfutils-0.194-1.el9.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/f/file-5.39-17.el9.x86_64.rpm
     repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
     size: 55037
     checksum: sha256:ad360b1c5aae98fcc41a212d5d69a8e8c6a5427b4c51418da18691dd09b18fa3
     name: file
-    evr: 5.39-17.el9
-    sourcerpm: file-5.39-17.el9.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/f/file-libs-5.39-17.el9.x86_64.rpm
-    repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
-    size: 608227
-    checksum: sha256:d473bf62eafab2e29a85e7bea9c71992441b71e37a2345a4b6e37d27689bc5a0
-    name: file-libs
     evr: 5.39-17.el9
     sourcerpm: file-5.39-17.el9.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/f/fuse-common-3.10.2-9.el9.x86_64.rpm
@@ -1814,34 +1639,6 @@ arches:
     name: fuse-common
     evr: 3.10.2-9.el9
     sourcerpm: fuse3-3.10.2-9.el9.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/g/glibc-2.34-270.el9_8.x86_64.rpm
-    repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
-    size: 2084453
-    checksum: sha256:39e15c1eb3181970e467e4baeaf31673120890b7bb9dd97b311f1c1128b76d16
-    name: glibc
-    evr: 2.34-270.el9_8
-    sourcerpm: glibc-2.34-270.el9_8.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/g/glibc-common-2.34-270.el9_8.x86_64.rpm
-    repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
-    size: 322519
-    checksum: sha256:f63ee066c0942641ea683e499087a0e9b4fa80645387871ebef264bd51640567
-    name: glibc-common
-    evr: 2.34-270.el9_8
-    sourcerpm: glibc-2.34-270.el9_8.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/g/glibc-langpack-en-2.34-270.el9_8.x86_64.rpm
-    repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
-    size: 685314
-    checksum: sha256:a6ed1995b04ec6c750b5467e7fe085acca53d63f8ec27dd768de1eb50b9a1dc1
-    name: glibc-langpack-en
-    evr: 2.34-270.el9_8
-    sourcerpm: glibc-2.34-270.el9_8.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/g/glibc-minimal-langpack-2.34-270.el9_8.x86_64.rpm
-    repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
-    size: 31845
-    checksum: sha256:1ea08534d2eafe91a9d549277ab1682913f0407c1c4e3e0d89626975aca35fc8
-    name: glibc-minimal-langpack
-    evr: 2.34-270.el9_8
-    sourcerpm: glibc-2.34-270.el9_8.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/g/groff-base-1.22.4-10.el9.x86_64.rpm
     repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
     size: 1133828
@@ -1891,20 +1688,6 @@ arches:
     name: libfido2
     evr: 1.13.0-2.el9
     sourcerpm: libfido2-1.13.0-2.el9.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/l/libgcc-11.5.0-14.el9.x86_64.rpm
-    repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
-    size: 87280
-    checksum: sha256:77c66827ffc14df2f43612b26128b1fd58d5c9597d4d4e564aa239b161272872
-    name: libgcc
-    evr: 11.5.0-14.el9
-    sourcerpm: gcc-11.5.0-14.el9.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/l/libgomp-11.5.0-14.el9.x86_64.rpm
-    repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
-    size: 263723
-    checksum: sha256:87b9a7316760374111290e6e4c76ee4d093566f08a7c7c91ad7827c5948afb69
-    name: libgomp
-    evr: 11.5.0-14.el9
-    sourcerpm: gcc-11.5.0-14.el9.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/l/libicu-67.1-10.el9_6.x86_64.rpm
     repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
     size: 10037375
@@ -1954,20 +1737,20 @@ arches:
     name: openssh-clients
     evr: 9.9p1-7.el9_8
     sourcerpm: openssh-9.9p1-7.el9_8.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/o/openssl-3.5.5-3.el9_8.x86_64.rpm
+  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/o/openssl-3.5.5-4.el9_8.x86_64.rpm
     repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
-    size: 1563561
-    checksum: sha256:7bfbc78ae617d7d276c4708bbcbce2cd98b88aef0b8155b784f69dcd17d1b0a5
+    size: 1564134
+    checksum: sha256:e0e2c1f901d3f6245ff43f194ac11ba133cf99c630307239722c07a2282a1356
     name: openssl
-    evr: 1:3.5.5-3.el9_8
-    sourcerpm: openssl-3.5.5-3.el9_8.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/o/openssl-libs-3.5.5-3.el9_8.x86_64.rpm
+    evr: 1:3.5.5-4.el9_8
+    sourcerpm: openssl-3.5.5-4.el9_8.src.rpm
+  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/o/openssl-libs-3.5.5-4.el9_8.x86_64.rpm
     repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
-    size: 2424992
-    checksum: sha256:924b7eac2141b1bdad8abc2a1a4ac58b45c77293b1de27c00fb2433dfffa1289
+    size: 2426674
+    checksum: sha256:126c17e907e1f6cbbd3989a478e933a74d5508e70b8983b0f6a94e7fd2a903e6
     name: openssl-libs
-    evr: 1:3.5.5-3.el9_8
-    sourcerpm: openssl-3.5.5-3.el9_8.src.rpm
+    evr: 1:3.5.5-4.el9_8
+    sourcerpm: openssl-3.5.5-4.el9_8.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/p/pkgconf-1.7.3-10.el9.x86_64.rpm
     repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
     size: 45675
@@ -2003,5 +1786,96 @@ arches:
     name: shadow-utils-subid
     evr: 2:4.9-16.el9
     sourcerpm: shadow-utils-4.9-16.el9.src.rpm
+  - url: https://ftp-chi.osuosl.org/pub/fedora-epel/9/Everything/x86_64/Packages/b/boost1.78-atomic-1.78.0-1.el9.x86_64.rpm
+    repoid: epel
+    size: 14900
+    checksum: sha256:2f125176700c2923f55dc66d53a2e09312202aef9fde63fac40b6aebfc016c4b
+    name: boost1.78-atomic
+    evr: 1.78.0-1.el9
+    sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
+  - url: https://ftp-chi.osuosl.org/pub/fedora-epel/9/Everything/x86_64/Packages/b/boost1.78-filesystem-1.78.0-1.el9.x86_64.rpm
+    repoid: epel
+    size: 61579
+    checksum: sha256:c4e62a0c8149f14a792aa816ed8360ad3ac6e576da38cf329a6bbcb6ac4c67ac
+    name: boost1.78-filesystem
+    evr: 1.78.0-1.el9
+    sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
+  - url: https://ftp-chi.osuosl.org/pub/fedora-epel/9/Everything/x86_64/Packages/b/boost1.78-program-options-1.78.0-1.el9.x86_64.rpm
+    repoid: epel
+    size: 106462
+    checksum: sha256:a545fe18f516dae3c6280d663fe0a58c011de2c6a53fc5319b894c945207f387
+    name: boost1.78-program-options
+    evr: 1.78.0-1.el9
+    sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
+  - url: https://ftp-chi.osuosl.org/pub/fedora-epel/9/Everything/x86_64/Packages/b/boost1.78-system-1.78.0-1.el9.x86_64.rpm
+    repoid: epel
+    size: 11135
+    checksum: sha256:e31ffb8df3f283abc5ce448ac266b47108246e903b7e36f2c87b40e93ad015b9
+    name: boost1.78-system
+    evr: 1.78.0-1.el9
+    sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
+  - url: https://ftp-chi.osuosl.org/pub/fedora-epel/9/Everything/x86_64/Packages/c/clamav-1.4.3-3.el9.x86_64.rpm
+    repoid: epel
+    size: 7038941
+    checksum: sha256:3976a48f6eb2a27e3e6d777b5b2c23782a47b825205438969c0a1534976b4ea3
+    name: clamav
+    evr: 1.4.3-3.el9
+    sourcerpm: clamav-1.4.3-3.el9.src.rpm
+  - url: https://ftp-chi.osuosl.org/pub/fedora-epel/9/Everything/x86_64/Packages/c/clamav-filesystem-1.4.3-3.el9.noarch.rpm
+    repoid: epel
+    size: 17833
+    checksum: sha256:18a441394a4ac51074ca8c90fc9f6112bc818578a4d9d08acdf19805d95dc352
+    name: clamav-filesystem
+    evr: 1.4.3-3.el9
+    sourcerpm: clamav-1.4.3-3.el9.src.rpm
+  - url: https://ftp-chi.osuosl.org/pub/fedora-epel/9/Everything/x86_64/Packages/c/clamav-freshclam-1.4.3-3.el9.x86_64.rpm
+    repoid: epel
+    size: 3460373
+    checksum: sha256:f1916aba45bb3d39f20c90acd630f79214f4e4c0988e64cc3906053dd891cd0e
+    name: clamav-freshclam
+    evr: 1.4.3-3.el9
+    sourcerpm: clamav-1.4.3-3.el9.src.rpm
+  - url: https://ftp-chi.osuosl.org/pub/fedora-epel/9/Everything/x86_64/Packages/c/clamav-lib-1.4.3-3.el9.x86_64.rpm
+    repoid: epel
+    size: 4159687
+    checksum: sha256:49be3f72c741257e98d9d4e463ee7fa2527672906aa31b21dcce89ce4bb3ed1d
+    name: clamav-lib
+    evr: 1.4.3-3.el9
+    sourcerpm: clamav-1.4.3-3.el9.src.rpm
+  - url: https://ftp-chi.osuosl.org/pub/fedora-epel/9/Everything/x86_64/Packages/c/clamd-1.4.3-3.el9.x86_64.rpm
+    repoid: epel
+    size: 94679
+    checksum: sha256:1e3f0a94e2e0e613dbfc43333044ee063157fa6905a318a05843ce7a3399f2db
+    name: clamd
+    evr: 1.4.3-3.el9
+    sourcerpm: clamav-1.4.3-3.el9.src.rpm
+  - url: https://ftp-chi.osuosl.org/pub/fedora-epel/9/Everything/x86_64/Packages/c/csdiff-3.5.7-1.el9.x86_64.rpm
+    repoid: epel
+    size: 944586
+    checksum: sha256:9a6e44bc0633aa8ba95a4cc5744acd90cb8291bdc3f5f9d0a19f1a4ca3e54478
+    name: csdiff
+    evr: 3.5.7-1.el9
+    sourcerpm: csdiff-3.5.7-1.el9.src.rpm
+  - url: https://ftp-chi.osuosl.org/pub/fedora-epel/9/Everything/x86_64/Packages/c/csmock-plugin-shellcheck-core-3.8.6-1.el9.noarch.rpm
+    repoid: epel
+    size: 22847
+    checksum: sha256:54b5a58d78d30193aa615ddce29b20d35ccd1a09c77a474fdbfe77f5ddc6b6ee
+    name: csmock-plugin-shellcheck-core
+    evr: 3.8.6-1.el9
+    sourcerpm: csmock-3.8.6-1.el9.src.rpm
+  - url: https://ftp-chi.osuosl.org/pub/fedora-epel/9/Everything/x86_64/Packages/s/ShellCheck-0.10.0-3.el9.x86_64.rpm
+    repoid: epel
+    size: 2761018
+    checksum: sha256:a10bba0d29731a43100ef0d6070279a3a2633e621c439788113a0b04ec90f41a
+    name: ShellCheck
+    evr: 0.10.0-3.el9
+    sourcerpm: ShellCheck-0.10.0-3.el9.src.rpm
+  - url: https://ftp-chi.osuosl.org/pub/fedora-epel/9/Everything/x86_64/Packages/t/tini-0.19.0-5.el9.x86_64.rpm
+    repoid: epel
+    size: 22793
+    checksum: sha256:1cedbdf9afa27bf03ee70681ff9b8bd68d681a48050d6d35d69014964f90ce2b
+    name: tini
+    evr: 0.19.0-5.el9
+    sourcerpm: tini-0.19.0-5.el9.src.rpm
   source: []
   module_metadata: []
