@@ -11,7 +11,7 @@ RUN tar -xzf /cachi2/output/deps/generic/check-payload-${CHECK_PAYLOAD_VERSION}.
 
 FROM quay.io/konflux-ci/buildah-task:latest@sha256:4c470b5a153c4acd14bf4f8731b5e36c61d7faafe09c2bf376bb81ce84aa5709 AS buildah-task-image
 FROM registry.redhat.io/openshift4/ose-tools-rhel9@sha256:24fa100fca2fad1096a5e01cd31360ccd99649b0621aeccb2f3553c6a79cb4d5 as oc-bin
-FROM quay.io/konflux-ci/task-runner:1.7.0@sha256:1c0582a85dae0949f3ec94aca95695c5d7698b371f1b76c5a78822a6249073dc AS appstudio-utils
+FROM quay.io/konflux-ci/task-runner:1.8.1@sha256:b9ef0479b57a494368a12a02886c650314c9ac7391c6228f21065865aab71c9e AS appstudio-utils
 FROM registry.access.redhat.com/ubi9/ubi:9.8-1781496985
 
 # Note that the version of OPA used by pr-checks must be updated manually to reflect conftest updates
