@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: Check out Docker file code in the root directory
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Install dependencies
         run: |
