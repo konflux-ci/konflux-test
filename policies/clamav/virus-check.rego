@@ -1,7 +1,7 @@
 package required_checks
 
-import future.keywords.in
 import future.keywords.if
+import future.keywords.in
 
 violation_infected_files := [{"msg": msg, "details": {"filename": filename, "virname": virname, "description": description}} |
 	hit := _report.hits[_]
@@ -45,7 +45,7 @@ _report := d if {
 
 	hits := [{"filename": filename, "virname": virname, "is_heuristic": is_heuristic} |
 		some hit in hits_lines
-		regex.match("^\\S+: \\S+ FOUND$", hit)
+		regex.match(`^\S+: \S+ FOUND$`, hit)
 
 		hit_parts := split(hit, " ")
 		filename := substring(hit_parts[0], 0, count(hit_parts[0]) - 1)

@@ -37,7 +37,36 @@ jobs:
       - uses: hadolint/hadolint-action@v3.3.0
         with:
           dockerfile: Dockerfile
-          ignore: DL3003,DL3013,DL3041,DL4006  # DL4006 seems broken
+
+  regal-lint:
+    name: Regal Rego linter
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+      - name: Run Regal
+        uses: StyraInc/regal-action@v1
+        with:
+          args: lint policies/ unittests/ hack/
+
+  opa-fmt-check:
+    name: Check OPA formatting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+      - name: Install OPA
+        run: |
+          sudo curl -L -o /usr/bin/opa https://openpolicyagent.org/downloads/v0.56.0/opa_linux_amd64_static
+          sudo chmod 755 /usr/bin/opa
+      - name: Check OPA formatting
+        run: |
+          diff=$(opa fmt --diff policies/ unittests/ hack/)
+          if [ -n "$diff" ]; then
+            echo "::error::OPA formatting check failed. Run 'opa fmt -w policies/ unittests/ hack/' to fix."
+            echo "$diff"
+            exit 1
+          fi
 
   opa_policies_unittest:
     name: opa_policies_unittest
@@ -103,8 +132,6 @@ jobs:
       - uses: actions/checkout@v7
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@master
-        env:
-          SHELLCHECK_OPTS: -s bash
         with:
           scandir: './test'
           ignore_paths: './test/conftest.sh ./test/selftest.sh'  # for now
