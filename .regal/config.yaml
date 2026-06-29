@@ -1,0 +1,37 @@
+rules:
+  idiomatic:
+    directory-package-mismatch:
+      level: ignore
+    equals-pattern-matching:
+      level: ignore
+    no-defined-entrypoint:
+      level: ignore
+  imports:
+    confusing-alias:
+      level: ignore
+    implicit-future-keywords:
+      level: ignore
+    pointless-import:
+      level: ignore
+    redundant-data-import:
+      level: ignore
+    unresolved-import:
+      level: ignore
+    unresolved-reference:
+      level: ignore
+  style:
+    avoid-get-and-list-prefix:
+      level: ignore
+    line-length:
+      level: ignore
+    opa-fmt:
+      level: ignore
+    prefer-some-in-iteration:
+      level: ignore
+    unconditional-assignment:
+      level: ignore
+    use-assignment-operator:
+      level: error
+  testing:
+    test-outside-test-package:
+      level: ignore
