@@ -45,7 +45,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7
       - name: Run Regal
-        uses: StyraInc/regal-action@v1
+        uses: StyraInc/regal-action@v2.0.0
         with:
           args: lint policies/ unittests/ hack/
 
