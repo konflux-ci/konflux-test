@@ -12,7 +12,7 @@ RUN tar -xzf /cachi2/output/deps/generic/check-payload-${CHECK_PAYLOAD_VERSION}.
 FROM quay.io/konflux-ci/buildah-task:latest@sha256:4c470b5a153c4acd14bf4f8731b5e36c61d7faafe09c2bf376bb81ce84aa5709 AS buildah-task-image
 FROM registry.redhat.io/openshift4/ose-tools-rhel9@sha256:248cdd3f2b81ffeb5a67a6c5fa50f8d61894f512b72211948ec171df20a76f35 as oc-bin
 FROM quay.io/konflux-ci/task-runner:2.0.0@sha256:4b01fbf98fa7155f5c21443c285f88853864ae7cc66981cf6b543fc6ba16b81b AS appstudio-utils
-FROM registry.access.redhat.com/ubi9/ubi:9.8-1782365825
+FROM registry.access.redhat.com/ubi9/ubi:9.8-1782841664
 
 # Note that the version of OPA used by pr-checks must be updated manually to reflect conftest updates
 # To find the OPA version associated with conftest run the following with the relevant version of conftest:
