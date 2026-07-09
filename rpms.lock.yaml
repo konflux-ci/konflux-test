@@ -4,91 +4,91 @@ lockfileVendor: redhat
 arches:
 - arch: aarch64
   packages:
-  - url: http://mirrors.wcupa.edu/epel/9/Everything/aarch64/Packages/b/boost1.78-atomic-1.78.0-1.el9.aarch64.rpm
+  - url: http://mirror.cs.princeton.edu/pub/mirrors/epel/9/Everything/aarch64/Packages/b/boost1.78-atomic-1.78.0-1.el9.aarch64.rpm
     repoid: epel
     size: 14535
     checksum: sha256:cadbcf774a28c0a4a95c242a9874caed2b5a0f5a664a138d9a80f7dd7be30f12
     name: boost1.78-atomic
     evr: 1.78.0-1.el9
     sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
-  - url: http://mirrors.wcupa.edu/epel/9/Everything/aarch64/Packages/b/boost1.78-filesystem-1.78.0-1.el9.aarch64.rpm
+  - url: http://mirror.cs.princeton.edu/pub/mirrors/epel/9/Everything/aarch64/Packages/b/boost1.78-filesystem-1.78.0-1.el9.aarch64.rpm
     repoid: epel
     size: 57331
     checksum: sha256:f4df758081d4306c0a49a94ef4c57d807105c7575eb80010685a9e001226d690
     name: boost1.78-filesystem
     evr: 1.78.0-1.el9
     sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
-  - url: http://mirrors.wcupa.edu/epel/9/Everything/aarch64/Packages/b/boost1.78-program-options-1.78.0-1.el9.aarch64.rpm
+  - url: http://mirror.cs.princeton.edu/pub/mirrors/epel/9/Everything/aarch64/Packages/b/boost1.78-program-options-1.78.0-1.el9.aarch64.rpm
     repoid: epel
     size: 100258
     checksum: sha256:100de2aeac3be1893c38ff78eba748f021685c2390684a5833bc3cc0f4f398c4
     name: boost1.78-program-options
     evr: 1.78.0-1.el9
     sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
-  - url: http://mirrors.wcupa.edu/epel/9/Everything/aarch64/Packages/b/boost1.78-system-1.78.0-1.el9.aarch64.rpm
+  - url: http://mirror.cs.princeton.edu/pub/mirrors/epel/9/Everything/aarch64/Packages/b/boost1.78-system-1.78.0-1.el9.aarch64.rpm
     repoid: epel
     size: 11055
     checksum: sha256:e8f51a6e87360899e4a39934481e13c36178d7d5e9c38d2cd1ccae865053059b
     name: boost1.78-system
     evr: 1.78.0-1.el9
     sourcerpm: boost1.78-1.78.0-1.el9.src.rpm
-  - url: http://mirrors.wcupa.edu/epel/9/Everything/aarch64/Packages/c/clamav-1.4.3-3.el9.aarch64.rpm
+  - url: http://mirror.cs.princeton.edu/pub/mirrors/epel/9/Everything/aarch64/Packages/c/clamav-1.4.3-3.el9.aarch64.rpm
     repoid: epel
     size: 3789815
     checksum: sha256:4ffefa33fa6b18c800f4c88c1b3fa49d23d73842db929b9df9de7d3f353d8c75
     name: clamav
     evr: 1.4.3-3.el9
     sourcerpm: clamav-1.4.3-3.el9.src.rpm
-  - url: http://mirrors.wcupa.edu/epel/9/Everything/aarch64/Packages/c/clamav-filesystem-1.4.3-3.el9.noarch.rpm
+  - url: http://mirror.cs.princeton.edu/pub/mirrors/epel/9/Everything/aarch64/Packages/c/clamav-filesystem-1.4.3-3.el9.noarch.rpm
     repoid: epel
     size: 17833
     checksum: sha256:18a441394a4ac51074ca8c90fc9f6112bc818578a4d9d08acdf19805d95dc352
     name: clamav-filesystem
     evr: 1.4.3-3.el9
     sourcerpm: clamav-1.4.3-3.el9.src.rpm
-  - url: http://mirrors.wcupa.edu/epel/9/Everything/aarch64/Packages/c/clamav-freshclam-1.4.3-3.el9.aarch64.rpm
+  - url: http://mirror.cs.princeton.edu/pub/mirrors/epel/9/Everything/aarch64/Packages/c/clamav-freshclam-1.4.3-3.el9.aarch64.rpm
     repoid: epel
     size: 3025975
     checksum: sha256:f52cacab90b80f3235ce2382d874718266304087e7c0f70fb45e610408b2151a
     name: clamav-freshclam
     evr: 1.4.3-3.el9
     sourcerpm: clamav-1.4.3-3.el9.src.rpm
-  - url: http://mirrors.wcupa.edu/epel/9/Everything/aarch64/Packages/c/clamav-lib-1.4.3-3.el9.aarch64.rpm
+  - url: http://mirror.cs.princeton.edu/pub/mirrors/epel/9/Everything/aarch64/Packages/c/clamav-lib-1.4.3-3.el9.aarch64.rpm
     repoid: epel
     size: 3707396
     checksum: sha256:d71b6fbca9979a972feb6541062146cde4e477d538684f61155a59d3430a7b99
     name: clamav-lib
     evr: 1.4.3-3.el9
     sourcerpm: clamav-1.4.3-3.el9.src.rpm
-  - url: http://mirrors.wcupa.edu/epel/9/Everything/aarch64/Packages/c/clamd-1.4.3-3.el9.aarch64.rpm
+  - url: http://mirror.cs.princeton.edu/pub/mirrors/epel/9/Everything/aarch64/Packages/c/clamd-1.4.3-3.el9.aarch64.rpm
     repoid: epel
     size: 94009
     checksum: sha256:ddaf96d654136da65db57e8a247d763164bcbd54345225bfd168e98279cc9ef0
     name: clamd
     evr: 1.4.3-3.el9
     sourcerpm: clamav-1.4.3-3.el9.src.rpm
-  - url: http://mirrors.wcupa.edu/epel/9/Everything/aarch64/Packages/c/csdiff-3.5.7-1.el9.aarch64.rpm
+  - url: http://mirror.cs.princeton.edu/pub/mirrors/epel/9/Everything/aarch64/Packages/c/csdiff-3.5.7-1.el9.aarch64.rpm
     repoid: epel
     size: 888126
     checksum: sha256:c2021d08737f6db18f392c2b2836d35e027907ddc6a1786bedf475547ac0ec73
     name: csdiff
     evr: 3.5.7-1.el9
     sourcerpm: csdiff-3.5.7-1.el9.src.rpm
-  - url: http://mirrors.wcupa.edu/epel/9/Everything/aarch64/Packages/c/csmock-plugin-shellcheck-core-3.8.6-1.el9.noarch.rpm
+  - url: http://mirror.cs.princeton.edu/pub/mirrors/epel/9/Everything/aarch64/Packages/c/csmock-plugin-shellcheck-core-3.8.6-1.el9.noarch.rpm
     repoid: epel
     size: 22847
     checksum: sha256:54b5a58d78d30193aa615ddce29b20d35ccd1a09c77a474fdbfe77f5ddc6b6ee
     name: csmock-plugin-shellcheck-core
     evr: 3.8.6-1.el9
     sourcerpm: csmock-3.8.6-1.el9.src.rpm
-  - url: http://mirrors.wcupa.edu/epel/9/Everything/aarch64/Packages/s/ShellCheck-0.10.0-3.el9.aarch64.rpm
+  - url: http://mirror.cs.princeton.edu/pub/mirrors/epel/9/Everything/aarch64/Packages/s/ShellCheck-0.10.0-3.el9.aarch64.rpm
     repoid: epel
     size: 3602973
     checksum: sha256:8ad8f318d53460d9bc40598be534e98aec8333e71b65abeb4597f8820334e2de
     name: ShellCheck
     evr: 0.10.0-3.el9
     sourcerpm: ShellCheck-0.10.0-3.el9.src.rpm
-  - url: http://mirrors.wcupa.edu/epel/9/Everything/aarch64/Packages/t/tini-0.19.0-5.el9.aarch64.rpm
+  - url: http://mirror.cs.princeton.edu/pub/mirrors/epel/9/Everything/aarch64/Packages/t/tini-0.19.0-5.el9.aarch64.rpm
     repoid: epel
     size: 22568
     checksum: sha256:486454b6e2e84c96850a12038b5e70348bb85da0266332e203acd967fd91db90
@@ -179,13 +179,13 @@ arches:
     name: git-core-doc
     evr: 2.52.0-1.el9
     sourcerpm: git-2.52.0-1.el9.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/appstream/os/Packages/g/glibc-devel-2.34-272.el9_8.aarch64.rpm
+  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/appstream/os/Packages/g/glibc-devel-2.34-270.el9_8.aarch64.rpm
     repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-appstream-rpms
-    size: 577070
-    checksum: sha256:3d76e7f2892d66c767a065524df5592f8fa75f44fa5f2e371b2a366d63c18de4
+    size: 578011
+    checksum: sha256:dc745c58066e323f08bdc8b613163c59899e764eed95899afa64d58b424c5a57
     name: glibc-devel
-    evr: 2.34-272.el9_8
-    sourcerpm: glibc-2.34-272.el9_8.src.rpm
+    evr: 2.34-270.el9_8
+    sourcerpm: glibc-2.34-270.el9_8.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/appstream/os/Packages/g/golang-1.26.4-1.el9_8.aarch64.rpm
     repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-appstream-rpms
     size: 1520343
@@ -214,13 +214,13 @@ arches:
     name: golang-src
     evr: 1.26.4-1.el9_8
     sourcerpm: golang-1.26.4-1.el9_8.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/appstream/os/Packages/k/kernel-headers-5.14.0-687.20.1.el9_8.aarch64.rpm
+  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/appstream/os/Packages/k/kernel-headers-5.14.0-687.17.1.el9_8.aarch64.rpm
     repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-appstream-rpms
-    size: 2847337
-    checksum: sha256:9d68e24b43ce1fa494c04aeda9bde9544d6947a8d9edaf6e0f4a6398b8f79cec
+    size: 2812677
+    checksum: sha256:65d32fce1400e40296fc62c2f70894362a4845b8583d22d0fe2c465509ad7fa9
     name: kernel-headers
-    evr: 5.14.0-687.20.1.el9_8
-    sourcerpm: kernel-5.14.0-687.20.1.el9_8.src.rpm
+    evr: 5.14.0-687.17.1.el9_8
+    sourcerpm: kernel-5.14.0-687.17.1.el9_8.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/appstream/os/Packages/l/libasan-11.5.0-14.el9.aarch64.rpm
     repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-appstream-rpms
     size: 409047
@@ -788,34 +788,6 @@ arches:
     name: fuse-common
     evr: 3.10.2-9.el9
     sourcerpm: fuse3-3.10.2-9.el9.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/baseos/os/Packages/g/glibc-2.34-272.el9_8.aarch64.rpm
-    repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-baseos-rpms
-    size: 1814375
-    checksum: sha256:32d7e0106931f57b02f4c6e2f3cb48054cb22210f26d997840dbbf5d05ad0b5f
-    name: glibc
-    evr: 2.34-272.el9_8
-    sourcerpm: glibc-2.34-272.el9_8.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/baseos/os/Packages/g/glibc-common-2.34-272.el9_8.aarch64.rpm
-    repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-baseos-rpms
-    size: 312875
-    checksum: sha256:01221c541d1239b8219f6e6f78bee322e7d775e81177651cc716ead4d59d6171
-    name: glibc-common
-    evr: 2.34-272.el9_8
-    sourcerpm: glibc-2.34-272.el9_8.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/baseos/os/Packages/g/glibc-langpack-en-2.34-272.el9_8.aarch64.rpm
-    repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-baseos-rpms
-    size: 684747
-    checksum: sha256:34d95f6d19e5613c3338d0659c2074152a2216bb19f33803de298e5dc484b008
-    name: glibc-langpack-en
-    evr: 2.34-272.el9_8
-    sourcerpm: glibc-2.34-272.el9_8.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/baseos/os/Packages/g/glibc-minimal-langpack-2.34-272.el9_8.aarch64.rpm
-    repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-baseos-rpms
-    size: 30969
-    checksum: sha256:928369bd41008bea5b7b472f8578cf7c14ac1ebe81d33e4556cd6fff41b35a14
-    name: glibc-minimal-langpack
-    evr: 2.34-272.el9_8
-    sourcerpm: glibc-2.34-272.el9_8.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/baseos/os/Packages/g/groff-base-1.22.4-10.el9.aarch64.rpm
     repoid: ubi-9-for-aarch64-for-aarch64-for-aarch64-for-aarch64-baseos-rpms
     size: 1088949
@@ -1135,20 +1107,20 @@ arches:
     name: git-core-doc
     evr: 2.52.0-1.el9
     sourcerpm: git-2.52.0-1.el9.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/g/glibc-devel-2.34-272.el9_8.x86_64.rpm
+  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/g/glibc-devel-2.34-270.el9_8.x86_64.rpm
     repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-appstream-rpms
-    size: 46619
-    checksum: sha256:528edd253ccac17373c82bad04064a554ee18986a9362860be4d804ff1239825
+    size: 47451
+    checksum: sha256:ac596cb6c59f74558e4b9b3674abc34d79c9772c4165f5cda866c1c24c81f939
     name: glibc-devel
-    evr: 2.34-272.el9_8
-    sourcerpm: glibc-2.34-272.el9_8.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/g/glibc-headers-2.34-272.el9_8.x86_64.rpm
+    evr: 2.34-270.el9_8
+    sourcerpm: glibc-2.34-270.el9_8.src.rpm
+  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/g/glibc-headers-2.34-270.el9_8.x86_64.rpm
     repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-appstream-rpms
-    size: 567230
-    checksum: sha256:11533070a0fa0133c3184295df9666ddbf5352e1bb748a1e5d7c97da6853cff5
+    size: 568001
+    checksum: sha256:0eab0982c27442a8e4acbd7b32a66757174482dcc183ef27412427f54f8f36d7
     name: glibc-headers
-    evr: 2.34-272.el9_8
-    sourcerpm: glibc-2.34-272.el9_8.src.rpm
+    evr: 2.34-270.el9_8
+    sourcerpm: glibc-2.34-270.el9_8.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/g/golang-1.26.4-1.el9_8.x86_64.rpm
     repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-appstream-rpms
     size: 1520631
@@ -1177,13 +1149,13 @@ arches:
     name: golang-src
     evr: 1.26.4-1.el9_8
     sourcerpm: golang-1.26.4-1.el9_8.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/k/kernel-headers-5.14.0-687.20.1.el9_8.x86_64.rpm
+  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/k/kernel-headers-5.14.0-687.17.1.el9_8.x86_64.rpm
     repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-appstream-rpms
-    size: 2886649
-    checksum: sha256:15bc07a73a86aa6278eafa5d523c4de21c8a37f6178b94283845b1bfd929e7f7
+    size: 2851973
+    checksum: sha256:327d2fb943e75ecd6d5ed30bcaa240751ea4e11be091ff6aeb5ce36405a6afba
     name: kernel-headers
-    evr: 5.14.0-687.20.1.el9_8
-    sourcerpm: kernel-5.14.0-687.20.1.el9_8.src.rpm
+    evr: 5.14.0-687.17.1.el9_8
+    sourcerpm: kernel-5.14.0-687.17.1.el9_8.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/os/Packages/l/libmpc-1.2.1-4.el9.x86_64.rpm
     repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-appstream-rpms
     size: 66075
@@ -1744,34 +1716,6 @@ arches:
     name: fuse-common
     evr: 3.10.2-9.el9
     sourcerpm: fuse3-3.10.2-9.el9.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/g/glibc-2.34-272.el9_8.x86_64.rpm
-    repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
-    size: 2084168
-    checksum: sha256:d59c7006e4a76b6543be7fb04cd701cc341fd667198f86006a8e766923a9985b
-    name: glibc
-    evr: 2.34-272.el9_8
-    sourcerpm: glibc-2.34-272.el9_8.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/g/glibc-common-2.34-272.el9_8.x86_64.rpm
-    repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
-    size: 321732
-    checksum: sha256:aff0f291115fdf9e8ae8e683ba2a2a75c17e9e00dab7bc0441482b3c18a964fa
-    name: glibc-common
-    evr: 2.34-272.el9_8
-    sourcerpm: glibc-2.34-272.el9_8.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/g/glibc-langpack-en-2.34-272.el9_8.x86_64.rpm
-    repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
-    size: 684670
-    checksum: sha256:60287099b75389b18f8b57a6b78c252bb77ccde55c97e7b0d22790f912413397
-    name: glibc-langpack-en
-    evr: 2.34-272.el9_8
-    sourcerpm: glibc-2.34-272.el9_8.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/g/glibc-minimal-langpack-2.34-272.el9_8.x86_64.rpm
-    repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
-    size: 31001
-    checksum: sha256:a6bd959400dd177dfddc995baf85df09746fa0a5d0d59a9ebfafb6a4c1b53344
-    name: glibc-minimal-langpack
-    evr: 2.34-272.el9_8
-    sourcerpm: glibc-2.34-272.el9_8.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/g/groff-base-1.22.4-10.el9.x86_64.rpm
     repoid: ubi-9-for-x86_64-for-x86_64-for-x86_64-for-x86_64-baseos-rpms
     size: 1133828
