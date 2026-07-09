@@ -2012,7 +2012,7 @@ parse_picklescan_output() {
 
   local infected_files_json
   infected_files_json=$(printf '%s\n' "$hits_section" | \
-    grep ' FOUND$' | \
+    { grep ' FOUND$' || [[ $? -eq 1 ]]; } | \
     jq -Rs '
       [ split("\n")[] | select(length > 0) |
         . as $line |
@@ -2023,7 +2023,7 @@ parse_picklescan_output() {
 
   local summary_json
   summary_json=$(printf '%s\n' "$summary_section" | \
-    grep -E '^[[:space:]]*[A-Za-z ]+:[[:space:]]*[0-9]+[[:space:]]*$' | \
+    { grep -E '^[[:space:]]*[A-Za-z ]+:[[:space:]]*[0-9]+[[:space:]]*$' || [[ $? -eq 1 ]]; } | \
     jq -Rs '
       [ split("\n")[] | select(length > 0) |
         split(": ") |
