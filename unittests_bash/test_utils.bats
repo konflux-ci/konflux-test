@@ -2228,7 +2228,7 @@ Scanned files: 10
 Infected files: 2
 Dangerous globals: 2"
 
-    run parse_picklescan_output "$SCAN_OUTPUT"
+    run bash -c 'set -euo pipefail; source test/utils.sh; parse_picklescan_output "$1"' _ "$SCAN_OUTPUT"
 
     [ "$status" -eq 0 ]
     [ "$(echo "$output" | jq -r '.infected_files["file1.pkl"]')" = "global import 'os.system' FOUND" ]
@@ -2244,7 +2244,7 @@ Scanned files: 5
 Infected files: 0
 Dangerous globals: 0"
 
-    run parse_picklescan_output "$SCAN_OUTPUT"
+    run bash -c 'set -euo pipefail; source test/utils.sh; parse_picklescan_output "$1"' _ "$SCAN_OUTPUT"
 
     [ "$status" -eq 0 ]
     [ "$(echo "$output" | jq -r '.infected_files')" = "{}" ]
