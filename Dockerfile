@@ -10,7 +10,7 @@ RUN tar -xzf /cachi2/output/deps/generic/check-payload-${CHECK_PAYLOAD_VERSION}.
     chmod +x /opt/app-root/src/check-payload-binary
 
 FROM quay.io/konflux-ci/buildah-task:latest@sha256:4c470b5a153c4acd14bf4f8731b5e36c61d7faafe09c2bf376bb81ce84aa5709 AS buildah-task-image
-FROM registry.redhat.io/openshift4/ose-tools-rhel9@sha256:fb6fe3bd299f8abbbfb65977de7b89d5f0ac0995bd908817295d0fa43ba5e259 as oc-bin
+FROM registry.redhat.io/openshift4/ose-tools-rhel9@sha256:52da0e4461897bbd0d4ab6f3340e290de5d6b9a702014950b4db6b6abb4880f4 as oc-bin
 FROM quay.io/konflux-ci/task-runner:2.1.0@sha256:c34c933c269e2401bb042fe69e2999cf288331b6586d4f4eca9c845270d9b1f9 AS appstudio-utils
 FROM registry.access.redhat.com/ubi9/ubi:9.8-1782365825
 
