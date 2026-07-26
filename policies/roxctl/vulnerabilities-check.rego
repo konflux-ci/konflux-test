@@ -29,7 +29,6 @@ roxctl_get_unpatched_vulnerabilities(input_data, severity) := vulnerabilities if
 	vulnerabilities := [entry |
 		v := input_data[_]
 		v.severity == severity
-		v.fixedBy == ""
 		count(v.advisory) == 0
 		entry := {"cve": v.cve, "components": v.components}
 	]
@@ -63,7 +62,7 @@ roxctl_generate_description(vulnerabilities) := dsc if {
 }
 
 warn_roxctl_critical_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vulns_num, "details": {"name": name, "description": description, "url": url}} |
-	components_with_critical_vulnerabilities := roxctl_get_patched_vulnerabilities(input, "CRITICAL_VULNERABILITY_SEVERITY")
+	components_with_critical_vulnerabilities := roxctl_get_patched_vulnerabilities(input[_], "CRITICAL_VULNERABILITY_SEVERITY")
 	not count(components_with_critical_vulnerabilities) == 0
 
 	name := "roxctl_critical_vulnerabilities"
@@ -74,7 +73,7 @@ warn_roxctl_critical_vulnerabilities := [{"msg": msg, "vulnerabilities_number": 
 ]
 
 warn_roxctl_unpatched_critical_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vulns_num, "details": {"name": name, "description": description, "url": url}} |
-	components_with_unpatched_critical_vulnerabilities := roxctl_get_unpatched_vulnerabilities(input, "CRITICAL_VULNERABILITY_SEVERITY")
+	components_with_unpatched_critical_vulnerabilities := roxctl_get_unpatched_vulnerabilities(input[_], "CRITICAL_VULNERABILITY_SEVERITY")
 	not count(components_with_unpatched_critical_vulnerabilities) == 0
 
 	name := "roxctl_unpatched_critical_vulnerabilities"
@@ -85,7 +84,7 @@ warn_roxctl_unpatched_critical_vulnerabilities := [{"msg": msg, "vulnerabilities
 ]
 
 warn_roxctl_high_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vulns_num, "details": {"name": name, "description": description, "url": url}} |
-	components_with_high_vulnerabilities := roxctl_get_patched_vulnerabilities(input, "IMPORTANT_VULNERABILITY_SEVERITY")
+	components_with_high_vulnerabilities := roxctl_get_patched_vulnerabilities(input[_], "IMPORTANT_VULNERABILITY_SEVERITY")
 	not count(components_with_high_vulnerabilities) == 0
 
 	name := "roxctl_high_vulnerabilities"
@@ -96,7 +95,7 @@ warn_roxctl_high_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vuln
 ]
 
 warn_roxctl_unpatched_high_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vulns_num, "details": {"name": name, "description": description, "url": url}} |
-	components_with_unpatched_high_vulnerabilities := roxctl_get_unpatched_vulnerabilities(input, "IMPORTANT_VULNERABILITY_SEVERITY")
+	components_with_unpatched_high_vulnerabilities := roxctl_get_unpatched_vulnerabilities(input[_], "IMPORTANT_VULNERABILITY_SEVERITY")
 	not count(components_with_unpatched_high_vulnerabilities) == 0
 
 	name := "roxctl_unpatched_high_vulnerabilities"
@@ -107,7 +106,7 @@ warn_roxctl_unpatched_high_vulnerabilities := [{"msg": msg, "vulnerabilities_num
 ]
 
 warn_roxctl_medium_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vulns_num, "details": {"name": name, "description": description, "url": url}} |
-	components_with_medium_vulnerabilities := roxctl_get_patched_vulnerabilities(input, "MODERATE_VULNERABILITY_SEVERITY")
+	components_with_medium_vulnerabilities := roxctl_get_patched_vulnerabilities(input[_], "MODERATE_VULNERABILITY_SEVERITY")
 	not count(components_with_medium_vulnerabilities) == 0
 
 	name := "roxctl_medium_vulnerabilities"
@@ -118,7 +117,7 @@ warn_roxctl_medium_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vu
 ]
 
 warn_roxctl_unpatched_medium_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vulns_num, "details": {"name": name, "description": description, "url": url}} |
-	components_with_unpatched_medium_vulnerabilities := roxctl_get_unpatched_vulnerabilities(input, "MODERATE_VULNERABILITY_SEVERITY")
+	components_with_unpatched_medium_vulnerabilities := roxctl_get_unpatched_vulnerabilities(input[_], "MODERATE_VULNERABILITY_SEVERITY")
 	not count(components_with_unpatched_medium_vulnerabilities) == 0
 
 	name := "roxctl_unpatched_medium_vulnerabilities"
@@ -129,7 +128,7 @@ warn_roxctl_unpatched_medium_vulnerabilities := [{"msg": msg, "vulnerabilities_n
 ]
 
 warn_roxctl_low_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vulns_num, "details": {"name": name, "description": description, "url": url}} |
-	components_with_low_vulnerabilities := roxctl_get_patched_vulnerabilities(input, "LOW_VULNERABILITY_SEVERITY")
+	components_with_low_vulnerabilities := roxctl_get_patched_vulnerabilities(input[_], "LOW_VULNERABILITY_SEVERITY")
 	not count(components_with_low_vulnerabilities) == 0
 
 	name := "roxctl_low_vulnerabilities"
@@ -140,7 +139,7 @@ warn_roxctl_low_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vulns
 ]
 
 warn_roxctl_unpatched_low_vulnerabilities := [{"msg": msg, "vulnerabilities_number": vulns_num, "details": {"name": name, "description": description, "url": url}} |
-	components_with_unpatched_low_vulnerabilities := roxctl_get_unpatched_vulnerabilities(input, "LOW_VULNERABILITY_SEVERITY")
+	components_with_unpatched_low_vulnerabilities := roxctl_get_unpatched_vulnerabilities(input[_], "LOW_VULNERABILITY_SEVERITY")
 	not count(components_with_unpatched_low_vulnerabilities) == 0
 
 	name := "roxctl_unpatched_low_vulnerabilities"
@@ -151,7 +150,7 @@ warn_roxctl_unpatched_low_vulnerabilities := [{"msg": msg, "vulnerabilities_numb
 ]
 
 discrepancies_for_cves := [{"msg": msg, "discrepancies_number": disc_num, "details": {"name": name, "description": description, "url": url}} |
-	cves_with_discrepancies := roxctl_get_discrepancies(input)
+	cves_with_discrepancies := roxctl_get_discrepancies(input[_])
 	not count(cves_with_discrepancies) == 0
 
 	name := "discrepancies"
