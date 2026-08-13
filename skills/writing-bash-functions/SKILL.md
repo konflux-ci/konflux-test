@@ -150,3 +150,36 @@ shellcheck -s bash test/utils.sh
 | Wrong test data path | File `unittests_bash/data/conftest_failures.json` sourced in test |
 | Shellcheck violation | Run `shellcheck -s bash test/utils.sh` before pushing |
 | Not exporting mock function | Use `export -f function_name` so subshells see the mock |
+| Using `\|\| true` after `grep` in pipelines | Use `{ grep PATTERN \|\| [[ $? -eq 1 ]]; }` — only suppresses no-match (exit 1), propagates real errors (exit 2) under `pipefail` |
+
+## Pipefail-safe grep
+
+`grep` returns three distinct exit codes:
+
+| Exit code | Meaning |
+|-----------|---------|
+| 0 | Match found |
+| 1 | No match found |
+| 2 | Error (bad pattern, missing file, I/O error) |
+
+Under `set -o pipefail`, a `grep` that finds no matches (exit 1) causes
+the entire pipeline to fail. The naive fix `|| true` suppresses **all**
+failures, including real errors (exit 2).
+
+**Correct idiom:**
+
+```bash
+{ grep PATTERN file || [[ $? -eq 1 ]]; }
+```
+
+This suppresses only exit code 1 (no match) while letting exit code 2
+(real errors) propagate normally.
+
+**Example from `test/utils.sh`:**
+
+```bash
+local infected
+infected=$(echo "${picklescan_output}" | \
+    { grep "^.*,.*,.*,infected" || [[ $? -eq 1 ]]; } | \
+    sort -u)
+```
