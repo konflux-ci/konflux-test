@@ -55,7 +55,7 @@ def severity_rank:
 # ---------------------------------------------------------------------------
 # Step 1 – Flatten: one record per (vuln × component), carrying location
 # ---------------------------------------------------------------------------
-[ .[].scan.components[]
+[ .[].scan.components[]?
   | . as $comp
   | .vulns[]?
   | select(.cve != null and .cve != "")
