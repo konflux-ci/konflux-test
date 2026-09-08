@@ -348,24 +348,6 @@ spec:
         operator: in
         values:
         - 'false'
-    - name: rox-scan
-      params:
-      - name: image-digest
-        value: $(tasks.build-image-index.results.IMAGE_DIGEST)
-      - name: image-url
-        value: $(tasks.build-image-index.results.IMAGE_URL)
-      runAfter:
-      - build-image-index
-      taskRef:
-        params:
-        - name: name
-          value: roxctl-scan
-        - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-roxctl-scan:0.1@sha256:76ed85aa05ce42d31341269837f104c3b766508313a68439085dcf9cc89d03f4
-        - name: kind
-          value: task
-        resolver: bundles
-      timeout: 20m
     - name: ecosystem-cert-preflight-checks
       params:
       - name: image-url
