@@ -137,7 +137,7 @@ shellcheck -s bash test/utils.sh
 
 **Common violations:**
 - SC2086: Quote variables: `"${var}"` not `$var`
-- SC2181: Check exit code of specific command, not $?
+- SC2181: Check exit code of specific command, not `$?` (exception: the pipefail-safe grep idiom — see below)
 - SC2119: Function called without args but expects them
 
 ## Common Mistakes
@@ -152,7 +152,7 @@ shellcheck -s bash test/utils.sh
 | Not exporting mock function | Use `export -f function_name` so subshells see the mock |
 | Using `\|\| true` after `grep` in pipelines | Use `{ grep PATTERN \|\| [[ $? -eq 1 ]]; }` — only suppresses no-match (exit 1), propagates real errors (exit 2) under `pipefail` |
 
-## Pipefail-safe grep
+## Pipefail-Safe grep
 
 `grep` returns three distinct exit codes:
 
@@ -172,14 +172,17 @@ failures, including real errors (exit 2).
 { grep PATTERN file || [[ $? -eq 1 ]]; }
 ```
 
-This suppresses only exit code 1 (no match) while letting exit code 2
-(real errors) propagate normally.
+This suppresses only exit code 1 (no match). Any other exit code
+(e.g., 2 for real errors) causes the construct to return non-zero
+(specifically exit code 1 from the failed `[[ ]]` test), which still
+triggers failure under `pipefail`. Note: this idiom requires
+`# shellcheck disable=SC2181` since it intentionally checks `$?`.
 
-**Example from `test/utils.sh`:**
+**Example from `test/utils.sh` (`parse_picklescan_output`):**
 
 ```bash
-local infected
-infected=$(echo "${picklescan_output}" | \
-    { grep "^.*,.*,.*,infected" || [[ $? -eq 1 ]]; } | \
-    sort -u)
+local infected_files_json
+infected_files_json=$(printf '%s\n' "$hits_section" | \
+    { grep ' FOUND$' || [[ $? -eq 1 ]]; } | \
+    jq -Rs '...')
 ```
