@@ -137,7 +137,7 @@ shellcheck -s bash test/utils.sh
 
 **Common violations:**
 - SC2086: Quote variables: `"${var}"` not `$var`
-- SC2181: Check exit code of specific command, not `$?` (exception: the pipefail-safe grep idiom — see below)
+- SC2181: Check exit code of specific command, not `$?`
 - SC2119: Function called without args but expects them
 
 ## Common Mistakes
@@ -150,7 +150,7 @@ shellcheck -s bash test/utils.sh
 | Wrong test data path | File `unittests_bash/data/conftest_failures.json` sourced in test |
 | Shellcheck violation | Run `shellcheck -s bash test/utils.sh` before pushing |
 | Not exporting mock function | Use `export -f function_name` so subshells see the mock |
-| Using `\|\| true` after `grep` in pipelines | Use `{ grep PATTERN \|\| [[ $? -eq 1 ]]; }` — only suppresses no-match (exit 1), propagates real errors (exit 2) under `pipefail` |
+| Using `|| true` after `grep` in pipelines | Use `{ grep PATTERN || [[ $? -eq 1 ]]; }` — only suppresses no-match (exit 1), propagates real errors (exit 2) under `pipefail` |
 
 ## Pipefail-Safe grep
 
@@ -175,8 +175,7 @@ failures, including real errors (exit 2).
 This suppresses only exit code 1 (no match). Any other exit code
 (e.g., 2 for real errors) causes the construct to return non-zero
 (specifically exit code 1 from the failed `[[ ]]` test), which still
-triggers failure under `pipefail`. Note: this idiom requires
-`# shellcheck disable=SC2181` since it intentionally checks `$?`.
+triggers failure under `pipefail`.
 
 **Example from `test/utils.sh` (`parse_picklescan_output`):**
 
