@@ -2,9 +2,9 @@
 metadata: 
   version: "1.0"
 artifacts:
-  - download_url: "https://github.com/openshift/check-payload/archive/refs/tags/0.3.18.tar.gz"
-    checksum: "sha256:ea35c1df8248f878e46c0477300dfb89d8f88feb41896a2da107731aa556baf8"
-    filename: "check-payload-0.3.18.tar.gz"
+  - download_url: "https://github.com/openshift/check-payload/archive/refs/tags/0.4.1.tar.gz"
+    checksum: "sha256:905ed322aa7944284aee30a14c712bd2933c3027fa6e094a0a2c36252d9ded28"
+    filename: "check-payload-0.4.1.tar.gz"
   - download_url: "https://github.com/CycloneDX/sbom-utility/releases/download/v0.12.0/sbom-utility-v0.12.0-linux-amd64.tar.gz"
     checksum: "sha256:762072a297f499691d59eeb3405aa873b6e71ea8f18d7db496511e584b0f5bb1"
     filename: "sbom-utility.tar.gz"
