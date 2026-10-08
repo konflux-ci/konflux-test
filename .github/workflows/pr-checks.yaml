@@ -102,7 +102,7 @@ jobs:
 
   bash_unittests:
     name: bash_unittests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Setup BATS
         uses: mig4/setup-bats@af9a00deb21b5d795cabfeaa8d9060410377686d # v1
@@ -141,13 +141,19 @@ jobs:
       - name: Prepare Bash coverage report
         if: always()
         run: |
-          report="$(find coverage -type f -name cobertura.xml -print -quit)"
-          test -n "$report"
-          cp "$report" coverage/bash-coverage.xml
+          report=''
+          if [[ -d coverage ]]; then
+            report="$(find coverage -type f -name cobertura.xml -print -quit)"
+          fi
+          if [[ -n "$report" ]]; then
+            cp "$report" coverage/bash-coverage.xml
+          else
+            echo "::warning::No kcov coverage report was generated."
+          fi
 
       - name: Upload Bash coverage report
         uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7
-        if: always()
+        if: ${{ always() && hashFiles('coverage/bash-coverage.xml') != '' }}
         with:
           files: ./coverage/bash-coverage.xml
           flags: bash
