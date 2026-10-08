@@ -122,8 +122,35 @@ jobs:
       - name: Check out code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - name: Test
-        run: bats unittests_bash
+      - name: Install kcov
+        run: |
+          curl -L --fail --silent --show-error \
+            https://github.com/SimonKagstrom/kcov/releases/download/v42/kcov-amd64.tar.gz \
+            -o kcov.tar.gz
+          tar -xzf kcov.tar.gz
+
+      - name: Test and collect Bash coverage
+        run: |
+          ./usr/local/bin/kcov \
+            --exclude-path=/tmp \
+            --include-path="$GITHUB_WORKSPACE/test/utils.sh" \
+            --bash-parse-files-in-dir="$GITHUB_WORKSPACE/test" \
+            coverage \
+            bats unittests_bash
+
+      - name: Prepare Bash coverage report
+        if: always()
+        run: |
+          report="$(find coverage -type f -name cobertura.xml -print -quit)"
+          test -n "$report"
+          cp "$report" coverage/bash-coverage.xml
+
+      - name: Upload Bash coverage report
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7
+        if: always()
+        with:
+          files: ./coverage/bash-coverage.xml
+          flags: bash
 
   shellcheck:
     name: Shellcheck
