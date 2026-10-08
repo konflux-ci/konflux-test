@@ -2,6 +2,9 @@
 metadata: 
   version: "1.0"
 artifacts:
+  - download_url: "https://github.com/SimonKagstrom/kcov/releases/download/v42/kcov-amd64.tar.gz"
+    checksum: "sha256:78aa17a5f6d27a867cc0540b1550051591d350423a1a0ef98d63c9ce7cc10f9d"
+    filename: "kcov-v42-amd64.tar.gz"
   - download_url: "https://github.com/openshift/check-payload/archive/refs/tags/0.4.1.tar.gz"
     checksum: "sha256:905ed322aa7944284aee30a14c712bd2933c3027fa6e094a0a2c36252d9ded28"
     filename: "check-payload-0.4.1.tar.gz"
