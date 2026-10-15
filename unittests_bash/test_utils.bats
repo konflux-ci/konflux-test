@@ -892,6 +892,39 @@ EOF
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
 }
 
+@test "Process imageDigestMirrorSet: rejects invalid source and mirror" {
+    # Two backslashes so the repository string still contains a backslash.
+    local -a bad_values=(
+        'example.com/repo|bad'
+        'example.com/ns\\bad'
+        'example.com/repo&bad'
+        'example.com/repo bad'
+        'example.com/repo*'
+        'example.com/openpolicyagent":["quay.io/attacker"],"example.com/gatekeeper'
+    )
+    local bad_value side yaml_input idms_source idms_mirror
+
+    for bad_value in "${bad_values[@]}"; do
+        for side in source mirror; do
+            if [[ "${side}" == "source" ]]; then
+                idms_source="${bad_value}"
+                idms_mirror="example.com/repo"
+            else
+                idms_source="quay.io/safe"
+                idms_mirror="${bad_value}"
+            fi
+            yaml_input=$(source="${idms_source}" mirror="${idms_mirror}" yq -n \
+                '.apiVersion = "operator.openshift.io/v1alpha1" | .kind = "ImageDigestMirrorSet" | .spec.imageDigestMirrors = [{"source": strenv(source), "mirrors": [strenv(mirror)]}]')
+
+            run process_image_digest_mirror_set "${yaml_input}"
+            [ "${status}" -eq 2 ]
+            [[ "${output}" == *"process_image_digest_mirror_set: ERROR: Invalid image repository"* ]]
+            [[ "${output}" == *"${side}="* ]]
+            [[ "${output}" != "{"* ]]
+        done
+    done
+}
+
 @test "Replace image pullspec: invalid input" {
     run replace_image_pullspec "quay.io/some/image"
     EXPECTED_RESPONSE="replace_image_pullspec: Usage: replace_image_pullspec <image> <mirror>"
@@ -2127,11 +2160,31 @@ EOF
                 > "${idms}"
 
             run replace_mirror_pullspec_with_source "${idms}" "${catalog}"
-            [ "$status" -eq 1 ]
-            [[ "$output" == *"Invalid image repository"* ]]
+            [ "${status}" -eq 2 ]
+            [[ "${output}" == *"Invalid image repository"* ]]
             diff <(printf '%s\n' "${original}" | jq -c .) <(jq -c . "${catalog}")
         done
     done
+}
+
+@test "replace_mirror_pullspec_with_source: rejects injected idms mapping" {
+    local catalog="${REPLACE_MIRROR_TEST_TMP}/catalog_inject.json"
+    cp "${REPLACE_MIRROR_TEST_TMP}/catalog.json" "${catalog}"
+    local original
+    original=$(cat "${catalog}")
+    local idms="${REPLACE_MIRROR_TEST_TMP}/inject-idms.yaml"
+    # Concatenating this source into JSON would add a second allowlisted mapping
+    # that rewrites example.com/openpolicyagent/gatekeeper in the catalog.
+    local injected_source='example.com/openpolicyagent":["quay.io/attacker"],"example.com/gatekeeper'
+
+    source="${injected_source}" mirror="example.com/openpolicyagent/gatekeeper" yq -n \
+        '.apiVersion = "operator.openshift.io/v1alpha1" | .kind = "ImageDigestMirrorSet" | .spec.imageDigestMirrors = [{"source": strenv(source), "mirrors": [strenv(mirror)]}]' \
+        > "${idms}"
+
+    run replace_mirror_pullspec_with_source "${idms}" "${catalog}"
+    [ "${status}" -eq 2 ]
+    [[ "${output}" == *"Invalid image repository"* ]]
+    diff <(printf '%s\n' "${original}" | jq -c .) <(jq -c . "${catalog}")
 }
 
 @test "replace_mirror_pullspec_with_source: dots in repository names are literal" {
