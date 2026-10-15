@@ -1037,24 +1037,36 @@ extract_related_images_from_bundle(){
 
 # This function will be used by tasks in build-definitions
 # It returns a map of {source: [mirror1, mirror2]} for imageDigestMirrorSet yaml
+# Source and mirror strings are validated before the map is built. jq encodes the
+# map so repository text cannot insert additional JSON entries.
 process_image_digest_mirror_set() {
   local yaml_input="$1"
-  local pullspec_map="{"
+  local registry_regex='^[A-Za-z0-9._/:-]+$'
+  local mirrors_json=""
+  local repository=""
 
   if ! echo "${yaml_input}" | yq '.' &>/dev/null; then
     echo "process_image_digest_mirror_set: Invalid YAML input" >&2
     exit 2
   fi
 
-  for entry in $(yq --output-format=json '.spec.imageDigestMirrors' <<<"${yaml_input}" | jq -c '.[]'); do
-    source=$(echo "${entry}" | jq -r '.source')
-    mirrors_list=$(echo "${entry}" | jq -r '.mirrors | map("\"" + . + "\"") | join(",")')
-    pullspec_map+="\"${source}\":[${mirrors_list}],"
-  done
+  mirrors_json=$(yq --output-format=json '.spec.imageDigestMirrors' <<<"${yaml_input}")
 
-  pullspec_map="${pullspec_map%,}}"
+  while IFS= read -r -d '' repository; do
+    if [[ ! "${repository}" =~ $registry_regex ]]; then
+      echo "process_image_digest_mirror_set: ERROR: Invalid image repository in ImageDigestMirrorSet. source='${repository}'." >&2
+      exit 2
+    fi
+  done < <(jq -j '(. // [])[] | (if (.source | type) == "string" then .source else "" end), "\u0000"' <<<"${mirrors_json}")
 
-  echo "${pullspec_map}"
+  while IFS= read -r -d '' repository; do
+    if [[ ! "${repository}" =~ $registry_regex ]]; then
+      echo "process_image_digest_mirror_set: ERROR: Invalid image repository in ImageDigestMirrorSet. mirror='${repository}'." >&2
+      exit 2
+    fi
+  done < <(jq -j '(. // [])[] | (.mirrors // [])[] | (if type == "string" then . else "" end), "\u0000"' <<<"${mirrors_json}")
+
+  jq -c 'reduce ((. // [])[]) as $entry ({}; .[$entry.source] = ($entry.mirrors // []))' <<<"${mirrors_json}"
 }
 
 # This function will be used by tasks in build-definitions
@@ -1853,13 +1865,13 @@ replace_mirror_pullspec_with_source() {
   # Create a working copy of the catalog
   cp "$catalog_file" "$input_catalog_file"
 
-  # Repository paths are interpolated into the sed program below. Allow only
-  # registry characters, then escape the sed metacharacters that remain.
+  # Original ImageDigestMirrorSet strings are validated before this map is built.
+  # Reject any encoded value that is still outside the repository pattern, then
+  # escape '.' in the mirror so the pattern matches the repository literally.
   local registry_regex='^[A-Za-z0-9._/:-]+$'
   local source_repository=""
   local mirror_repository=""
   local sed_mirror=""
-  local sed_source=""
 
   # Loop over sources and their mirrors from IDMS
   while IFS=$'\t' read -r source_repository mirror_repository; do
@@ -1870,20 +1882,11 @@ replace_mirror_pullspec_with_source() {
 
     if [[ ! "$source_repository" =~ $registry_regex || ! "$mirror_repository" =~ $registry_regex ]]; then
       echo "replace_mirror_pullspec_with_source: ERROR: Invalid image repository in ImageDigestMirrorSet. source='${source_repository}' mirror='${mirror_repository}'." >&2
-      exit 1
+      exit 2
     fi
 
-    # Escape backslash first so the escapes added below stay intact.
-    sed_mirror="${mirror_repository}"
-    sed_source="${source_repository}"
-    sed_mirror="${sed_mirror//\\/\\\\}"
-    sed_mirror="${sed_mirror//|/\\|}"
-    sed_mirror="${sed_mirror//&/\\&}"
-    sed_mirror="${sed_mirror//./\\.}"
-    sed_source="${sed_source//\\/\\\\}"
-    sed_source="${sed_source//|/\\|}"
-    sed_source="${sed_source//&/\\&}"
-    sed_source="${sed_source//./\\.}"
+    # '.' is special in the pattern. In the replacement it is already literal.
+    sed_mirror="${mirror_repository//./\\.}"
 
     # Sed is run for each mirror-source pair on the entire file.
     #
@@ -1894,8 +1897,8 @@ replace_mirror_pullspec_with_source() {
     #   [/:@]              - Matches the separator: a colon ':' for a tag or an '@' for a digest,
     #                                               or a '/' for a namespace or registry separator.
     #   [^"', ]*           - Matches everything after the separator until a quote, comma, or space.
-    # ${sed_source}\1      - The replacement: the new source repository followed by the captured tag/digest.
-    if ! sed -i -E "s|${sed_mirror}([/:@][^\"', ]*)|${sed_source}\1|g" "$input_catalog_file"; then
+    # ${source_repository}\1 - The replacement: the source repository followed by the captured tag/digest.
+    if ! sed -i -E "s|${sed_mirror}([/:@][^\"', ]*)|${source_repository}\1|g" "$input_catalog_file"; then
       echo "replace_mirror_pullspec_with_source: ERROR: Replacement failed for mirror '${mirror_repository}'." >&2
       exit 1
     fi
