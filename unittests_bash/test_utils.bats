@@ -2097,6 +2097,62 @@ EOF
     diff <(echo "$original_content" | jq -c .) <(jq -c . "${REPLACE_MIRROR_TEST_TMP}/catalog_no_match.json")
 }
 
+@test "replace_mirror_pullspec_with_source: rejects unsafe registry characters" {
+    local catalog="${REPLACE_MIRROR_TEST_TMP}/catalog_reject.json"
+    cp "${REPLACE_MIRROR_TEST_TMP}/catalog.json" "${catalog}"
+    local original
+    original=$(cat "${catalog}")
+    local idms="${REPLACE_MIRROR_TEST_TMP}/bad-idms.yaml"
+
+    # Two backslashes so one remains after ImageDigestMirrorSet JSON assembly.
+    local -a bad_values=(
+        'example.com/repo|bad'
+        'example.com/ns\\bad'
+        'example.com/repo&bad'
+        'example.com/repo*'
+    )
+
+    local bad_value side idms_source idms_mirror
+    for bad_value in "${bad_values[@]}"; do
+        for side in mirror source; do
+            if [[ "${side}" == "mirror" ]]; then
+                idms_source="quay.io/safe"
+                idms_mirror="${bad_value}"
+            else
+                idms_source="${bad_value}"
+                idms_mirror="example.com/repo"
+            fi
+            source="${idms_source}" mirror="${idms_mirror}" yq -n \
+                '.apiVersion = "operator.openshift.io/v1alpha1" | .kind = "ImageDigestMirrorSet" | .spec.imageDigestMirrors = [{"source": strenv(source), "mirrors": [strenv(mirror)]}]' \
+                > "${idms}"
+
+            run replace_mirror_pullspec_with_source "${idms}" "${catalog}"
+            [ "$status" -eq 1 ]
+            [[ "$output" == *"Invalid image repository"* ]]
+            diff <(printf '%s\n' "${original}" | jq -c .) <(jq -c . "${catalog}")
+        done
+    done
+}
+
+@test "replace_mirror_pullspec_with_source: dots in repository names are literal" {
+    cat > "${REPLACE_MIRROR_TEST_TMP}/catalog_dots.json" <<EOF
+{
+    "image": "example.com/repo:v1.2.3",
+    "lookalike": "exampleXcom/repo:v1.2.3"
+}
+EOF
+
+    run replace_mirror_pullspec_with_source "${REPLACE_MIRROR_TEST_TMP}/reg-idms.yaml" "${REPLACE_MIRROR_TEST_TMP}/catalog_dots.json"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"Replacement process completed"* ]]
+
+    expected_content='{
+    "image": "quay.io/repo:v1.2.3",
+    "lookalike": "exampleXcom/repo:v1.2.3"
+}'
+    diff <(echo "$expected_content" | jq -c .) <(jq -c . "${REPLACE_MIRROR_TEST_TMP}/catalog_dots.json")
+}
+
 @test "get_image_mirror_list: match registry" {
     mirror_map=$(cat <<EOF
 {
