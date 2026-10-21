@@ -118,5 +118,6 @@ COPY test/conftest.sh $POLICY_PATH
 COPY test/selftest.sh /selftest.sh
 COPY test/utils.sh /utils.sh
 COPY parsers/parse_to_cve_oriented_output.jq /parse_to_cve_oriented_output.jq
+COPY parsers/parse_acs_to_rhsa.jq /parse_acs_to_rhsa.jq
 
 ENTRYPOINT ["/usr/bin/bash"]
