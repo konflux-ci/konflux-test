@@ -2027,6 +2027,21 @@ parse_acs_output(){
   fi
 }
 
+# Filter ACS output from image scan to get RHSAs
+parse_acs_to_rhsa_output(){
+  local output_data=$1
+  data=$(jq '.' < "$output_data")
+  if [[ -e "$output_data" && -n "$data" ]]; then
+    # Create temporary file
+    output_tmp_file="$(mktemp)"
+    jq -f parsers/parse_acs_to_rhsa.jq "$output_data" > "$output_tmp_file"
+    cat "$output_tmp_file"
+  else
+    echo "output not found or empty" >&2
+    exit 1
+  fi
+}
+
 # Convert raw picklescan stdout to a JSON string suitable for conftest/rego input.
 # Usage: parse_picklescan_output "$PICKLESCAN_OUTPUT"
 # Produces: {"infected_files": {...}, "summary": {"scanned_files": N, "infected_files": N, "dangerous_globals": N}}
