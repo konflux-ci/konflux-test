@@ -31,6 +31,13 @@ The most important part of this repository is the collection of OPA Rego policie
 ### Bash utility functions
 The Bash utility functions in the `test/` directory are meant to be used in the Tekton task steps in order to support the Konflux CI Tekton task logic. These functions are meant to reduce the size and complexity of the scripts embedded within the Task steps, while being more directly testable by the Bats unit tests in the `unittests_bash/` directory.
 
+### Parser invocation paths
+Parser files in `parsers/` are referenced two ways:
+- **Relative paths** (`parsers/<name>.jq`) in `test/utils.sh` functions — these run from the repo root in BATS tests, CI, and Tekton workspaces
+- **Absolute paths** (`/<name>.jq`) in Tekton task step scripts — the Dockerfile copies parsers to the container root for this purpose
+
+Both paths are intentional. New parser functions in `test/utils.sh` should use the relative `parsers/` prefix, matching the existing `parse_acs_output` convention.
+
 ### Image-hosted utilities
 The `konflux-test` image also contains additional utilities (binaries, scripts, etc.) which are required by the Konflux CI Tekton tasks. See the `Dockerfile` for more details on them.
 
