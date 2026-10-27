@@ -2329,6 +2329,23 @@ EOF
     [ "$status" -eq 0 ]
 }
 
+@test "Test for filtering ACS output for RHSAs with empty file" {
+    run parse_acs_to_rhsa_output unittests_bash/data/empty.json
+
+    EXPECTED_ERROR="output not found or empty"
+    [[ "${output}" == *"${EXPECTED_ERROR}"* && "$status" -eq 1 ]]
+}
+
+@test "Test for filtering ACS output on valid file and check if it contains all required fields" {
+    run parse_acs_to_rhsa_output unittests_bash/data/konflux_test_parsed_output.json
+    TEST_FOR_CRITICAL=$(echo "${output}" | jq 'has("CRITICAL")')
+    TEST_FOR_EMPTY_CRITICAL=$(echo "${output}" | jq '.CRITICAL | length == 0')
+    TEST_FOR_IMPORTANT=$(echo "${output}" | jq 'has("IMPORTANT")')
+    TEST_FOR_RHSA=$(echo "${output}" | jq '.IMPORTANT[0]|contains("RHSA-2026:39798")')
+    [[ "$TEST_FOR_CRITICAL" == true && "$TEST_FOR_EMPTY_CRITICAL" == true && "$TEST_FOR_IMPORTANT" == true && "$TEST_FOR_RHSA" == true ]]
+    [ "$status" -eq 0 ]
+}
+
 @test "parse_picklescan_output: infected files are parsed to JSON" {
     SCAN_OUTPUT="file1.pkl: global import 'os.system' FOUND
 file2.pkl: global import 'eval' FOUND
