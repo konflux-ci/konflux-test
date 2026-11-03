@@ -18,6 +18,7 @@ allowed_remote_resources:
 # Update this list when team membership changes.
 agents:
     - name: review
+      runtime: claude 
       trigger: >-
         event.entity.kind == "work_item"
         && event.transition.kind == "comment_added"
@@ -33,7 +34,8 @@ agents:
           "sonam1412",
           "NigelByrne1",
           "ainephelan365",
-          "jsztuka"
+          "jsztuka",
+          "jencull"
         ]
 create_issues:
     allow_targets:
