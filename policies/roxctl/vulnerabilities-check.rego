@@ -21,7 +21,7 @@ roxctl_get_patched_vulnerabilities(input_data, severity) := vulnerabilities if {
 		v.fixedBy != ""
 		count(v.advisory) > 0
 		roxctl_has_rhsa_advisory(v.advisory)
-		entry := {"cve": v.cve, "components": v.components, "fixedBy": v.fixedBy}
+		entry := {"cve": v.cve, "fixedBy": v.fixedBy}
 	]
 }
 
@@ -30,7 +30,7 @@ roxctl_get_unpatched_vulnerabilities(input_data, severity) := vulnerabilities if
 		v := input_data[_]
 		v.severity == severity
 		count(v.advisory) == 0
-		entry := {"cve": v.cve, "components": v.components}
+		entry := {"cve": v.cve}
 	]
 }
 
@@ -39,7 +39,7 @@ roxctl_get_discrepancies(input_data) := disc if {
 		v := input_data[_]
 		v.severity != ""
 		not roxctl_has_redhat_link(v.links)
-		entry := {"cve": v.cve, "components": v.components, "links": v.links}
+		entry := {"cve": v.cve, "links": v.links}
 	]
 }
 
@@ -57,7 +57,7 @@ roxctl_format_components(components) := formatted if {
 roxctl_generate_description(vulnerabilities) := dsc if {
 	dsc := sprintf("Vulnerabilities found: %s", [concat(
 		", ",
-		[sprintf("%s: %s", [v.cve, roxctl_format_components(v.components)]) | v := vulnerabilities[_]],
+		[sprintf("%s", [v.cve]) | v := vulnerabilities[_]],
 	)])
 }
 
