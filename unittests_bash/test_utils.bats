@@ -2438,3 +2438,374 @@ Dangerous globals: 0"
     EXPECTED_RESPONSE="get_prev_ocp_version: Invalid OCP version format 'v5.abc' (expected vX.Y or X.Y)"
     [[ "${EXPECTED_RESPONSE}" = "${output}" && "$status" -eq 2 ]]
 }
+
+# make_fips_per_image_result tests
+
+@test "make_fips_per_image_result: missing output_file returns 2" {
+    run make_fips_per_image_result "" "quay.io/redhat/ose-foo@sha256:abc" "SUCCESS"
+    [ "$status" -eq 2 ]
+    [[ "$output" == *"Missing parameter: output_file"* ]]
+}
+
+@test "make_fips_per_image_result: missing image returns 2" {
+    local out
+    out=$(mktemp)
+    run make_fips_per_image_result "${out}" "" "SUCCESS"
+    rm -f "${out}"
+    [ "$status" -eq 2 ]
+    [[ "$output" == *"Missing parameter: image"* ]]
+}
+
+@test "make_fips_per_image_result: invalid result value returns 2" {
+    local out
+    out=$(mktemp)
+    run make_fips_per_image_result "${out}" "quay.io/redhat/ose-foo@sha256:abc" "INVALID"
+    rm -f "${out}"
+    [ "$status" -eq 2 ]
+    [[ "$output" == *"Invalid value for result"* ]]
+}
+
+@test "make_fips_per_image_result: SUCCESS result has no findings key" {
+    local out
+    out=$(mktemp)
+    run make_fips_per_image_result "${out}" "quay.io/redhat/ose-foo@sha256:abc" "SUCCESS"
+    [ "$status" -eq 0 ]
+    local result
+    result=$(jq -c '.' "${out}")
+    rm -f "${out}"
+    [ "$(echo "${result}" | jq -r '.image')" = "quay.io/redhat/ose-foo@sha256:abc" ]
+    [ "$(echo "${result}" | jq '.result')" = '"SUCCESS"' ]
+    [ "$(echo "${result}" | jq 'has("findings")')" = "false" ]
+}
+
+@test "make_fips_per_image_result: output never includes operator field" {
+    local out
+    out=$(mktemp)
+    run make_fips_per_image_result "${out}" "quay.io/redhat/ose-foo@sha256:abc" "ERROR"
+    [ "$status" -eq 0 ]
+    local result
+    result=$(jq -c '.' "${out}")
+    rm -f "${out}"
+    [ "$(echo "${result}" | jq 'has("operator")')" = "false" ]
+}
+
+@test "make_fips_per_image_result: ERROR result has no findings key" {
+    local out
+    out=$(mktemp)
+    run make_fips_per_image_result "${out}" "quay.io/redhat/ose-foo@sha256:abc" "ERROR"
+    [ "$status" -eq 0 ]
+    local result
+    result=$(jq -c '.' "${out}")
+    rm -f "${out}"
+    [ "$(echo "${result}" | jq '.result')" = '"ERROR"' ]
+    [ "$(echo "${result}" | jq 'has("findings")')" = "false" ]
+}
+
+@test "make_fips_per_image_result: ERROR with message includes error field" {
+    local out
+    out=$(mktemp)
+    run make_fips_per_image_result "${out}" "quay.io/redhat/broken@sha256:abc" "ERROR" "" "Could not inspect image: unauthorized"
+    [ "$status" -eq 0 ]
+    local result
+    result=$(jq -c '.' "${out}")
+    rm -f "${out}"
+    [ "$(echo "${result}" | jq '.result')" = '"ERROR"' ]
+    [ "$(echo "${result}" | jq 'has("error")')" = "true" ]
+    [ "$(echo "${result}" | jq -r '.error')" = "Could not inspect image: unauthorized" ]
+    [ "$(echo "${result}" | jq 'has("findings")')" = "false" ]
+}
+
+@test "make_fips_per_image_result: ERROR without message has no error field" {
+    local out
+    out=$(mktemp)
+    run make_fips_per_image_result "${out}" "quay.io/redhat/broken@sha256:abc" "ERROR"
+    [ "$status" -eq 0 ]
+    local result
+    result=$(jq -c '.' "${out}")
+    rm -f "${out}"
+    [ "$(echo "${result}" | jq '.result')" = '"ERROR"' ]
+    [ "$(echo "${result}" | jq 'has("error")')" = "false" ]
+}
+
+@test "make_fips_per_image_result: FAILURE parses single finding from CSV" {
+    local out csv
+    out=$(mktemp); csv=$(mktemp)
+    {
+        printf '%s\n' 'Operator Name,RPM Name,Executable Name,Status'
+        printf '%s\n' 'openssl,openssl-libs,/usr/lib64/libcrypto.so,operating system is not FIPS certified'
+    } > "${csv}"
+    run make_fips_per_image_result "${out}" "quay.io/redhat/ose-bar@sha256:def" "FAILURE" "${csv}"
+    [ "$status" -eq 0 ]
+    local result
+    result=$(jq -c '.' "${out}")
+    rm -f "${out}" "${csv}"
+    [ "$(echo "${result}" | jq '.result')" = '"FAILURE"' ]
+    [ "$(echo "${result}" | jq 'has("findings")')" = "true" ]
+    [ "$(echo "${result}" | jq -c '.findings[0]')" = '{"rpm":"openssl-libs","binary":"/usr/lib64/libcrypto.so","message":"operating system is not FIPS certified"}' ]
+}
+
+@test "make_fips_per_image_result: WARNING parses findings from CSV" {
+    local out csv
+    out=$(mktemp); csv=$(mktemp)
+    {
+        printf '%s\n' 'Operator Name,RPM Name,Executable Name,Status'
+        printf '%s\n' 'myop,gnutls-libs,/usr/lib64/libgnutls.so,go binary is not CGO_ENABLED'
+    } > "${csv}"
+    run make_fips_per_image_result "${out}" "quay.io/redhat/ose-baz@sha256:ghi" "WARNING" "${csv}"
+    [ "$status" -eq 0 ]
+    local result
+    result=$(jq -c '.' "${out}")
+    rm -f "${out}" "${csv}"
+    [ "$(echo "${result}" | jq '.result')" = '"WARNING"' ]
+    [ "$(echo "${result}" | jq 'has("findings")')" = "true" ]
+    [ "$(echo "${result}" | jq -c '.findings[0].rpm')" = '"gnutls-libs"' ]
+}
+
+@test "make_fips_per_image_result: FAILURE with no CSV has no findings key" {
+    local out
+    out=$(mktemp)
+    run make_fips_per_image_result "${out}" "quay.io/redhat/ose-foo@sha256:abc" "FAILURE"
+    [ "$status" -eq 0 ]
+    local result
+    result=$(jq -c '.' "${out}")
+    rm -f "${out}"
+    [ "$(echo "${result}" | jq '.result')" = '"FAILURE"' ]
+    [ "$(echo "${result}" | jq 'has("findings")')" = "false" ]
+}
+
+@test "make_fips_per_image_result: SUCCESS with CSV provided ignores it" {
+    local out csv
+    out=$(mktemp); csv=$(mktemp)
+    {
+        printf '%s\n' 'Operator Name,Executable Name,Status'
+        printf '%s\n' 'myop,/usr/bin/lib,operating system is not FIPS certified'
+    } > "${csv}"
+    run make_fips_per_image_result "${out}" "quay.io/redhat/ose-foo@sha256:abc" "SUCCESS" "${csv}"
+    [ "$status" -eq 0 ]
+    local result
+    result=$(jq -c '.' "${out}")
+    rm -f "${out}" "${csv}"
+    [ "$(echo "${result}" | jq '.result')" = '"SUCCESS"' ]
+    [ "$(echo "${result}" | jq 'has("findings")')" = "false" ]
+}
+
+@test "make_fips_per_image_result: ERROR with CSV provided has no findings key" {
+    local out csv
+    out=$(mktemp); csv=$(mktemp)
+    {
+        printf '%s\n' 'Operator Name,Executable Name,Status'
+        printf '%s\n' 'myop,/usr/bin/lib,operating system is not FIPS certified'
+    } > "${csv}"
+    run make_fips_per_image_result "${out}" "quay.io/redhat/broken@sha256:abc" "ERROR" "${csv}"
+    [ "$status" -eq 0 ]
+    local result
+    result=$(jq -c '.' "${out}")
+    rm -f "${out}" "${csv}"
+    [ "$(echo "${result}" | jq '.result')" = '"ERROR"' ]
+    [ "$(echo "${result}" | jq 'has("findings")')" = "false" ]
+    [ "$(echo "${result}" | jq 'has("error")')" = "false" ]
+}
+
+@test "make_fips_per_image_result: skips check-payload summary lines in CSV" {
+    local out csv
+    out=$(mktemp); csv=$(mktemp)
+    {
+        printf '%s\n' '---- Failure Report'
+        printf '%s\n' 'Operator Name,RPM Name,Executable Name,Status'
+        printf '%s\n' 'openssl,openssl-libs,/usr/lib64/libcrypto.so,operating system is not FIPS certified'
+    } > "${csv}"
+    run make_fips_per_image_result "${out}" "img" "FAILURE" "${csv}"
+    [ "$status" -eq 0 ]
+    local result
+    result=$(jq -c '.' "${out}")
+    rm -f "${out}" "${csv}"
+    [ "$(echo "${result}" | jq '.findings | length')" -eq 1 ]
+}
+
+@test "make_fips_per_image_result: FAILURE with CSV that has no data rows has no findings key" {
+    local out csv
+    out=$(mktemp); csv=$(mktemp)
+    printf '%s\n' ' ---- Successful run' > "${csv}"
+    run make_fips_per_image_result "${out}" "img" "FAILURE" "${csv}"
+    [ "$status" -eq 0 ]
+    local result
+    result=$(jq -c '.' "${out}")
+    rm -f "${out}" "${csv}"
+    [ "$(echo "${result}" | jq 'has("findings")')" = "false" ]
+}
+
+@test "make_fips_per_image_result: parses multiple findings from CSV" {
+    local out csv
+    out=$(mktemp); csv=$(mktemp)
+    {
+        printf '%s\n' 'Operator Name,RPM Name,Executable Name,Status'
+        printf '%s\n' 'openssl,openssl-libs,/usr/lib64/libcrypto.so,operating system is not FIPS certified'
+        printf '%s\n' 'gnutls,gnutls-libs,/usr/lib64/libgnutls.so,go binary is not CGO_ENABLED'
+    } > "${csv}"
+    run make_fips_per_image_result "${out}" "img" "FAILURE" "${csv}"
+    [ "$status" -eq 0 ]
+    local result
+    result=$(jq -c '.' "${out}")
+    rm -f "${out}" "${csv}"
+    [ "$(echo "${result}" | jq '.findings | length')" -eq 2 ]
+    [ "$(echo "${result}" | jq -c '.findings[1].rpm')" = '"gnutls-libs"' ]
+}
+
+@test "make_fips_per_image_result: escapes double quotes in CSV values" {
+    local out csv
+    out=$(mktemp); csv=$(mktemp)
+    {
+        printf '%s\n' 'Operator Name,RPM Name,Executable Name,Status'
+        printf '%s\n' 'openssl,"some""pkg",/usr/lib/lib.so,operating system is not FIPS certified'
+    } > "${csv}"
+    run make_fips_per_image_result "${out}" "img" "FAILURE" "${csv}"
+    [ "$status" -eq 0 ]
+    local result
+    result=$(jq -c '.' "${out}")
+    rm -f "${out}" "${csv}"
+    [ "$(echo "${result}" | jq -r '.findings[0].rpm')" = 'some"pkg' ]
+}
+
+@test "make_fips_per_image_result: preserves backslashes in CSV values" {
+    local out csv
+    out=$(mktemp); csv=$(mktemp)
+    {
+        printf '%s\n' 'Operator Name,RPM Name,Executable Name,Status'
+        printf '%s\n' 'myop,some\pkg,/usr/lib/lib\.so,error with \n escape'
+    } > "${csv}"
+    run make_fips_per_image_result "${out}" "img" "FAILURE" "${csv}"
+    [ "$status" -eq 0 ]
+    local result
+    result=$(jq -c '.' "${out}")
+    rm -f "${out}" "${csv}"
+    [ "$(echo "${result}" | jq -r '.findings[0].rpm')" = 'some\pkg' ]
+    [ "$(echo "${result}" | jq -r '.findings[0].binary')" = '/usr/lib/lib\.so' ]
+    [ "$(echo "${result}" | jq -r '.findings[0].message')" = 'error with \n escape' ]
+}
+
+@test "make_fips_per_image_result: handles suppressed RPM Name column in CSV" {
+    local out csv
+    out=$(mktemp); csv=$(mktemp)
+    {
+        printf '%s\n' 'Operator Name,Executable Name,Status'
+        printf '%s\n' 'zlib,/etc/redhat-release,could not find distribution file'
+    } > "${csv}"
+    run make_fips_per_image_result "${out}" "img" "FAILURE" "${csv}"
+    [ "$status" -eq 0 ]
+    local result
+    result=$(jq -c '.' "${out}")
+    rm -f "${out}" "${csv}"
+    [ "$(echo "${result}" | jq -c '.findings[0].binary')" = '"/etc/redhat-release"' ]
+    [ "$(echo "${result}" | jq -c '.findings[0].message')" = '"could not find distribution file"' ]
+    [ "$(echo "${result}" | jq -c '.findings[0] | has("rpm")')" = "false" ]
+}
+
+@test "make_fips_per_image_result: reassembles Status field containing commas (go GODEBUG)" {
+    local out csv
+    out=$(mktemp); csv=$(mktemp)
+    {
+        printf '%s\n' 'Operator Name,Executable Name,Status'
+        printf '%s\n' 'myop,/usr/bin/mybinary,"go binary does not set GODEBUG fips140={auto,on,only}"'
+    } > "${csv}"
+    run make_fips_per_image_result "${out}" "img" "FAILURE" "${csv}"
+    [ "$status" -eq 0 ]
+    local result
+    result=$(jq -c '.' "${out}")
+    rm -f "${out}" "${csv}"
+    [ "$(echo "${result}" | jq -r '.findings[0].message')" = 'go binary does not set GODEBUG fips140={auto,on,only}' ]
+}
+
+@test "make_fips_per_image_result: reassembles Status field containing commas (rust no FIPS provider)" {
+    local out csv
+    out=$(mktemp); csv=$(mktemp)
+    {
+        printf '%s\n' 'Operator Name,Executable Name,Status'
+        printf '%s\n' 'myop,/usr/bin/mybinary,"rust binary has a cargo-auditable manifest but no FIPS crypto provider could be identified; the denylist is non-exhaustive so this is inconclusive, not a pass"'
+    } > "${csv}"
+    run make_fips_per_image_result "${out}" "img" "FAILURE" "${csv}"
+    [ "$status" -eq 0 ]
+    local result
+    result=$(jq -c '.' "${out}")
+    rm -f "${out}" "${csv}"
+    [ "$(echo "${result}" | jq -r '.findings[0].message')" = 'rust binary has a cargo-auditable manifest but no FIPS crypto provider could be identified; the denylist is non-exhaustive so this is inconclusive, not a pass' ]
+}
+
+@test "make_fips_per_image_result: reassembles Status field containing commas (certified_distributions empty)" {
+    local out csv
+    out=$(mktemp); csv=$(mktemp)
+    {
+        printf '%s\n' 'Operator Name,Executable Name,Status'
+        printf '%s\n' 'myop,,"certified_distributions is empty, consider using -V [VERSION] for check-payload"'
+    } > "${csv}"
+    run make_fips_per_image_result "${out}" "img" "FAILURE" "${csv}"
+    [ "$status" -eq 0 ]
+    local result
+    result=$(jq -c '.' "${out}")
+    rm -f "${out}" "${csv}"
+    [ "$(echo "${result}" | jq -r '.findings[0].message')" = 'certified_distributions is empty, consider using -V [VERSION] for check-payload' ]
+}
+
+# write_fips_report tests
+
+@test "write_fips_report: assembles report from fragment files" {
+    local out dir
+    out=$(mktemp)
+    dir=$(mktemp -d)
+    printf '{"image":"img1","result":"SUCCESS"}' > "${dir}/fragment-0001.json"
+    printf '{"image":"img2","result":"FAILURE","findings":[{"rpm":"openssl-libs"}]}' > "${dir}/fragment-0002.json"
+    run write_fips_report "${out}" "${dir}" 2 1 1 0 0
+    [ "$status" -eq 0 ]
+    local result
+    result=$(jq -c '.' "${out}")
+    rm -f "${out}"
+    rm -rf "${dir}"
+    [ "$(echo "${result}" | jq '.summary.total')" = "2" ]
+    [ "$(echo "${result}" | jq '.summary.successes')" = "1" ]
+    [ "$(echo "${result}" | jq '.summary.failures')" = "1" ]
+    [ "$(echo "${result}" | jq '.images | length')" = "2" ]
+    [ "$(echo "${result}" | jq -r '.images[0].image')" = "img1" ]
+    [ "$(echo "${result}" | jq -r '.images[1].result')" = "FAILURE" ]
+}
+
+@test "write_fips_report: report has timestamp in UTC ISO format" {
+    local out dir
+    out=$(mktemp)
+    dir=$(mktemp -d)
+    printf '{"image":"img1","result":"SUCCESS"}' > "${dir}/fragment-0001.json"
+    run write_fips_report "${out}" "${dir}" 1 1 0 0 0
+    [ "$status" -eq 0 ]
+    local ts
+    ts=$(jq -r '.timestamp' "${out}")
+    rm -f "${out}"
+    rm -rf "${dir}"
+    [[ "${ts}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$ ]]
+}
+
+@test "write_fips_report: empty fragments dir produces empty images array" {
+    local out dir
+    out=$(mktemp)
+    dir=$(mktemp -d)
+    run write_fips_report "${out}" "${dir}" 0 0 0 0 0
+    [ "$status" -eq 0 ]
+    local result
+    result=$(jq -c '.' "${out}")
+    rm -f "${out}"
+    rm -rf "${dir}"
+    [ "$(echo "${result}" | jq '.images | length')" = "0" ]
+    [ "$(echo "${result}" | jq '.summary.total')" = "0" ]
+}
+
+@test "write_fips_report: missing output_file returns 2" {
+    run write_fips_report "" "/tmp" 0 0 0 0 0
+    [ "$status" -eq 2 ]
+    [[ "$output" == *"Missing parameter: output_file"* ]]
+}
+
+@test "write_fips_report: missing fragments_dir returns 2" {
+    local out
+    out=$(mktemp)
+    run write_fips_report "${out}" "" 0 0 0 0 0
+    rm -f "${out}"
+    [ "$status" -eq 2 ]
+    [[ "$output" == *"Missing parameter: fragments_dir"* ]]
+}
