@@ -158,13 +158,15 @@ test_roxctl_format_components_multiple if {
 test_roxctl_generate_description if {
 	vulns := [{"cve": "CVE-2025-60753", "components": [{"component": "libarchive", "version": "3.5.3-5.el9_6", "source": "var/lib/rpm"}]}]
 	result := roxctl_generate_description(vulns)
-	result == "Vulnerabilities found: CVE-2025-60753: libarchive-3.5.3-5.el9_6@var/lib/rpm"
+	result == "Vulnerabilities found: CVE-2025-60753"
 }
 
 test_roxctl_get_patched_vulnerabilities if {
 	result := roxctl_get_patched_vulnerabilities(mock_input.roxctl_new, "CRITICAL_VULNERABILITY_SEVERITY")
 	count(result) == 1
-	result[0].cve == "CVE-2025-60753"
+
+	# entries now carry only cve + fixedBy -- "components" was removed
+	result[0] == {"cve": "CVE-2025-60753", "fixedBy": "0:3.5.3-6.el9_6"}
 }
 
 test_roxctl_get_patched_vulnerabilities_none if {
@@ -175,7 +177,9 @@ test_roxctl_get_patched_vulnerabilities_none if {
 test_roxctl_get_unpatched_vulnerabilities if {
 	result := roxctl_get_unpatched_vulnerabilities(mock_input.roxctl_new, "CRITICAL_VULNERABILITY_SEVERITY")
 	count(result) == 1
-	result[0].cve == "CVE-2023-30571"
+
+	# entries now carry only cve -- "components" was removed
+	result[0] == {"cve": "CVE-2023-30571"}
 }
 
 test_roxctl_get_unpatched_vulnerabilities_none if {
@@ -186,8 +190,13 @@ test_roxctl_get_unpatched_vulnerabilities_none if {
 test_roxctl_get_discrepancies if {
 	result := roxctl_get_discrepancies(mock_input.roxctl_new)
 	count(result) == 2
-	cves := {r.cve | r := result[_]}
-	cves == {"CVE-2025-5918", "CVE-2025-5917"}
+
+	# entries now carry only cve + links -- "components" was removed
+	entries := {e.cve: e.links | e := result[_]}
+	entries == {
+		"CVE-2025-5918": [],
+		"CVE-2025-5917": ["https://nvd.nist.gov/vuln/detail/CVE-2025-5917"],
+	}
 }
 
 test_roxctl_get_discrepancies_none if {
@@ -204,7 +213,8 @@ test_warn_roxctl_critical_vulnerabilities if {
 	count(result) == 1
 	result[0].vulnerabilities_number == 1
 	result[0].details.name == "roxctl_critical_vulnerabilities"
-	contains(result[0].details.description, "CVE-2025-60753")
+
+	result[0].details.description == "Vulnerabilities found: CVE-2025-60753"
 	result[0].details.url == "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
 }
 
@@ -222,7 +232,8 @@ test_warn_roxctl_unpatched_critical_vulnerabilities if {
 	count(result) == 1
 	result[0].vulnerabilities_number == 1
 	result[0].details.name == "roxctl_unpatched_critical_vulnerabilities"
-	contains(result[0].details.description, "CVE-2023-30571")
+
+	result[0].details.description == "Vulnerabilities found: CVE-2023-30571"
 }
 
 test_warn_roxctl_unpatched_critical_vulnerabilities_none if {
@@ -239,7 +250,8 @@ test_warn_roxctl_high_vulnerabilities if {
 	count(result) == 1
 	result[0].vulnerabilities_number == 1
 	result[0].details.name == "roxctl_high_vulnerabilities"
-	contains(result[0].details.description, "CVE-2025-5914")
+
+	result[0].details.description == "Vulnerabilities found: CVE-2025-5914"
 }
 
 test_warn_roxctl_high_vulnerabilities_none if {
@@ -256,8 +268,8 @@ test_warn_roxctl_unpatched_high_vulnerabilities if {
 	count(result) == 1
 	result[0].vulnerabilities_number == 1
 	result[0].details.name == "roxctl_unpatched_high_vulnerabilities"
-	contains(result[0].details.description, "CVE-2024-12345")
-	contains(result[0].details.description, "openssl")
+
+	result[0].details.description == "Vulnerabilities found: CVE-2024-12345"
 }
 
 test_warn_roxctl_unpatched_high_vulnerabilities_none if {
@@ -274,7 +286,8 @@ test_warn_roxctl_medium_vulnerabilities if {
 	count(result) == 1
 	result[0].vulnerabilities_number == 1
 	result[0].details.name == "roxctl_medium_vulnerabilities"
-	contains(result[0].details.description, "CVE-2024-33602")
+
+	result[0].details.description == "Vulnerabilities found: CVE-2024-33602"
 }
 
 test_warn_roxctl_medium_vulnerabilities_none if {
@@ -291,7 +304,8 @@ test_warn_roxctl_unpatched_medium_vulnerabilities if {
 	count(result) == 1
 	result[0].vulnerabilities_number == 1
 	result[0].details.name == "roxctl_unpatched_medium_vulnerabilities"
-	contains(result[0].details.description, "CVE-2021-20197")
+
+	result[0].details.description == "Vulnerabilities found: CVE-2021-20197"
 }
 
 test_warn_roxctl_unpatched_medium_vulnerabilities_none if {
@@ -308,7 +322,8 @@ test_warn_roxctl_low_vulnerabilities if {
 	count(result) == 1
 	result[0].vulnerabilities_number == 1
 	result[0].details.name == "roxctl_low_vulnerabilities"
-	contains(result[0].details.description, "CVE-2022-29458")
+
+	result[0].details.description == "Vulnerabilities found: CVE-2022-29458"
 }
 
 test_warn_roxctl_low_vulnerabilities_none if {
@@ -325,9 +340,8 @@ test_warn_roxctl_unpatched_low_vulnerabilities if {
 	count(result) == 1
 	result[0].vulnerabilities_number == 3
 	result[0].details.name == "roxctl_unpatched_low_vulnerabilities"
-	contains(result[0].details.description, "CVE-2021-3572")
-	contains(result[0].details.description, "CVE-2025-5918")
-	contains(result[0].details.description, "CVE-2025-5917")
+
+	result[0].details.description == "Vulnerabilities found: CVE-2021-3572, CVE-2025-5918, CVE-2025-5917"
 }
 
 test_warn_roxctl_unpatched_low_vulnerabilities_none if {
@@ -344,8 +358,8 @@ test_discrepancies_for_cves if {
 	count(result) == 1
 	result[0].discrepancies_number == 2
 	result[0].details.name == "discrepancies"
-	contains(result[0].details.description, "CVE-2025-5918")
-	contains(result[0].details.description, "CVE-2025-5917")
+
+	result[0].details.description == "Vulnerabilities found: CVE-2025-5918, CVE-2025-5917"
 	result[0].details.url == "https://access.redhat.com/articles/red_hat_vulnerability_tutorial"
 }
 
