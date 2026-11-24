@@ -2080,3 +2080,139 @@ parse_picklescan_output() {
     --argjson summary "$summary_json" \
     '{infected_files: $infected_files, summary: $summary}'
 }
+
+# Write a per-image JSON fragment for the FIPS scan report.
+# Args: output_file, image, result (SUCCESS|FAILURE|WARNING|ERROR), [csv_file], [error_msg]
+# csv_file is the check-payload CSV output; parsed for FAILURE/WARNING results, ignored otherwise.
+# ERROR entries include an "error" field with the failure reason.
+# FAILURE/WARNING entries include a "findings" array when the CSV contains findings.
+#
+# Example outputs:
+#   {"image":"quay.io/...@sha256:abc","result":"FAILURE","findings":[{"rpm":"openssl-libs","binary":"/usr/lib64/libcrypto.so.3","message":"operating system is not FIPS certified"}]}
+#   {"image":"quay.io/...@sha256:abc","result":"SUCCESS"}
+#   {"image":"quay.io/...@sha256:abc","result":"ERROR","error":"Could not inspect image for labels"}
+make_fips_per_image_result() {
+  local output_file="${1}"
+  local image="${2}"
+  local result="${3}"
+  local csv_file="${4:-}"
+  local error_msg="${5:-}"
+
+  if [ -z "${output_file}" ]; then
+    echo "make_fips_per_image_result: Missing parameter: output_file" >&2
+    return 2
+  fi
+  if [ -z "${image}" ]; then
+    echo "make_fips_per_image_result: Missing parameter: image" >&2
+    return 2
+  fi
+  case "${result}" in
+    SUCCESS|FAILURE|WARNING|ERROR) ;;
+    *)
+      echo "make_fips_per_image_result: Invalid value for result: '${result}' (expected SUCCESS|FAILURE|WARNING|ERROR)" >&2
+      return 2
+      ;;
+  esac
+
+  # Python is used instead of jq because jq has no native CSV parser and
+  # check-payload output uses RFC 4180 quoting with embedded commas in status strings.
+  if ! python3 -I -c '
+import csv, json, sys
+
+output_file, image, result, csv_file, error_msg = sys.argv[1:6]
+
+findings = []
+if result in ("FAILURE", "WARNING") and csv_file:
+    hdr = None
+    with open(csv_file, newline="") as f:
+        for rec in csv.reader(f):
+            if not rec:
+                continue
+            if rec[0].lstrip().startswith("----"):
+                hdr = None
+                continue
+            if all(not c.strip() for c in rec):
+                continue
+            if "Status" in (c.strip() for c in rec):
+                hdr = [c.strip() for c in rec]
+                continue
+            if hdr is None:
+                continue
+            cells = dict(zip(hdr, (c.strip() for c in rec)))
+            out = {}
+            for key, col in (("rpm", "RPM Name"),
+                             ("binary", "Executable Name"),
+                             ("message", "Status")):
+                if cells.get(col):
+                    out[key] = cells[col]
+            if out:
+                findings.append(out)
+
+obj = {"image": image, "result": result}
+if result == "ERROR" and error_msg:
+    obj["error"] = error_msg
+elif result in ("FAILURE", "WARNING") and findings:
+    obj["findings"] = findings
+
+with open(output_file, "w") as f:
+    json.dump(obj, f, separators=(",", ":"))
+' "${output_file}" "${image}" "${result}" "${csv_file}" "${error_msg}"; then
+    echo "make_fips_per_image_result: Failed to write FIPS result for ${image}" >&2
+    return 1
+  fi
+}
+
+# Assemble a complete FIPS scan report from per-image JSON fragments.
+# Args: output_file, fragments_dir, total, successes, failures, warnings, errors
+# fragments_dir contains fragment-*.json files written by make_fips_per_image_result.
+# Summary counters are caller-managed and not validated against the fragment files.
+write_fips_report() {
+  local output_file="${1}"
+  local fragments_dir="${2}"
+  local total="${3}"
+  local successes="${4}"
+  local failures="${5}"
+  local warnings="${6}"
+  local errors="${7}"
+
+  if [ -z "${output_file}" ]; then
+    echo "write_fips_report: Missing parameter: output_file" >&2
+    return 2
+  fi
+  if [ -z "${fragments_dir}" ]; then
+    echo "write_fips_report: Missing parameter: fragments_dir" >&2
+    return 2
+  fi
+
+  # Python is used for consistency with make_fips_per_image_result and to handle
+  # JSON assembly with timestamp generation.
+  if ! python3 -I -c '
+import glob, json, sys
+from datetime import datetime, timezone
+
+output_file, fragments_dir = sys.argv[1], sys.argv[2]
+total, successes, failures, warnings, errors = (int(x) for x in sys.argv[3:8])
+
+images = []
+for f in sorted(glob.glob(fragments_dir + "/fragment-*.json")):
+    with open(f) as fh:
+        images.append(json.load(fh))
+
+report = {
+    "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+    "summary": {
+        "total": total,
+        "successes": successes,
+        "failures": failures,
+        "warnings": warnings,
+        "errors": errors
+    },
+    "images": images
+}
+with open(output_file, "w") as fh:
+    json.dump(report, fh, separators=(",", ":"))
+' "${output_file}" "${fragments_dir}" "${total}" "${successes}" "${failures}" "${warnings}" "${errors}"; then
+    echo "write_fips_report: Failed to write FIPS report to ${output_file}" >&2
+    return 1
+  fi
+}
